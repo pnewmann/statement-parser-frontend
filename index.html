@@ -1575,7 +1575,16 @@
                                 maxTicksLimit: 8,
                                 callback: (v) => {
                                     const d = new Date(labels[v]);
-                                    return d.toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
+                                    // Use more granular format for shorter periods
+                                    if (period === '1M') {
+                                        return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                                    } else if (period === '3M' || period === 'YTD') {
+                                        return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                                    } else if (period === '6M' || period === '1Y') {
+                                        return d.toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
+                                    } else {
+                                        return d.toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
+                                    }
                                 }
                             }
                         },
