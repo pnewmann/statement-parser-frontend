@@ -494,6 +494,36 @@
         }
 
         /* Performance Returns */
+        .period-selector {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .period-btn {
+            padding: 10px 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .period-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .period-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
         .returns-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -504,6 +534,17 @@
         .return-card {
             text-align: center;
             padding: 20px 16px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .return-card:hover {
+            border-color: var(--primary);
+        }
+
+        .return-card.active {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 91, 255, 0.1);
         }
 
         .return-card .stat-value {
@@ -520,59 +561,66 @@
         .map-container {
             position: relative;
             padding: 24px;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
         }
 
         .world-map {
             width: 100%;
             height: auto;
-            max-height: 400px;
+            max-height: 350px;
         }
 
         .world-map path {
-            fill: var(--bg-tertiary);
+            fill: #dce3eb;
             stroke: var(--bg-primary);
-            stroke-width: 0.5;
-            transition: fill 0.2s;
+            stroke-width: 1;
+            transition: all 0.3s ease;
+        }
+
+        .world-map path:hover {
+            opacity: 0.85;
         }
 
         .world-map path.highlighted {
             fill: var(--primary);
+            filter: drop-shadow(0 2px 4px rgba(99, 91, 255, 0.3));
         }
 
         .world-map path.highlighted-light {
-            fill: var(--primary-light);
-            opacity: 0.7;
+            fill: #a5b4fc;
         }
 
         .world-map path.highlighted-em {
-            fill: #f59e0b;
+            fill: #fbbf24;
         }
 
         .map-legend {
             display: flex;
             justify-content: center;
-            gap: 24px;
-            margin-top: 20px;
+            gap: 32px;
+            margin-top: 24px;
             flex-wrap: wrap;
         }
 
         .legend-item {
             display: flex;
             align-items: center;
-            gap: 8px;
-            font-size: 0.875rem;
+            gap: 10px;
+            font-size: 0.9375rem;
+            font-weight: 500;
             color: var(--text-secondary);
         }
 
         .legend-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 3px;
+            width: 14px;
+            height: 14px;
+            border-radius: 4px;
         }
 
         .legend-dot.us { background: var(--primary); }
-        .legend-dot.developed { background: var(--primary-light); }
-        .legend-dot.emerging { background: #f59e0b; }
+        .legend-dot.developed { background: #a5b4fc; }
+        .legend-dot.emerging { background: #fbbf24; }
 
         /* Scenario Analysis */
         .scenarios-container {
@@ -1005,7 +1053,18 @@
             <div class="tab-content" id="tab-performance">
                 <div class="returns-grid" id="returnsGrid"></div>
                 <div class="card chart-card">
-                    <div class="card-title">Historical Performance vs S&P 500</div>
+                    <div class="card-header">
+                        <div class="card-title">Historical Performance vs S&P 500</div>
+                        <div class="period-selector" id="periodSelector">
+                            <button class="period-btn" data-period="1M">1M</button>
+                            <button class="period-btn" data-period="3M">3M</button>
+                            <button class="period-btn" data-period="6M">6M</button>
+                            <button class="period-btn" data-period="YTD">YTD</button>
+                            <button class="period-btn" data-period="1Y">1Y</button>
+                            <button class="period-btn" data-period="3Y">3Y</button>
+                            <button class="period-btn active" data-period="5Y">5Y</button>
+                        </div>
+                    </div>
                     <div class="chart-wrapper" style="height: 380px;">
                         <canvas id="performanceChart"></canvas>
                     </div>
@@ -1051,11 +1110,11 @@
                 <div class="card">
                     <div class="card-title">Geographic Allocation</div>
                     <div class="map-container">
-                        <svg class="world-map" id="worldMap" viewBox="0 0 1000 500"></svg>
+                        <svg class="world-map" id="worldMap" viewBox="130 30 780 430" preserveAspectRatio="xMidYMid meet"></svg>
                         <div class="map-legend">
-                            <div class="legend-item"><div class="legend-dot us"></div>United States</div>
-                            <div class="legend-item"><div class="legend-dot developed"></div>Developed Markets</div>
-                            <div class="legend-item"><div class="legend-dot emerging"></div>Emerging Markets</div>
+                            <div class="legend-item"><div class="legend-dot us"></div><span>United States <strong id="usMapPct">0%</strong></span></div>
+                            <div class="legend-item"><div class="legend-dot developed"></div><span>Developed <strong id="devMapPct">0%</strong></span></div>
+                            <div class="legend-item"><div class="legend-dot emerging"></div><span>Emerging <strong id="emMapPct">0%</strong></span></div>
                         </div>
                     </div>
                 </div>
@@ -1350,6 +1409,9 @@
             renderDoughnut('subClassChart', subClass);
         }
 
+        let fullChartData = null;
+        let currentPeriod = '5Y';
+
         function renderPerformance() {
             const perf = portfolioData.historical_performance || {};
             const returns = perf.returns || {};
@@ -1361,7 +1423,7 @@
                 const bench = data.benchmark;
                 const cls = val > 0 ? 'positive' : val < 0 ? 'negative' : '';
                 return `
-                    <div class="stat-card return-card">
+                    <div class="stat-card return-card" data-period="${p}">
                         <div class="stat-label">${p}</div>
                         <div class="stat-value ${cls}">${val !== null && val !== undefined ? (val > 0 ? '+' : '') + val.toFixed(2) + '%' : '--'}</div>
                         <div class="benchmark-label">S&P: ${bench !== null && bench !== undefined ? (bench > 0 ? '+' : '') + bench.toFixed(2) + '%' : '--'}</div>
@@ -1369,17 +1431,93 @@
                 `;
             }).join('');
 
-            if (perf.chart_data) renderLineChart(perf.chart_data);
+            // Store full chart data for filtering
+            if (perf.chart_data) {
+                fullChartData = perf.chart_data;
+                renderLineChart(fullChartData, currentPeriod);
+            }
+
+            // Add click handlers for return cards
+            document.querySelectorAll('.return-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    const period = card.dataset.period;
+                    selectPeriod(period);
+                });
+            });
+
+            // Add click handlers for period buttons
+            document.querySelectorAll('.period-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const period = btn.dataset.period;
+                    selectPeriod(period);
+                });
+            });
         }
 
-        function renderLineChart(data) {
+        function selectPeriod(period) {
+            currentPeriod = period;
+
+            // Update period button states
+            document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+            document.querySelector(`.period-btn[data-period="${period}"]`)?.classList.add('active');
+
+            // Update return card states
+            document.querySelectorAll('.return-card').forEach(c => c.classList.remove('active'));
+            document.querySelector(`.return-card[data-period="${period}"]`)?.classList.add('active');
+
+            // Re-render chart with filtered data
+            if (fullChartData) {
+                renderLineChart(fullChartData, period);
+            }
+        }
+
+        function filterChartDataByPeriod(data, period) {
+            if (!data || !data.labels || !data.labels.length) return data;
+
+            const now = new Date(data.labels[data.labels.length - 1]);
+            let startDate = new Date(now);
+
+            switch (period) {
+                case '1M': startDate.setMonth(now.getMonth() - 1); break;
+                case '3M': startDate.setMonth(now.getMonth() - 3); break;
+                case '6M': startDate.setMonth(now.getMonth() - 6); break;
+                case 'YTD': startDate = new Date(now.getFullYear(), 0, 1); break;
+                case '1Y': startDate.setFullYear(now.getFullYear() - 1); break;
+                case '3Y': startDate.setFullYear(now.getFullYear() - 3); break;
+                case '5Y':
+                default: return data; // Return full data for 5Y
+            }
+
+            const startIdx = data.labels.findIndex(d => new Date(d) >= startDate);
+            if (startIdx === -1) return data;
+
+            const filteredLabels = data.labels.slice(startIdx);
+            const filteredPortfolio = data.portfolio.slice(startIdx);
+            const filteredBenchmark = data.benchmark?.slice(startIdx);
+
+            // Normalize to start at 100
+            const portfolioStart = filteredPortfolio[0] || 100;
+            const benchmarkStart = filteredBenchmark?.[0] || 100;
+
+            return {
+                labels: filteredLabels,
+                portfolio: filteredPortfolio.map(v => (v / portfolioStart) * 100),
+                benchmark: filteredBenchmark?.map(v => (v / benchmarkStart) * 100)
+            };
+        }
+
+        function renderLineChart(data, period = '5Y') {
             const ctx = document.getElementById('performanceChart').getContext('2d');
             if (charts.performanceChart) charts.performanceChart.destroy();
 
-            const step = Math.max(1, Math.floor(data.labels.length / 100));
-            const labels = data.labels.filter((_, i) => i % step === 0);
-            const portfolio = data.portfolio.filter((_, i) => i % step === 0);
-            const benchmark = data.benchmark?.filter((_, i) => i % step === 0);
+            const filteredData = filterChartDataByPeriod(data, period);
+
+            // Downsample for performance
+            const maxPoints = 150;
+            const step = Math.max(1, Math.floor(filteredData.labels.length / maxPoints));
+            const labels = filteredData.labels.filter((_, i) => i % step === 0);
+            const portfolio = filteredData.portfolio.filter((_, i) => i % step === 0);
+            const benchmark = filteredData.benchmark?.filter((_, i) => i % step === 0);
 
             charts.performanceChart = new Chart(ctx, {
                 type: 'line',
@@ -1389,28 +1527,66 @@
                         {
                             label: 'Portfolio', data: portfolio,
                             borderColor: '#635bff', backgroundColor: 'rgba(99,91,255,0.1)',
-                            borderWidth: 2, fill: true, tension: 0.3, pointRadius: 0
+                            borderWidth: 2.5, fill: true, tension: 0.3,
+                            pointRadius: 0, pointHoverRadius: 6, pointHoverBackgroundColor: '#635bff'
                         },
                         ...(benchmark ? [{
                             label: 'S&P 500', data: benchmark,
                             borderColor: '#8898aa', backgroundColor: 'transparent',
-                            borderWidth: 2, borderDash: [5, 5], fill: false, tension: 0.3, pointRadius: 0
+                            borderWidth: 2, borderDash: [5, 5], fill: false, tension: 0.3,
+                            pointRadius: 0, pointHoverRadius: 5, pointHoverBackgroundColor: '#8898aa'
                         }] : [])
                     ]
                 },
                 options: {
-                    responsive: true, maintainAspectRatio: false,
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
                     plugins: {
                         legend: { display: true, position: 'top', labels: { usePointStyle: true, padding: 20 } },
                         tooltip: {
+                            enabled: true,
+                            backgroundColor: 'rgba(10, 37, 64, 0.95)',
+                            titleFont: { size: 13, weight: '600' },
+                            bodyFont: { size: 12 },
+                            padding: 12,
+                            cornerRadius: 8,
+                            displayColors: true,
                             callbacks: {
-                                label: ctx => `${ctx.dataset.label}: ${ctx.raw.toFixed(2)} (${(ctx.raw - 100) >= 0 ? '+' : ''}${(ctx.raw - 100).toFixed(2)}%)`
+                                title: (items) => {
+                                    const date = new Date(items[0].label);
+                                    return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+                                },
+                                label: ctx => {
+                                    const change = ctx.raw - 100;
+                                    const sign = change >= 0 ? '+' : '';
+                                    return `${ctx.dataset.label}: ${sign}${change.toFixed(2)}%`;
+                                }
                             }
                         }
                     },
                     scales: {
-                        x: { grid: { color: '#e3e8ee' }, ticks: { color: '#8898aa', maxTicksLimit: 8, callback: (v) => { const d = new Date(labels[v]); return d.toLocaleDateString('en-US', { month: 'short', year: '2-digit' }); } } },
-                        y: { grid: { color: '#e3e8ee' }, ticks: { color: '#8898aa' } }
+                        x: {
+                            grid: { color: '#e3e8ee', drawBorder: false },
+                            ticks: {
+                                color: '#8898aa',
+                                maxTicksLimit: 8,
+                                callback: (v) => {
+                                    const d = new Date(labels[v]);
+                                    return d.toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
+                                }
+                            }
+                        },
+                        y: {
+                            grid: { color: '#e3e8ee', drawBorder: false },
+                            ticks: {
+                                color: '#8898aa',
+                                callback: (v) => (v - 100 >= 0 ? '+' : '') + (v - 100).toFixed(0) + '%'
+                            }
+                        }
                     }
                 }
             });
@@ -1451,32 +1627,66 @@
             document.getElementById('devPct').textContent = dev.toFixed(1) + '%';
             document.getElementById('emPct').textContent = em.toFixed(1) + '%';
 
+            // Update map legend percentages
+            document.getElementById('usMapPct').textContent = us.toFixed(0) + '%';
+            document.getElementById('devMapPct').textContent = dev.toFixed(0) + '%';
+            document.getElementById('emMapPct').textContent = em.toFixed(0) + '%';
+
             renderWorldMap(us, dev, em);
             renderDoughnut('geoChart', geo, {
-                US: '#635bff', 'Developed Markets': '#7a73ff', 'Emerging Markets': '#f59e0b',
-                Europe: '#a78bfa', 'Asia Pacific': '#fbbf24', Global: '#64d2ff',
+                US: '#635bff', 'Developed Markets': '#a5b4fc', 'Emerging Markets': '#fbbf24',
+                Europe: '#a78bfa', 'Asia Pacific': '#c4b5fd', Global: '#64d2ff',
                 International: '#818cf8', Japan: '#6366f1', China: '#ef4444'
             });
         }
 
         function renderWorldMap(us, dev, em) {
             const svg = document.getElementById('worldMap');
+            const usClass = us > 5 ? 'highlighted' : '';
+            const devClass = dev > 5 ? 'highlighted-light' : '';
+            const emClass = em > 5 ? 'highlighted-em' : '';
+
             svg.innerHTML = `
-                <path class="${us > 5 ? 'highlighted' : ''}" d="M165,120 L165,200 L280,200 L280,140 L240,140 L240,120 Z" title="United States"/>
-                <path class="${us > 5 ? 'highlighted' : ''}" d="M280,140 L280,200 L300,200 L300,180 L290,170 L290,140 Z" title="Eastern US"/>
-                <path class="${dev > 5 ? 'highlighted-light' : ''}" d="M150,100 L150,120 L240,120 L240,100 L200,90 Z" title="Canada"/>
-                <path class="${dev > 5 ? 'highlighted-light' : ''}" d="M430,100 L430,180 L530,180 L530,100 Z" title="Europe"/>
-                <path class="${dev > 5 ? 'highlighted-light' : ''}" d="M540,80 L540,140 L600,140 L600,80 Z" title="Northern Europe"/>
-                <path class="${dev > 5 ? 'highlighted-light' : ''}" d="M780,140 L780,220 L850,220 L850,140 Z" title="Japan"/>
-                <path class="${dev > 5 ? 'highlighted-light' : ''}" d="M700,350 L700,420 L800,420 L800,350 Z" title="Australia"/>
-                <path class="${em > 5 ? 'highlighted-em' : ''}" d="M650,130 L650,260 L780,260 L780,130 Z" title="China"/>
-                <path class="${em > 5 ? 'highlighted-em' : ''}" d="M580,180 L580,280 L650,280 L650,180 Z" title="India"/>
-                <path class="${em > 5 ? 'highlighted-em' : ''}" d="M260,240 L260,380 L340,380 L340,240 Z" title="Brazil"/>
-                <path class="${em > 5 ? 'highlighted-em' : ''}" d="M150,220 L150,300 L260,300 L260,220 Z" title="Mexico/Central"/>
-                <path d="M430,200 L430,350 L580,350 L580,200 Z" title="Africa"/>
-                <path d="M600,80 L600,130 L780,130 L780,80 Z" title="Russia"/>
-                <path d="M580,280 L580,350 L700,350 L700,280 Z" title="Southeast Asia"/>
-                <path d="M200,380 L200,450 L340,450 L340,380 Z" title="Argentina"/>
+                <!-- North America -->
+                <path class="${usClass}" d="M158,135 L168,128 L185,127 L195,120 L210,118 L225,120 L240,125 L255,130 L270,128 L280,135 L285,145 L290,155 L288,170 L280,180 L270,185 L258,190 L245,188 L235,195 L220,200 L205,198 L195,190 L188,180 L180,175 L170,168 L162,158 L155,148 Z"/>
+                <path class="${usClass}" d="M148,95 L165,90 L180,92 L195,88 L210,90 L225,95 L235,100 L245,105 L252,112 L255,120 L250,125 L238,122 L225,118 L210,115 L195,118 L180,122 L165,125 L155,120 L148,110 Z"/>
+                <path class="${devClass}" d="M150,60 L175,55 L200,50 L225,48 L250,52 L270,58 L285,65 L290,75 L282,85 L265,88 L248,90 L230,88 L210,85 L190,82 L170,78 L155,72 L148,65 Z"/>
+                <!-- Mexico & Central America -->
+                <path class="${emClass}" d="M170,195 L185,192 L195,198 L200,210 L195,225 L185,235 L175,240 L165,235 L158,225 L155,215 L160,205 Z"/>
+                <!-- South America -->
+                <path class="${emClass}" d="M235,240 L255,235 L275,240 L290,250 L300,265 L305,285 L302,305 L295,325 L285,345 L270,360 L255,370 L240,375 L228,365 L220,345 L215,325 L218,305 L225,285 L230,265 Z"/>
+                <!-- Europe -->
+                <path class="${devClass}" d="M440,85 L455,80 L475,78 L495,82 L512,88 L525,95 L530,108 L528,120 L520,130 L505,138 L490,142 L472,140 L455,135 L440,128 L430,118 L428,105 L432,92 Z"/>
+                <path class="${devClass}" d="M445,142 L460,138 L478,142 L492,148 L500,158 L495,168 L482,175 L468,178 L452,175 L440,168 L435,158 L438,148 Z"/>
+                <!-- UK & Ireland -->
+                <path class="${devClass}" d="M420,88 L432,85 L438,92 L435,102 L428,108 L418,105 L415,95 Z"/>
+                <!-- Scandinavia -->
+                <path class="${devClass}" d="M475,55 L490,50 L505,48 L515,55 L520,68 L515,78 L505,82 L490,80 L478,75 L472,65 Z"/>
+                <!-- Africa -->
+                <path d="M445,185 L465,180 L485,185 L502,195 L515,210 L522,230 L525,255 L520,280 L510,305 L495,325 L475,340 L455,345 L435,340 L420,328 L412,310 L408,288 L412,265 L420,242 L432,218 L440,198 Z"/>
+                <!-- Middle East -->
+                <path class="${emClass}" d="M525,148 L545,145 L562,150 L578,158 L588,170 L590,185 L585,198 L572,205 L558,202 L542,195 L530,185 L522,170 L520,158 Z"/>
+                <!-- Russia -->
+                <path d="M530,55 L560,48 L595,45 L635,48 L675,52 L710,58 L740,65 L760,75 L765,88 L755,100 L735,108 L710,112 L680,110 L645,105 L610,98 L575,92 L545,85 L535,72 Z"/>
+                <!-- India -->
+                <path class="${emClass}" d="M605,175 L625,170 L642,178 L655,190 L660,208 L655,228 L645,245 L630,255 L612,250 L598,238 L590,222 L592,205 L598,188 Z"/>
+                <!-- China -->
+                <path class="${emClass}" d="M665,110 L695,105 L725,108 L752,115 L770,128 L778,145 L775,165 L765,182 L748,195 L725,200 L700,198 L678,190 L660,178 L652,162 L655,142 L658,125 Z"/>
+                <!-- Southeast Asia -->
+                <path class="${emClass}" d="M685,210 L705,205 L722,212 L735,225 L740,242 L735,260 L722,275 L705,282 L688,278 L675,265 L670,248 L675,228 Z"/>
+                <!-- Japan -->
+                <path class="${devClass}" d="M785,125 L798,120 L808,128 L812,142 L808,158 L798,168 L785,172 L775,165 L772,150 L775,138 Z"/>
+                <path class="${devClass}" d="M792,172 L802,175 L808,185 L805,198 L795,205 L785,200 L782,188 Z"/>
+                <!-- South Korea -->
+                <path class="${devClass}" d="M765,155 L775,152 L782,160 L780,172 L772,178 L762,175 L758,165 Z"/>
+                <!-- Taiwan -->
+                <path class="${emClass}" d="M768,188 L778,185 L782,195 L778,205 L768,208 L762,198 Z"/>
+                <!-- Australia -->
+                <path class="${devClass}" d="M720,330 L755,322 L790,328 L818,342 L835,362 L840,385 L832,408 L815,425 L790,435 L760,438 L730,432 L705,418 L690,398 L688,375 L695,352 L708,338 Z"/>
+                <!-- New Zealand -->
+                <path class="${devClass}" d="M865,405 L878,402 L885,415 L882,430 L872,440 L860,438 L855,425 L858,412 Z"/>
+                <!-- Indonesia -->
+                <path class="${emClass}" d="M695,285 L720,282 L745,288 L768,298 L782,312 L778,325 L762,332 L740,328 L718,320 L702,308 L695,295 Z"/>
             `;
         }
 
