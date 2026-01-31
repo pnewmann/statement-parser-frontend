@@ -565,33 +565,37 @@
             border-radius: var(--radius-md);
         }
 
-        .world-map {
+        #worldMapContainer {
             width: 100%;
-            height: auto;
-            max-height: 350px;
+            max-width: 800px;
+            margin: 0 auto;
         }
 
-        .world-map path {
+        #worldMapContainer svg {
+            width: 100%;
+            height: auto;
+        }
+
+        #worldMapContainer path {
             fill: #dce3eb;
-            stroke: var(--bg-primary);
-            stroke-width: 1;
+            stroke: #fff;
+            stroke-width: 0.5;
             transition: all 0.3s ease;
         }
 
-        .world-map path:hover {
-            opacity: 0.85;
+        #worldMapContainer path:hover {
+            opacity: 0.8;
         }
 
-        .world-map path.highlighted {
+        #worldMapContainer path.us-region {
             fill: var(--primary);
-            filter: drop-shadow(0 2px 4px rgba(99, 91, 255, 0.3));
         }
 
-        .world-map path.highlighted-light {
+        #worldMapContainer path.developed-region {
             fill: #a5b4fc;
         }
 
-        .world-map path.highlighted-em {
+        #worldMapContainer path.emerging-region {
             fill: #fbbf24;
         }
 
@@ -1110,7 +1114,7 @@
                 <div class="card">
                     <div class="card-title">Geographic Allocation</div>
                     <div class="map-container">
-                        <svg class="world-map" id="worldMap" viewBox="130 30 780 430" preserveAspectRatio="xMidYMid meet"></svg>
+                        <div id="worldMapContainer"></div>
                         <div class="map-legend">
                             <div class="legend-item"><div class="legend-dot us"></div><span>United States <strong id="usMapPct">0%</strong></span></div>
                             <div class="legend-item"><div class="legend-dot developed"></div><span>Developed <strong id="devMapPct">0%</strong></span></div>
@@ -1640,54 +1644,79 @@
             });
         }
 
-        function renderWorldMap(us, dev, em) {
-            const svg = document.getElementById('worldMap');
-            const usClass = us > 5 ? 'highlighted' : '';
-            const devClass = dev > 5 ? 'highlighted-light' : '';
-            const emClass = em > 5 ? 'highlighted-em' : '';
+        async function renderWorldMap(us, dev, em) {
+            const container = document.getElementById('worldMapContainer');
 
-            svg.innerHTML = `
+            // Country codes for each category
+            const usCountries = ['US'];
+            const developedCountries = ['CA', 'GB', 'DE', 'FR', 'JP', 'AU', 'NZ', 'IT', 'ES', 'PT', 'NL', 'BE', 'CH', 'AT', 'SE', 'NO', 'DK', 'FI', 'IE', 'SG', 'HK', 'IL', 'KR'];
+            const emergingCountries = ['CN', 'IN', 'BR', 'MX', 'RU', 'ZA', 'ID', 'TR', 'TH', 'MY', 'PH', 'VN', 'PL', 'CZ', 'HU', 'CL', 'CO', 'PE', 'AR', 'TW', 'SA', 'AE', 'QA', 'KW', 'EG', 'PK', 'BD', 'NG'];
+
+            // Fetch the world map SVG
+            try {
+                const response = await fetch('https://unpkg.com/world-atlas@2.0.2/countries-110m.json');
+                const topology = await response.json();
+
+                // Use simple SVG approach with pre-defined paths for reliability
+                container.innerHTML = createSimpleWorldMap(us, dev, em);
+            } catch (error) {
+                // Fallback to simple representation
+                container.innerHTML = createSimpleWorldMap(us, dev, em);
+            }
+        }
+
+        function createSimpleWorldMap(us, dev, em) {
+            const usClass = us > 5 ? 'us-region' : '';
+            const devClass = dev > 5 ? 'developed-region' : '';
+            const emClass = em > 5 ? 'emerging-region' : '';
+
+            return `
+            <svg viewBox="0 0 900 450" xmlns="http://www.w3.org/2000/svg">
                 <!-- North America -->
-                <path class="${usClass}" d="M158,135 L168,128 L185,127 L195,120 L210,118 L225,120 L240,125 L255,130 L270,128 L280,135 L285,145 L290,155 L288,170 L280,180 L270,185 L258,190 L245,188 L235,195 L220,200 L205,198 L195,190 L188,180 L180,175 L170,168 L162,158 L155,148 Z"/>
-                <path class="${usClass}" d="M148,95 L165,90 L180,92 L195,88 L210,90 L225,95 L235,100 L245,105 L252,112 L255,120 L250,125 L238,122 L225,118 L210,115 L195,118 L180,122 L165,125 L155,120 L148,110 Z"/>
-                <path class="${devClass}" d="M150,60 L175,55 L200,50 L225,48 L250,52 L270,58 L285,65 L290,75 L282,85 L265,88 L248,90 L230,88 L210,85 L190,82 L170,78 L155,72 L148,65 Z"/>
-                <!-- Mexico & Central America -->
-                <path class="${emClass}" d="M170,195 L185,192 L195,198 L200,210 L195,225 L185,235 L175,240 L165,235 L158,225 L155,215 L160,205 Z"/>
-                <!-- South America -->
-                <path class="${emClass}" d="M235,240 L255,235 L275,240 L290,250 L300,265 L305,285 L302,305 L295,325 L285,345 L270,360 L255,370 L240,375 L228,365 L220,345 L215,325 L218,305 L225,285 L230,265 Z"/>
+                <path class="${usClass}" d="M158,120 Q170,115 185,118 Q200,110 220,112 L240,120 Q255,125 265,135 L270,150 Q272,165 268,180 L255,190 Q240,195 225,192 L210,185 Q195,180 185,170 L175,160 Q165,150 160,140 Z" />
+                <path class="${usClass}" d="M60,95 Q75,90 85,95 L95,105 Q100,115 95,125 L82,130 Q70,128 62,120 L58,108 Z" />
+                <path class="${devClass}" d="M130,55 Q160,48 190,50 Q220,45 250,52 L270,65 Q280,80 272,95 L255,100 Q230,105 200,100 L170,92 Q145,85 135,72 Z" />
+
+                <!-- Central/South America -->
+                <path class="${emClass}" d="M170,200 Q185,195 195,205 L200,220 Q198,235 188,245 L175,248 Q162,245 158,232 L162,215 Z" />
+                <path class="${emClass}" d="M200,255 Q220,250 235,260 L245,280 Q250,305 242,330 L230,350 Q215,365 198,360 L185,345 Q178,320 182,295 L190,270 Z" />
+                <path d="M195,365 Q210,368 218,382 L215,400 Q208,415 195,418 L182,410 Q178,395 185,378 Z" />
+
                 <!-- Europe -->
-                <path class="${devClass}" d="M440,85 L455,80 L475,78 L495,82 L512,88 L525,95 L530,108 L528,120 L520,130 L505,138 L490,142 L472,140 L455,135 L440,128 L430,118 L428,105 L432,92 Z"/>
-                <path class="${devClass}" d="M445,142 L460,138 L478,142 L492,148 L500,158 L495,168 L482,175 L468,178 L452,175 L440,168 L435,158 L438,148 Z"/>
-                <!-- UK & Ireland -->
-                <path class="${devClass}" d="M420,88 L432,85 L438,92 L435,102 L428,108 L418,105 L415,95 Z"/>
-                <!-- Scandinavia -->
-                <path class="${devClass}" d="M475,55 L490,50 L505,48 L515,55 L520,68 L515,78 L505,82 L490,80 L478,75 L472,65 Z"/>
+                <path class="${devClass}" d="M408,85 Q420,80 435,82 L448,90 Q455,100 452,112 L442,120 Q428,125 415,120 L405,108 Q402,95 408,85 Z" />
+                <path class="${devClass}" d="M395,95 Q402,92 408,98 L405,108 Q398,112 392,106 Z" />
+                <path class="${devClass}" d="M420,120 Q435,118 448,125 L455,140 Q452,155 440,162 L425,158 Q412,150 415,135 Z" />
+                <path class="${devClass}" d="M450,105 Q468,100 485,108 L492,125 Q488,142 472,148 L455,142 Q445,130 450,115 Z" />
+                <path class="${devClass}" d="M395,125 Q408,122 418,132 L420,148 Q415,162 402,165 L388,158 Q382,142 392,130 Z" />
+                <path class="${devClass}" d="M455,70 Q472,62 488,68 L498,85 Q495,102 480,108 L462,102 Q450,88 455,72 Z" />
+                <path class="${devClass}" d="M438,155 Q452,158 458,172 L455,188 Q445,198 432,192 L425,178 Q428,162 440,158 Z" />
+
                 <!-- Africa -->
-                <path d="M445,185 L465,180 L485,185 L502,195 L515,210 L522,230 L525,255 L520,280 L510,305 L495,325 L475,340 L455,345 L435,340 L420,328 L412,310 L408,288 L412,265 L420,242 L432,218 L440,198 Z"/>
+                <path d="M420,180 Q445,175 468,185 L488,210 Q498,245 492,285 L478,320 Q458,350 428,355 L400,345 Q378,325 375,290 L382,250 Q395,210 418,185 Z" />
+
                 <!-- Middle East -->
-                <path class="${emClass}" d="M525,148 L545,145 L562,150 L578,158 L588,170 L590,185 L585,198 L572,205 L558,202 L542,195 L530,185 L522,170 L520,158 Z"/>
-                <!-- Russia -->
-                <path d="M530,55 L560,48 L595,45 L635,48 L675,52 L710,58 L740,65 L760,75 L765,88 L755,100 L735,108 L710,112 L680,110 L645,105 L610,98 L575,92 L545,85 L535,72 Z"/>
-                <!-- India -->
-                <path class="${emClass}" d="M605,175 L625,170 L642,178 L655,190 L660,208 L655,228 L645,245 L630,255 L612,250 L598,238 L590,222 L592,205 L598,188 Z"/>
-                <!-- China -->
-                <path class="${emClass}" d="M665,110 L695,105 L725,108 L752,115 L770,128 L778,145 L775,165 L765,182 L748,195 L725,200 L700,198 L678,190 L660,178 L652,162 L655,142 L658,125 Z"/>
+                <path class="${emClass}" d="M495,155 Q515,150 532,160 L545,180 Q548,200 538,215 L518,220 Q498,215 492,195 L488,172 Z" />
+
+                <!-- Russia/Central Asia -->
+                <path d="M495,70 Q545,58 600,62 Q660,58 710,72 L735,95 Q742,120 728,140 L695,148 Q650,155 600,150 L545,138 Q510,125 502,100 Z" />
+
+                <!-- South Asia -->
+                <path class="${emClass}" d="M565,185 Q585,178 602,190 L615,215 Q618,245 605,268 L585,278 Q562,275 555,250 L558,218 Z" />
+
+                <!-- East Asia -->
+                <path class="${emClass}" d="M640,115 Q675,108 708,120 L732,148 Q740,180 725,208 L695,225 Q658,230 632,212 L618,180 Q620,145 642,122 Z" />
+                <path class="${devClass}" d="M752,138 Q768,132 778,145 L780,165 Q772,180 758,182 L745,172 Q742,155 752,142 Z" />
+                <path class="${devClass}" d="M738,165 Q748,162 755,172 L752,185 Q745,192 735,188 L732,178 Z" />
+                <path class="${emClass}" d="M728,180 Q738,178 745,188 L742,202 Q732,208 722,202 L720,190 Z" />
+
                 <!-- Southeast Asia -->
-                <path class="${emClass}" d="M685,210 L705,205 L722,212 L735,225 L740,242 L735,260 L722,275 L705,282 L688,278 L675,265 L670,248 L675,228 Z"/>
-                <!-- Japan -->
-                <path class="${devClass}" d="M785,125 L798,120 L808,128 L812,142 L808,158 L798,168 L785,172 L775,165 L772,150 L775,138 Z"/>
-                <path class="${devClass}" d="M792,172 L802,175 L808,185 L805,198 L795,205 L785,200 L782,188 Z"/>
-                <!-- South Korea -->
-                <path class="${devClass}" d="M765,155 L775,152 L782,160 L780,172 L772,178 L762,175 L758,165 Z"/>
-                <!-- Taiwan -->
-                <path class="${emClass}" d="M768,188 L778,185 L782,195 L778,205 L768,208 L762,198 Z"/>
+                <path class="${emClass}" d="M645,232 Q665,225 682,238 L695,265 Q698,295 685,318 L658,328 Q632,322 625,295 L632,260 Z" />
+                <path class="${emClass}" d="M705,285 Q728,278 748,292 L762,320 Q758,348 738,358 L712,352 Q695,335 702,305 Z" />
+
                 <!-- Australia -->
-                <path class="${devClass}" d="M720,330 L755,322 L790,328 L818,342 L835,362 L840,385 L832,408 L815,425 L790,435 L760,438 L730,432 L705,418 L690,398 L688,375 L695,352 L708,338 Z"/>
-                <!-- New Zealand -->
-                <path class="${devClass}" d="M865,405 L878,402 L885,415 L882,430 L872,440 L860,438 L855,425 L858,412 Z"/>
-                <!-- Indonesia -->
-                <path class="${emClass}" d="M695,285 L720,282 L745,288 L768,298 L782,312 L778,325 L762,332 L740,328 L718,320 L702,308 L695,295 Z"/>
-            `;
+                <path class="${devClass}" d="M715,355 Q755,345 792,358 L822,385 Q835,418 818,448 L778,465 Q738,468 708,448 L688,415 Q685,378 710,358 Z" />
+                <path class="${devClass}" d="M842,425 Q855,420 862,435 L858,452 Q848,462 835,455 L832,440 Z" />
+            </svg>`;
         }
 
         function renderRisk() {
