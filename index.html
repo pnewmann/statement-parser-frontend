@@ -1413,8 +1413,67 @@
 
         function renderPerformance() {
             const perf = portfolioData.historical_performance || {};
-            const returns = perf.returns || {};
+            let returns = perf.returns || {};
             const periods = ['1M', '3M', '6M', 'YTD', '1Y', '3Y', '5Y'];
+
+            // Calculate returns from chart data if not provided by backend
+            if (perf.chart_data && perf.chart_data.labels && perf.chart_data.portfolio) {
+                const chartData = perf.chart_data;
+                const labels = chartData.labels;
+                const portfolio = chartData.portfolio;
+                const benchmark = chartData.benchmark;
+                const lastDate = new Date(labels[labels.length - 1]);
+                const lastPortVal = portfolio[portfolio.length - 1];
+                const lastBenchVal = benchmark ? benchmark[benchmark.length - 1] : null;
+
+                // Helper to find return for a period
+                function calcReturnFromChart(daysBack) {
+                    const targetDate = new Date(lastDate);
+                    targetDate.setDate(targetDate.getDate() - daysBack);
+
+                    // Find the closest date at or before target
+                    let idx = -1;
+                    for (let i = labels.length - 1; i >= 0; i--) {
+                        if (new Date(labels[i]) <= targetDate) {
+                            idx = i;
+                            break;
+                        }
+                    }
+                    if (idx < 0) return { portfolio: null, benchmark: null };
+
+                    const portReturn = ((lastPortVal / portfolio[idx]) - 1) * 100;
+                    const benchReturn = benchmark ? ((lastBenchVal / benchmark[idx]) - 1) * 100 : null;
+                    return { portfolio: portReturn, benchmark: benchReturn };
+                }
+
+                // Fill in missing period returns from chart data
+                const periodDays = { '1M': 30, '3M': 90, '6M': 180, '1Y': 365, '3Y': 1095, '5Y': 1825 };
+                for (const [period, days] of Object.entries(periodDays)) {
+                    if (!returns[period] || returns[period].portfolio === null) {
+                        const calc = calcReturnFromChart(days);
+                        if (calc.portfolio !== null) {
+                            returns[period] = calc;
+                        }
+                    }
+                }
+
+                // Calculate YTD if missing
+                if (!returns['YTD'] || returns['YTD'].portfolio === null) {
+                    const yearStart = new Date(lastDate.getFullYear(), 0, 1);
+                    let idx = -1;
+                    for (let i = 0; i < labels.length; i++) {
+                        if (new Date(labels[i]) >= yearStart) {
+                            idx = i;
+                            break;
+                        }
+                    }
+                    if (idx >= 0) {
+                        const portReturn = ((lastPortVal / portfolio[idx]) - 1) * 100;
+                        const benchReturn = benchmark ? ((lastBenchVal / benchmark[idx]) - 1) * 100 : null;
+                        returns['YTD'] = { portfolio: portReturn, benchmark: benchReturn };
+                    }
+                }
+            }
 
             document.getElementById('returnsGrid').innerHTML = periods.map(p => {
                 const data = returns[p] || {};
