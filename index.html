@@ -9,6 +9,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jvectormap@2.0.4/jquery-jvectormap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jvectormap-world@1.0.0/jquery-jvectormap-world-mill.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/jvectormap@2.0.4/jquery-jvectormap.min.css" rel="stylesheet">
     <style>
         :root {
             --primary: #635bff;
@@ -567,36 +571,14 @@
 
         #worldMapContainer {
             width: 100%;
-            max-width: 800px;
+            height: 350px;
+            max-width: 900px;
             margin: 0 auto;
         }
 
-        #worldMapContainer svg {
+        .jvectormap-container {
             width: 100%;
-            height: auto;
-        }
-
-        #worldMapContainer path {
-            fill: #dce3eb;
-            stroke: #fff;
-            stroke-width: 0.5;
-            transition: all 0.3s ease;
-        }
-
-        #worldMapContainer path:hover {
-            opacity: 0.8;
-        }
-
-        #worldMapContainer path.us-region {
-            fill: var(--primary);
-        }
-
-        #worldMapContainer path.developed-region {
-            fill: #a5b4fc;
-        }
-
-        #worldMapContainer path.emerging-region {
-            fill: #fbbf24;
+            height: 100%;
         }
 
         .map-legend {
@@ -1644,79 +1626,66 @@
             });
         }
 
-        async function renderWorldMap(us, dev, em) {
-            const container = document.getElementById('worldMapContainer');
+        function renderWorldMap(us, dev, em) {
+            const container = $('#worldMapContainer');
+            container.empty();
 
             // Country codes for each category
             const usCountries = ['US'];
-            const developedCountries = ['CA', 'GB', 'DE', 'FR', 'JP', 'AU', 'NZ', 'IT', 'ES', 'PT', 'NL', 'BE', 'CH', 'AT', 'SE', 'NO', 'DK', 'FI', 'IE', 'SG', 'HK', 'IL', 'KR'];
-            const emergingCountries = ['CN', 'IN', 'BR', 'MX', 'RU', 'ZA', 'ID', 'TR', 'TH', 'MY', 'PH', 'VN', 'PL', 'CZ', 'HU', 'CL', 'CO', 'PE', 'AR', 'TW', 'SA', 'AE', 'QA', 'KW', 'EG', 'PK', 'BD', 'NG'];
+            const developedCountries = ['CA', 'GB', 'DE', 'FR', 'JP', 'AU', 'NZ', 'IT', 'ES', 'PT', 'NL', 'BE', 'CH', 'AT', 'SE', 'NO', 'DK', 'FI', 'IE', 'SG', 'IL', 'KR', 'LU', 'IS'];
+            const emergingCountries = ['CN', 'IN', 'BR', 'MX', 'RU', 'ZA', 'ID', 'TR', 'TH', 'MY', 'PH', 'VN', 'PL', 'CZ', 'HU', 'CL', 'CO', 'PE', 'AR', 'TW', 'SA', 'AE', 'QA', 'KW', 'EG', 'PK', 'BD', 'NG', 'GR'];
 
-            // Fetch the world map SVG
-            try {
-                const response = await fetch('https://unpkg.com/world-atlas@2.0.2/countries-110m.json');
-                const topology = await response.json();
+            // Build color map
+            const colors = {};
+            const defaultColor = '#e3e8ee';
+            const usColor = '#635bff';
+            const devColor = '#a5b4fc';
+            const emColor = '#fbbf24';
 
-                // Use simple SVG approach with pre-defined paths for reliability
-                container.innerHTML = createSimpleWorldMap(us, dev, em);
-            } catch (error) {
-                // Fallback to simple representation
-                container.innerHTML = createSimpleWorldMap(us, dev, em);
+            // Only color regions if allocation > 5%
+            if (us > 5) {
+                usCountries.forEach(c => colors[c] = usColor);
             }
-        }
+            if (dev > 5) {
+                developedCountries.forEach(c => colors[c] = devColor);
+            }
+            if (em > 5) {
+                emergingCountries.forEach(c => colors[c] = emColor);
+            }
 
-        function createSimpleWorldMap(us, dev, em) {
-            const usClass = us > 5 ? 'us-region' : '';
-            const devClass = dev > 5 ? 'developed-region' : '';
-            const emClass = em > 5 ? 'emerging-region' : '';
-
-            return `
-            <svg viewBox="0 0 900 450" xmlns="http://www.w3.org/2000/svg">
-                <!-- North America -->
-                <path class="${usClass}" d="M158,120 Q170,115 185,118 Q200,110 220,112 L240,120 Q255,125 265,135 L270,150 Q272,165 268,180 L255,190 Q240,195 225,192 L210,185 Q195,180 185,170 L175,160 Q165,150 160,140 Z" />
-                <path class="${usClass}" d="M60,95 Q75,90 85,95 L95,105 Q100,115 95,125 L82,130 Q70,128 62,120 L58,108 Z" />
-                <path class="${devClass}" d="M130,55 Q160,48 190,50 Q220,45 250,52 L270,65 Q280,80 272,95 L255,100 Q230,105 200,100 L170,92 Q145,85 135,72 Z" />
-
-                <!-- Central/South America -->
-                <path class="${emClass}" d="M170,200 Q185,195 195,205 L200,220 Q198,235 188,245 L175,248 Q162,245 158,232 L162,215 Z" />
-                <path class="${emClass}" d="M200,255 Q220,250 235,260 L245,280 Q250,305 242,330 L230,350 Q215,365 198,360 L185,345 Q178,320 182,295 L190,270 Z" />
-                <path d="M195,365 Q210,368 218,382 L215,400 Q208,415 195,418 L182,410 Q178,395 185,378 Z" />
-
-                <!-- Europe -->
-                <path class="${devClass}" d="M408,85 Q420,80 435,82 L448,90 Q455,100 452,112 L442,120 Q428,125 415,120 L405,108 Q402,95 408,85 Z" />
-                <path class="${devClass}" d="M395,95 Q402,92 408,98 L405,108 Q398,112 392,106 Z" />
-                <path class="${devClass}" d="M420,120 Q435,118 448,125 L455,140 Q452,155 440,162 L425,158 Q412,150 415,135 Z" />
-                <path class="${devClass}" d="M450,105 Q468,100 485,108 L492,125 Q488,142 472,148 L455,142 Q445,130 450,115 Z" />
-                <path class="${devClass}" d="M395,125 Q408,122 418,132 L420,148 Q415,162 402,165 L388,158 Q382,142 392,130 Z" />
-                <path class="${devClass}" d="M455,70 Q472,62 488,68 L498,85 Q495,102 480,108 L462,102 Q450,88 455,72 Z" />
-                <path class="${devClass}" d="M438,155 Q452,158 458,172 L455,188 Q445,198 432,192 L425,178 Q428,162 440,158 Z" />
-
-                <!-- Africa -->
-                <path d="M420,180 Q445,175 468,185 L488,210 Q498,245 492,285 L478,320 Q458,350 428,355 L400,345 Q378,325 375,290 L382,250 Q395,210 418,185 Z" />
-
-                <!-- Middle East -->
-                <path class="${emClass}" d="M495,155 Q515,150 532,160 L545,180 Q548,200 538,215 L518,220 Q498,215 492,195 L488,172 Z" />
-
-                <!-- Russia/Central Asia -->
-                <path d="M495,70 Q545,58 600,62 Q660,58 710,72 L735,95 Q742,120 728,140 L695,148 Q650,155 600,150 L545,138 Q510,125 502,100 Z" />
-
-                <!-- South Asia -->
-                <path class="${emClass}" d="M565,185 Q585,178 602,190 L615,215 Q618,245 605,268 L585,278 Q562,275 555,250 L558,218 Z" />
-
-                <!-- East Asia -->
-                <path class="${emClass}" d="M640,115 Q675,108 708,120 L732,148 Q740,180 725,208 L695,225 Q658,230 632,212 L618,180 Q620,145 642,122 Z" />
-                <path class="${devClass}" d="M752,138 Q768,132 778,145 L780,165 Q772,180 758,182 L745,172 Q742,155 752,142 Z" />
-                <path class="${devClass}" d="M738,165 Q748,162 755,172 L752,185 Q745,192 735,188 L732,178 Z" />
-                <path class="${emClass}" d="M728,180 Q738,178 745,188 L742,202 Q732,208 722,202 L720,190 Z" />
-
-                <!-- Southeast Asia -->
-                <path class="${emClass}" d="M645,232 Q665,225 682,238 L695,265 Q698,295 685,318 L658,328 Q632,322 625,295 L632,260 Z" />
-                <path class="${emClass}" d="M705,285 Q728,278 748,292 L762,320 Q758,348 738,358 L712,352 Q695,335 702,305 Z" />
-
-                <!-- Australia -->
-                <path class="${devClass}" d="M715,355 Q755,345 792,358 L822,385 Q835,418 818,448 L778,465 Q738,468 708,448 L688,415 Q685,378 710,358 Z" />
-                <path class="${devClass}" d="M842,425 Q855,420 862,435 L858,452 Q848,462 835,455 L832,440 Z" />
-            </svg>`;
+            container.vectorMap({
+                map: 'world_mill',
+                backgroundColor: 'transparent',
+                zoomOnScroll: false,
+                panOnDrag: false,
+                zoomButtons: false,
+                regionStyle: {
+                    initial: {
+                        fill: defaultColor,
+                        'fill-opacity': 1,
+                        stroke: '#fff',
+                        'stroke-width': 0.5,
+                        'stroke-opacity': 1
+                    },
+                    hover: {
+                        'fill-opacity': 0.8,
+                        cursor: 'default'
+                    }
+                },
+                series: {
+                    regions: [{
+                        values: colors,
+                        attribute: 'fill'
+                    }]
+                },
+                onRegionTipShow: function(e, el, code) {
+                    let category = 'Other';
+                    if (usCountries.includes(code)) category = 'United States';
+                    else if (developedCountries.includes(code)) category = 'Developed Markets';
+                    else if (emergingCountries.includes(code)) category = 'Emerging Markets';
+                    el.html(el.html() + ' (' + category + ')');
+                }
+            });
         }
 
         function renderRisk() {
