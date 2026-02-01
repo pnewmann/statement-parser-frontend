@@ -197,6 +197,152 @@
             display: none;
         }
 
+        /* Multi-file Upload Queue */
+        .upload-queue {
+            margin-top: 24px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .upload-queue-header {
+            padding: 12px 16px;
+            background: var(--bg-secondary);
+            font-size: 0.8125rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+        }
+
+        .upload-queue-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            border-top: 1px solid var(--border);
+            gap: 12px;
+        }
+
+        .upload-queue-item:first-of-type {
+            border-top: none;
+        }
+
+        .upload-file-icon {
+            width: 36px;
+            height: 36px;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .upload-file-icon svg {
+            width: 18px;
+            height: 18px;
+            color: var(--primary);
+        }
+
+        .upload-file-icon.success {
+            background: #dcfce7;
+        }
+
+        .upload-file-icon.success svg {
+            color: var(--success);
+        }
+
+        .upload-file-icon.error {
+            background: #fee2e2;
+        }
+
+        .upload-file-icon.error svg {
+            color: #ef4444;
+        }
+
+        .upload-file-icon.processing {
+            background: #e0e7ff;
+        }
+
+        .upload-file-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .upload-file-name {
+            font-weight: 500;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .upload-file-status {
+            font-size: 0.8125rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .upload-file-status.success {
+            color: var(--success);
+        }
+
+        .upload-file-status.error {
+            color: #ef4444;
+        }
+
+        .upload-progress-bar {
+            width: 100%;
+            height: 4px;
+            background: var(--bg-tertiary);
+            border-radius: 2px;
+            margin-top: 6px;
+            overflow: hidden;
+        }
+
+        .upload-progress-fill {
+            height: 100%;
+            background: var(--primary);
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+
+        .upload-summary {
+            display: flex;
+            gap: 16px;
+            margin-top: 16px;
+            padding: 16px;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+            justify-content: center;
+        }
+
+        .upload-summary-stat {
+            text-align: center;
+        }
+
+        .upload-summary-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .upload-summary-value.success {
+            color: var(--success);
+        }
+
+        .upload-summary-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
         /* Entry Method Selector */
         .entry-methods {
             display: flex;
@@ -2194,11 +2340,20 @@
                         </svg>
                     </div>
                     <div class="upload-title">Upload brokerage statements</div>
-                    <p class="upload-hint">Drag and drop PDF or CSV files, or click to browse</p>
+                    <p class="upload-hint">Drag and drop multiple PDF or CSV files at once, or click to browse</p>
                     <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()">
                         Select Files
                     </button>
                     <input type="file" id="fileInput" accept=".pdf,.csv" multiple>
+
+                    <!-- Upload Queue (shown during batch upload) -->
+                    <div class="upload-queue" id="uploadQueue" style="display: none;">
+                        <div class="upload-queue-header">
+                            <span id="uploadQueueTitle">Uploading files...</span>
+                            <span id="uploadQueueCount"></span>
+                        </div>
+                        <div id="uploadQueueList"></div>
+                    </div>
                 </div>
             </div>
 
@@ -4134,20 +4289,77 @@
         });
 
         async function handleFiles(files) {
-            for (const file of files) {
+            const validFiles = Array.from(files).filter(file => {
                 const ext = file.name.split('.').pop().toLowerCase();
-                if (!['pdf', 'csv'].includes(ext)) {
-                    showError(`${file.name}: Only PDF and CSV files supported`);
-                    continue;
+                return ['pdf', 'csv'].includes(ext);
+            });
+
+            if (validFiles.length === 0) {
+                showError('Please select PDF or CSV files');
+                return;
+            }
+
+            // Show upload queue for multiple files
+            const queue = document.getElementById('uploadQueue');
+            const queueList = document.getElementById('uploadQueueList');
+            const queueTitle = document.getElementById('uploadQueueTitle');
+            const queueCount = document.getElementById('uploadQueueCount');
+
+            if (validFiles.length > 1) {
+                queue.style.display = 'block';
+                queueTitle.textContent = 'Processing files...';
+                queueCount.textContent = `0 / ${validFiles.length}`;
+
+                // Initialize queue items
+                queueList.innerHTML = validFiles.map((file, i) => `
+                    <div class="upload-queue-item" id="queueItem${i}">
+                        <div class="upload-file-icon" id="queueIcon${i}">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                            </svg>
+                        </div>
+                        <div class="upload-file-info">
+                            <div class="upload-file-name">${file.name}</div>
+                            <div class="upload-file-status" id="queueStatus${i}">Waiting...</div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // Process all files in parallel
+            let completed = 0;
+            let successful = 0;
+
+            const processFile = async (file, index) => {
+                const iconEl = document.getElementById(`queueIcon${index}`);
+                const statusEl = document.getElementById(`queueStatus${index}`);
+
+                if (validFiles.length > 1) {
+                    iconEl?.classList.add('processing');
+                    if (statusEl) statusEl.textContent = 'Processing...';
+                } else {
+                    showProgress(`Parsing ${file.name}...`);
                 }
-                showProgress(`Parsing ${file.name}...`);
+
                 try {
                     const result = await parseFile(file);
+
                     if (result.error && !result.positions?.length) {
-                        hideProgress();
-                        showError(`${file.name}: ${result.error}`);
-                        continue;
+                        if (validFiles.length > 1) {
+                            iconEl?.classList.remove('processing');
+                            iconEl?.classList.add('error');
+                            if (statusEl) {
+                                statusEl.textContent = result.error;
+                                statusEl.classList.add('error');
+                            }
+                        } else {
+                            hideProgress();
+                            showError(`${file.name}: ${result.error}`);
+                        }
+                        return { success: false };
                     }
+
                     accounts.push({
                         id: Date.now() + Math.random(),
                         name: getBrokerageName(result.brokerage),
@@ -4155,14 +4367,80 @@
                         brokerage: result.brokerage,
                         totalValue: result.positions.reduce((s, p) => s + (p.value || 0), 0)
                     });
-                    hideProgress();
-                    hideError();
-                    renderAccounts();
+
+                    if (validFiles.length > 1) {
+                        iconEl?.classList.remove('processing');
+                        iconEl?.classList.add('success');
+                        if (iconEl) {
+                            iconEl.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>`;
+                        }
+                        if (statusEl) {
+                            statusEl.textContent = `${result.positions.length} positions found`;
+                            statusEl.classList.add('success');
+                        }
+                    }
+
+                    return { success: true };
                 } catch (err) {
-                    hideProgress();
-                    showError(`${file.name}: ${err.message}`);
+                    if (validFiles.length > 1) {
+                        iconEl?.classList.remove('processing');
+                        iconEl?.classList.add('error');
+                        if (iconEl) {
+                            iconEl.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <line x1="15" y1="9" x2="9" y2="15"/>
+                                <line x1="9" y1="9" x2="15" y2="15"/>
+                            </svg>`;
+                        }
+                        if (statusEl) {
+                            statusEl.textContent = err.message;
+                            statusEl.classList.add('error');
+                        }
+                    } else {
+                        hideProgress();
+                        showError(`${file.name}: ${err.message}`);
+                    }
+                    return { success: false };
+                }
+            };
+
+            // Process files in parallel (max 3 concurrent)
+            const results = [];
+            const concurrency = 3;
+
+            for (let i = 0; i < validFiles.length; i += concurrency) {
+                const batch = validFiles.slice(i, i + concurrency);
+                const batchResults = await Promise.all(
+                    batch.map((file, j) => processFile(file, i + j))
+                );
+                results.push(...batchResults);
+
+                completed += batch.length;
+                successful += batchResults.filter(r => r.success).length;
+
+                if (validFiles.length > 1) {
+                    queueCount.textContent = `${completed} / ${validFiles.length}`;
                 }
             }
+
+            // Finish up
+            if (validFiles.length > 1) {
+                queueTitle.textContent = 'Upload complete';
+
+                // Auto-hide queue after delay if all successful
+                if (successful === validFiles.length) {
+                    setTimeout(() => {
+                        queue.style.display = 'none';
+                    }, 2000);
+                }
+            } else {
+                hideProgress();
+            }
+
+            hideError();
+            renderAccounts();
         }
 
         function getBrokerageName(brokerage) {
