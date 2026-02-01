@@ -1761,6 +1761,44 @@
             margin-bottom: 12px;
             opacity: 0.5;
         }
+
+        /* Toast Notifications */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            padding: 16px 24px;
+            border-radius: var(--radius-md);
+            color: white;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: var(--shadow-lg);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 2000;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast.success {
+            background: var(--success);
+        }
+
+        .toast.error {
+            background: var(--danger);
+        }
+
+        .toast svg {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+        }
     </style>
 </head>
 <body>
@@ -2307,6 +2345,15 @@
         </div>
     </div>
 
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+            <polyline points="22 4 12 14.01 9 11.01"/>
+        </svg>
+        <span id="toastMessage">Success!</span>
+    </div>
+
     <!-- Save Portfolio Modal -->
     <div class="modal-overlay save-modal" id="saveModal">
         <div class="modal">
@@ -2569,6 +2616,7 @@
                 }
 
                 hideSaveModal();
+                showToast('Portfolio saved successfully!');
                 loadSavedPortfolios();
             } catch (err) {
                 errorEl.textContent = 'Connection error. Please try again.';
@@ -2703,6 +2751,19 @@
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+
+            toastMessage.textContent = message;
+            toast.className = 'toast ' + type;
+            toast.classList.add('show');
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
         }
 
         // =============================================================================
