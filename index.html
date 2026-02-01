@@ -3814,7 +3814,152 @@
             });
 
             const subClass = portfolioData.sub_class_allocation || {};
-            renderDoughnut('subClassChart', subClass);
+            renderSubClassChart('subClassChart', subClass, portfolioData.positions || []);
+        }
+
+        // Map sub-classes to their parent asset class
+        function getAssetClassForSubClass(subClassName, positions) {
+            // Find a position with this sub-class to get the asset class
+            for (const pos of positions) {
+                if (pos.classification && pos.classification.sub_class === subClassName) {
+                    return pos.classification.asset_class;
+                }
+            }
+            // Fallback mapping
+            const subClassMap = {
+                'US Total Market': 'Stocks', 'US Large Cap': 'Stocks', 'US Large Cap Growth': 'Stocks',
+                'US Large Cap Value': 'Stocks', 'US Mid Cap': 'Stocks', 'US Mid Cap Growth': 'Stocks',
+                'US Mid Cap Value': 'Stocks', 'US Small Cap': 'Stocks', 'US Small Cap Growth': 'Stocks',
+                'US Small Cap Value': 'Stocks', 'US Mega Cap': 'Stocks', 'US Dividend': 'Stocks',
+                'US Dividend Growth': 'Stocks', 'US High Dividend': 'Stocks',
+                'International Developed': 'Stocks', 'International Total': 'Stocks',
+                'International Small Cap': 'Stocks', 'International Dividend': 'Stocks',
+                'Emerging Markets': 'Stocks', 'Europe': 'Stocks', 'Pacific': 'Stocks',
+                'Japan': 'Stocks', 'China': 'Stocks', 'India': 'Stocks', 'Brazil': 'Stocks',
+                'Global': 'Stocks', 'Germany': 'Stocks', 'UK': 'Stocks', 'Canada': 'Stocks',
+                'Australia': 'Stocks', 'Taiwan': 'Stocks', 'South Korea': 'Stocks', 'MLPs': 'Stocks',
+                'US Treasury': 'Bonds', 'TIPS': 'Bonds', 'US Aggregate': 'Bonds',
+                'Short-Term Bond': 'Bonds', 'Intermediate Bond': 'Bonds', 'Long-Term Bond': 'Bonds',
+                'Investment Grade Corp': 'Bonds', 'High Yield': 'Bonds', 'Municipal': 'Bonds',
+                'Mortgage-Backed': 'Bonds', 'International Developed': 'Bonds',
+                'International Aggregate': 'Bonds', 'International Treasury': 'Bonds',
+                'Cash': 'Cash', 'Money Market': 'Cash',
+                'US REITs': 'Real Estate', 'International REITs': 'Real Estate',
+                'Bitcoin': 'Crypto', 'Ethereum': 'Crypto', 'DeFi': 'Crypto',
+                'Gold': 'Commodities', 'Silver': 'Commodities', 'Platinum': 'Commodities',
+                'Palladium': 'Commodities', 'Broad Commodities': 'Commodities',
+                'Oil': 'Commodities', 'Natural Gas': 'Commodities', 'Agriculture': 'Commodities'
+            };
+            return subClassMap[subClassName] || 'Stocks';
+        }
+
+        function generateShades(baseColor, count) {
+            // Convert hex to HSL, then generate shades
+            const hex = baseColor.replace('#', '');
+            const r = parseInt(hex.substr(0, 2), 16) / 255;
+            const g = parseInt(hex.substr(2, 2), 16) / 255;
+            const b = parseInt(hex.substr(4, 2), 16) / 255;
+
+            const max = Math.max(r, g, b), min = Math.min(r, g, b);
+            let h, s, l = (max + min) / 2;
+
+            if (max === min) {
+                h = s = 0;
+            } else {
+                const d = max - min;
+                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                switch (max) {
+                    case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
+                    case g: h = ((b - r) / d + 2) / 6; break;
+                    case b: h = ((r - g) / d + 4) / 6; break;
+                }
+            }
+
+            // Generate shades from dark to light
+            const shades = [];
+            const minL = Math.max(0.25, l - 0.3);
+            const maxL = Math.min(0.85, l + 0.3);
+            const step = count > 1 ? (maxL - minL) / (count - 1) : 0;
+
+            for (let i = 0; i < count; i++) {
+                const newL = minL + (step * i);
+                shades.push(hslToHex(h, s, newL));
+            }
+            return shades;
+        }
+
+        function hslToHex(h, s, l) {
+            let r, g, b;
+            if (s === 0) {
+                r = g = b = l;
+            } else {
+                const hue2rgb = (p, q, t) => {
+                    if (t < 0) t += 1;
+                    if (t > 1) t -= 1;
+                    if (t < 1/6) return p + (q - p) * 6 * t;
+                    if (t < 1/2) return q;
+                    if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+                    return p;
+                };
+                const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+                const p = 2 * l - q;
+                r = hue2rgb(p, q, h + 1/3);
+                g = hue2rgb(p, q, h);
+                b = hue2rgb(p, q, h - 1/3);
+            }
+            const toHex = x => {
+                const hex = Math.round(x * 255).toString(16);
+                return hex.length === 1 ? '0' + hex : hex;
+            };
+            return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+        }
+
+        function renderSubClassChart(id, data, positions) {
+            const ctx = document.getElementById(id).getContext('2d');
+            if (charts[id]) charts[id].destroy();
+
+            const assetColors = {
+                Stocks: '#635bff', Bonds: '#30d158', Cash: '#ffd60a',
+                'Real Estate': '#bf5af2', Crypto: '#ff9f0a', Commodities: '#64d2ff'
+            };
+
+            // Group sub-classes by asset class
+            const grouped = {};
+            Object.keys(data).forEach(subClass => {
+                if (data[subClass] <= 0) return;
+                const assetClass = getAssetClassForSubClass(subClass, positions);
+                if (!grouped[assetClass]) grouped[assetClass] = [];
+                grouped[assetClass].push({ name: subClass, value: data[subClass] });
+            });
+
+            // Sort each group by value (descending) and generate colors
+            const labels = [];
+            const values = [];
+            const colors = [];
+
+            Object.keys(grouped).sort().forEach(assetClass => {
+                const items = grouped[assetClass].sort((a, b) => b.value - a.value);
+                const baseColor = assetColors[assetClass] || '#8e8e93';
+                const shades = generateShades(baseColor, items.length);
+
+                items.forEach((item, idx) => {
+                    labels.push(item.name);
+                    values.push(item.value);
+                    colors.push(shades[idx]); // Darkest first (highest allocation)
+                });
+            });
+
+            charts[id] = new Chart(ctx, {
+                type: 'doughnut',
+                data: { labels, datasets: [{ data: values, backgroundColor: colors, borderWidth: 0 }] },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'right', labels: { padding: 16, usePointStyle: true, font: { size: 12 } } },
+                        tooltip: { callbacks: { label: ctx => `${ctx.label}: ${ctx.raw.toFixed(1)}%` } }
+                    }
+                }
+            });
         }
 
         let fullChartData = null;
