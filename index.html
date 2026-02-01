@@ -2265,6 +2265,529 @@
             height: 20px;
             flex-shrink: 0;
         }
+
+        /* ========== MOBILE OPTIMIZATIONS ========== */
+        @media (max-width: 480px) {
+            body {
+                font-size: 14px;
+            }
+
+            .container {
+                padding: 16px 12px;
+            }
+
+            /* Logo & Header */
+            .logo {
+                flex-direction: column;
+                text-align: center;
+                gap: 12px;
+            }
+
+            .logo-icon {
+                width: 56px;
+                height: 56px;
+                border-radius: 12px;
+            }
+
+            .logo-icon svg {
+                width: 32px;
+                height: 32px;
+            }
+
+            .brand-text {
+                align-items: center;
+            }
+
+            .brand-name {
+                font-size: 1.5rem;
+            }
+
+            .brand-tagline {
+                font-size: 0.6875rem;
+            }
+
+            .subtitle {
+                font-size: 0.9375rem;
+                padding: 0 8px;
+            }
+
+            /* Auth section positioning */
+            header > div[style*="position: absolute"] {
+                position: static !important;
+                display: flex;
+                justify-content: center;
+                margin-bottom: 16px;
+            }
+
+            /* Entry Method Tabs */
+            .entry-methods {
+                flex-direction: column;
+                gap: 4px;
+                padding: 4px;
+            }
+
+            .entry-method-btn {
+                padding: 10px 12px;
+                font-size: 0.8125rem;
+            }
+
+            .entry-method-btn svg {
+                width: 16px;
+                height: 16px;
+            }
+
+            /* Upload Card */
+            .upload-card {
+                padding: 24px 16px !important;
+            }
+
+            .upload-icon {
+                width: 48px;
+                height: 48px;
+                margin-bottom: 16px;
+            }
+
+            .upload-icon svg {
+                width: 24px;
+                height: 24px;
+            }
+
+            .upload-title {
+                font-size: 1.1rem;
+            }
+
+            .upload-hint {
+                font-size: 0.8125rem;
+            }
+
+            /* Manual Entry Form */
+            .manual-entry-card {
+                padding: 20px 16px !important;
+            }
+
+            .manual-entry-form {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .manual-entry-form .form-group {
+                min-width: 100%;
+            }
+
+            .manual-entry-form .btn-add {
+                width: 100%;
+            }
+
+            /* Holdings List */
+            .holdings-list-header {
+                display: none;
+            }
+
+            .holdings-list-item {
+                grid-template-columns: 1fr auto;
+                gap: 8px;
+            }
+
+            .holdings-list-item .holding-symbol {
+                grid-column: 1;
+            }
+
+            .holdings-list-item .btn-remove {
+                grid-column: 2;
+                grid-row: 1 / 3;
+            }
+
+            .holdings-list-item .holding-value {
+                font-size: 0.8125rem;
+            }
+
+            .holdings-list-item .holding-total {
+                font-size: 0.875rem;
+            }
+
+            .holdings-list-item::before {
+                display: none;
+            }
+
+            .manual-entry-actions {
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .manual-entry-actions .manual-total {
+                text-align: center;
+            }
+
+            .manual-entry-actions > div {
+                width: 100%;
+                display: flex;
+                gap: 8px;
+            }
+
+            .manual-entry-actions > div .btn {
+                flex: 1;
+            }
+
+            /* Dashboard Header */
+            .dashboard-header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+            }
+
+            .dashboard-title {
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            .dashboard-logo {
+                width: 36px;
+                height: 36px;
+                border-radius: 8px;
+            }
+
+            .dashboard-logo svg {
+                width: 22px;
+                height: 22px;
+            }
+
+            .dashboard-title h2 {
+                font-size: 1.25rem;
+            }
+
+            .total-badge {
+                padding: 6px 14px;
+                font-size: 1rem;
+            }
+
+            .header-actions {
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            .header-actions .btn {
+                font-size: 0.8125rem;
+                padding: 8px 12px;
+            }
+
+            /* Tabs - Horizontal scroll */
+            .tabs {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+                flex-wrap: nowrap;
+                justify-content: flex-start;
+                padding: 4px;
+                margin: 0 -12px;
+                padding-left: 12px;
+                padding-right: 12px;
+            }
+
+            .tabs::-webkit-scrollbar {
+                display: none;
+            }
+
+            .tab {
+                flex-shrink: 0;
+                padding: 8px 12px;
+                font-size: 0.8125rem;
+                white-space: nowrap;
+            }
+
+            /* Stats Grid */
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+            }
+
+            .stat-card {
+                padding: 14px;
+            }
+
+            .stat-label {
+                font-size: 0.6875rem;
+            }
+
+            .stat-value {
+                font-size: 1.25rem;
+            }
+
+            .stat-sub {
+                font-size: 0.75rem;
+            }
+
+            /* Charts */
+            .chart-wrapper {
+                height: 250px !important;
+            }
+
+            .charts-row {
+                gap: 16px;
+            }
+
+            .chart-card {
+                padding: 16px;
+            }
+
+            .card-title {
+                font-size: 0.9375rem;
+            }
+
+            /* Returns Grid */
+            .returns-grid {
+                grid-template-columns: repeat(4, 1fr) !important;
+                gap: 6px;
+            }
+
+            .return-card {
+                padding: 10px 6px;
+            }
+
+            .return-card .stat-label {
+                font-size: 0.625rem;
+            }
+
+            .return-card .stat-value {
+                font-size: 0.9375rem;
+            }
+
+            .benchmark-label {
+                font-size: 0.625rem;
+            }
+
+            /* Benchmark Toggles */
+            .benchmark-toggles {
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+
+            .benchmark-toggle {
+                padding: 4px 8px;
+                font-size: 0.75rem;
+            }
+
+            /* Period Buttons */
+            .period-buttons {
+                gap: 4px;
+            }
+
+            .period-btn {
+                padding: 6px 10px;
+                font-size: 0.75rem;
+            }
+
+            /* Projections */
+            #projectionsInfo {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 8px;
+            }
+
+            .monte-carlo-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 8px;
+            }
+
+            .monte-carlo-item {
+                padding: 12px;
+            }
+
+            .monte-carlo-label {
+                font-size: 0.6875rem;
+            }
+
+            .monte-carlo-value {
+                font-size: 0.9375rem;
+            }
+
+            /* Sectors */
+            .sector-item {
+                grid-template-columns: 1fr !important;
+                gap: 6px;
+                padding: 12px 0;
+            }
+
+            .sector-name {
+                font-weight: 600;
+            }
+
+            .sector-bar-container {
+                order: 3;
+            }
+
+            .sector-pct {
+                display: inline;
+            }
+
+            .sector-pct.benchmark {
+                margin-left: 12px;
+                color: var(--text-muted);
+            }
+
+            /* Geography */
+            .map-container {
+                flex-direction: column;
+            }
+
+            #worldMapContainer {
+                min-height: 200px;
+            }
+
+            .map-legend {
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 12px;
+                padding: 12px 0;
+            }
+
+            /* Risk Metrics */
+            .risk-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+
+            /* Holdings Table */
+            .holdings-table th,
+            .holdings-table td {
+                padding: 10px 8px;
+                font-size: 0.8125rem;
+            }
+
+            .holdings-table th:nth-child(2),
+            .holdings-table td:nth-child(2) {
+                display: none;
+            }
+
+            /* What-If */
+            .whatif-add-form {
+                grid-template-columns: 1fr !important;
+            }
+
+            /* Compare */
+            .compare-container {
+                flex-direction: column;
+            }
+
+            .compare-side {
+                min-width: 100%;
+            }
+
+            /* Accounts Section */
+            .account-item {
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .account-details {
+                flex: 1;
+                min-width: calc(100% - 60px);
+            }
+
+            .account-value {
+                order: 4;
+                width: 100%;
+                text-align: left;
+                padding-left: 44px;
+            }
+
+            /* Upload Queue */
+            .upload-queue {
+                max-height: 200px;
+            }
+
+            .upload-queue-item {
+                padding: 10px 12px;
+            }
+
+            .upload-file-icon {
+                width: 32px;
+                height: 32px;
+            }
+
+            .upload-file-name {
+                font-size: 0.875rem;
+            }
+
+            .upload-file-status {
+                font-size: 0.75rem;
+            }
+
+            /* Buttons */
+            .btn {
+                padding: 10px 16px;
+                font-size: 0.875rem;
+            }
+
+            .actions-row {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .actions-row .btn {
+                width: 100%;
+            }
+
+            /* Cards */
+            .card {
+                padding: 16px;
+                border-radius: 12px;
+            }
+
+            /* Modal */
+            .modal {
+                margin: 12px;
+                max-height: calc(100vh - 24px);
+                overflow-y: auto;
+            }
+
+            .modal-header {
+                padding: 16px 16px 0;
+            }
+
+            .modal-body {
+                padding: 16px;
+            }
+
+            /* Toast */
+            .toast {
+                left: 12px;
+                right: 12px;
+                bottom: 12px;
+                transform: none;
+                max-width: none;
+            }
+        }
+
+        /* Tablet adjustments */
+        @media (min-width: 481px) and (max-width: 768px) {
+            .entry-methods {
+                max-width: 100%;
+            }
+
+            .manual-entry-form {
+                flex-wrap: wrap;
+            }
+
+            .manual-entry-form .form-group {
+                flex: 1 1 calc(50% - 6px);
+                min-width: calc(50% - 6px);
+            }
+
+            .manual-entry-form .btn-add {
+                flex: 1 1 100%;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .returns-grid {
+                grid-template-columns: repeat(4, 1fr) !important;
+            }
+
+            .dashboard-title h2 {
+                font-size: 1.5rem;
+            }
+        }
     </style>
 </head>
 <body>
