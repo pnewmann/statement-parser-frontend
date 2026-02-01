@@ -1762,6 +1762,86 @@
             opacity: 0.5;
         }
 
+        /* Benchmark Toggles */
+        .benchmark-toggle {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8125rem;
+            cursor: pointer;
+            padding: 6px 12px;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-sm);
+            transition: all 0.15s;
+        }
+
+        .benchmark-toggle:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .benchmark-toggle input {
+            display: none;
+        }
+
+        .benchmark-label-box {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+            opacity: 0.4;
+            transition: opacity 0.15s;
+        }
+
+        .benchmark-toggle input:checked + .benchmark-label-box {
+            opacity: 1;
+        }
+
+        /* Projections */
+        .projection-stat {
+            text-align: center;
+            padding: 16px;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+        }
+
+        .projection-stat-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .projection-stat-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .monte-carlo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .monte-carlo-item {
+            padding: 16px;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+        }
+
+        .monte-carlo-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .monte-carlo-value {
+            font-size: 1.125rem;
+            font-weight: 600;
+        }
+
+        .monte-carlo-value.positive { color: var(--success); }
+        .monte-carlo-value.highlight { color: var(--primary); }
+
         /* Toast Notifications */
         .toast {
             position: fixed;
@@ -1963,7 +2043,7 @@
                 <div class="returns-grid" id="returnsGrid"></div>
                 <div class="card chart-card">
                     <div class="card-header">
-                        <div class="card-title">Historical Performance vs S&P 500</div>
+                        <div class="card-title">Historical Performance</div>
                         <div class="period-selector" id="periodSelector">
                             <button class="period-btn" data-period="1M">1M</button>
                             <button class="period-btn" data-period="3M">3M</button>
@@ -1974,9 +2054,43 @@
                             <button class="period-btn active" data-period="5Y">5Y</button>
                         </div>
                     </div>
+                    <div style="display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap;">
+                        <label class="benchmark-toggle">
+                            <input type="checkbox" checked onchange="toggleBenchmark('sp500', this.checked)">
+                            <span class="benchmark-label-box" style="background: #8898aa;"></span>
+                            S&P 500
+                        </label>
+                        <label class="benchmark-toggle">
+                            <input type="checkbox" onchange="toggleBenchmark('bonds', this.checked)">
+                            <span class="benchmark-label-box" style="background: #30d158;"></span>
+                            US Bonds
+                        </label>
+                        <label class="benchmark-toggle">
+                            <input type="checkbox" onchange="toggleBenchmark('world', this.checked)">
+                            <span class="benchmark-label-box" style="background: #ff9f0a;"></span>
+                            Total World
+                        </label>
+                        <label class="benchmark-toggle">
+                            <input type="checkbox" onchange="toggleBenchmark('sixty_forty', this.checked)">
+                            <span class="benchmark-label-box" style="background: #bf5af2;"></span>
+                            60/40 Portfolio
+                        </label>
+                    </div>
                     <div class="chart-wrapper" style="height: 380px;">
                         <canvas id="performanceChart"></canvas>
                     </div>
+                </div>
+
+                <!-- Projections Section -->
+                <div class="card chart-card" style="margin-top: 24px;">
+                    <div class="card-header">
+                        <div class="card-title">10-Year Projections (Monte Carlo Simulation)</div>
+                    </div>
+                    <div id="projectionsInfo" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; margin-bottom: 20px;"></div>
+                    <div class="chart-wrapper" style="height: 350px;">
+                        <canvas id="projectionsChart"></canvas>
+                    </div>
+                    <div id="monteCarloSummary" style="margin-top: 20px;"></div>
                 </div>
             </div>
 
@@ -4063,6 +4177,9 @@
                     selectPeriod(period);
                 });
             });
+
+            // Render projections chart
+            renderProjections();
         }
 
         function selectPeriod(period) {
@@ -4104,17 +4221,210 @@
 
             const filteredLabels = data.labels.slice(startIdx);
             const filteredPortfolio = data.portfolio.slice(startIdx);
-            const filteredBenchmark = data.benchmark?.slice(startIdx);
 
-            // Normalize to start at 100
+            // Normalize portfolio
             const portfolioStart = filteredPortfolio[0] || 100;
-            const benchmarkStart = filteredBenchmark?.[0] || 100;
-
-            return {
+            const result = {
                 labels: filteredLabels,
-                portfolio: filteredPortfolio.map(v => (v / portfolioStart) * 100),
-                benchmark: filteredBenchmark?.map(v => (v / benchmarkStart) * 100)
+                portfolio: filteredPortfolio.map(v => (v / portfolioStart) * 100)
             };
+
+            // Handle multiple benchmarks
+            const benchmarkKeys = ['sp500', 'bonds', 'world', 'sixty_forty', 'benchmark'];
+            benchmarkKeys.forEach(key => {
+                if (data[key]) {
+                    const filtered = data[key].slice(startIdx);
+                    const start = filtered[0] || 100;
+                    result[key] = filtered.map(v => v !== null ? (v / start) * 100 : null);
+                }
+            });
+
+            return result;
+        }
+
+        // Track which benchmarks are visible
+        let visibleBenchmarks = { sp500: true, bonds: false, world: false, sixty_forty: false };
+
+        function toggleBenchmark(key, checked) {
+            visibleBenchmarks[key] = checked;
+            if (fullChartData) {
+                renderLineChart(fullChartData, currentPeriod);
+            }
+        }
+
+        function renderProjections() {
+            const projections = portfolioData.projections;
+            if (!projections || !projections.monte_carlo) {
+                document.getElementById('projectionsInfo').innerHTML = '<p style="color: var(--text-secondary);">Projections require more data</p>';
+                return;
+            }
+
+            const mc = projections.monte_carlo;
+            const cma = projections.capital_market_assumptions || {};
+            const totalValue = portfolioData.total_value || 100000;
+            const summary = mc.summary || {};
+
+            // Render summary info cards
+            const expectedReturn = cma.expected_annual_return || 0;
+            const expectedVol = cma.expected_volatility || 0;
+            const infoHtml = `
+                <div class="stat-card">
+                    <div class="stat-label">Expected Return</div>
+                    <div class="stat-value ${expectedReturn >= 0 ? 'positive' : ''}">${expectedReturn.toFixed(1)}%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Expected Volatility</div>
+                    <div class="stat-value">${expectedVol.toFixed(1)}%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Median 10Y Outcome</div>
+                    <div class="stat-value">${formatCurrency(summary.median || 0)}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Best Case (95th)</div>
+                    <div class="stat-value positive">${formatCurrency(summary.p95 || 0)}</div>
+                </div>
+            `;
+            document.getElementById('projectionsInfo').innerHTML = infoHtml;
+
+            // Render projections chart with confidence bands
+            const ctx = document.getElementById('projectionsChart').getContext('2d');
+            if (charts.projectionsChart) charts.projectionsChart.destroy();
+
+            const projData = mc.projection_data || {};
+            const percentiles = projData.percentiles || {};
+            const years = projData.labels || Array.from({length: 11}, (_, i) => `Year ${i}`);
+            const p5 = percentiles.p5 || [];
+            const p25 = percentiles.p25 || [];
+            const p50 = percentiles.p50 || [];
+            const p75 = percentiles.p75 || [];
+            const p95 = percentiles.p95 || [];
+
+            charts.projectionsChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: years,
+                    datasets: [
+                        {
+                            label: '95th Percentile',
+                            data: p95,
+                            borderColor: 'rgba(48, 209, 88, 0.3)',
+                            backgroundColor: 'transparent',
+                            borderWidth: 1,
+                            borderDash: [3, 3],
+                            pointRadius: 0,
+                            tension: 0.3
+                        },
+                        {
+                            label: '75th Percentile',
+                            data: p75,
+                            borderColor: 'rgba(48, 209, 88, 0.6)',
+                            backgroundColor: 'rgba(48, 209, 88, 0.1)',
+                            borderWidth: 1.5,
+                            fill: '+1',
+                            pointRadius: 0,
+                            tension: 0.3
+                        },
+                        {
+                            label: 'Median (50th)',
+                            data: p50,
+                            borderColor: '#635bff',
+                            backgroundColor: 'rgba(99, 91, 255, 0.15)',
+                            borderWidth: 2.5,
+                            fill: false,
+                            pointRadius: 0,
+                            pointHoverRadius: 6,
+                            tension: 0.3
+                        },
+                        {
+                            label: '25th Percentile',
+                            data: p25,
+                            borderColor: 'rgba(255, 159, 10, 0.6)',
+                            backgroundColor: 'rgba(255, 159, 10, 0.1)',
+                            borderWidth: 1.5,
+                            fill: '-1',
+                            pointRadius: 0,
+                            tension: 0.3
+                        },
+                        {
+                            label: '5th Percentile',
+                            data: p5,
+                            borderColor: 'rgba(255, 69, 58, 0.3)',
+                            backgroundColor: 'transparent',
+                            borderWidth: 1,
+                            borderDash: [3, 3],
+                            pointRadius: 0,
+                            tension: 0.3
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { display: true, position: 'top', labels: { usePointStyle: true, padding: 15 } },
+                        tooltip: {
+                            backgroundColor: 'rgba(10, 37, 64, 0.95)',
+                            titleFont: { size: 13, weight: '600' },
+                            bodyFont: { size: 12 },
+                            padding: 12,
+                            cornerRadius: 8,
+                            callbacks: {
+                                label: ctx => `${ctx.dataset.label}: ${formatCurrency(ctx.raw)}`
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: '#e3e8ee', drawBorder: false },
+                            ticks: { color: '#8898aa' }
+                        },
+                        y: {
+                            grid: { color: '#e3e8ee', drawBorder: false },
+                            ticks: {
+                                color: '#8898aa',
+                                callback: v => formatCurrency(v)
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Render Monte Carlo summary
+            const medianValue = summary.median || totalValue;
+            const growthRate = Math.pow(medianValue / totalValue, 1/10) - 1;
+            const probGain = summary.prob_gain !== undefined ? summary.prob_gain.toFixed(0) : '--';
+            const probDouble = summary.prob_double !== undefined ? summary.prob_double.toFixed(0) : '--';
+            const summaryHtml = `
+                <div class="monte-carlo-grid">
+                    <div class="monte-carlo-item">
+                        <div class="monte-carlo-label">Simulations Run</div>
+                        <div class="monte-carlo-value">${(mc.simulations || 1000).toLocaleString()}</div>
+                    </div>
+                    <div class="monte-carlo-item">
+                        <div class="monte-carlo-label">Starting Value</div>
+                        <div class="monte-carlo-value">${formatCurrency(mc.starting_value || totalValue)}</div>
+                    </div>
+                    <div class="monte-carlo-item">
+                        <div class="monte-carlo-label">Worst Case (5th)</div>
+                        <div class="monte-carlo-value">${formatCurrency(summary.p5 || 0)}</div>
+                    </div>
+                    <div class="monte-carlo-item">
+                        <div class="monte-carlo-label">Probability of Gain</div>
+                        <div class="monte-carlo-value positive">${probGain}%</div>
+                    </div>
+                    <div class="monte-carlo-item">
+                        <div class="monte-carlo-label">Implied CAGR (Median)</div>
+                        <div class="monte-carlo-value highlight">${(growthRate * 100).toFixed(1)}%</div>
+                    </div>
+                    <div class="monte-carlo-item">
+                        <div class="monte-carlo-label">Chance to Double</div>
+                        <div class="monte-carlo-value">${probDouble}%</div>
+                    </div>
+                </div>
+            `;
+            document.getElementById('monteCarloSummary').innerHTML = summaryHtml;
         }
 
         function renderLineChart(data, period = '5Y') {
@@ -4128,27 +4438,39 @@
             const step = Math.max(1, Math.floor(filteredData.labels.length / maxPoints));
             const labels = filteredData.labels.filter((_, i) => i % step === 0);
             const portfolio = filteredData.portfolio.filter((_, i) => i % step === 0);
-            const benchmark = filteredData.benchmark?.filter((_, i) => i % step === 0);
+
+            // Benchmark configurations
+            const benchmarkConfigs = {
+                sp500: { label: 'S&P 500', color: '#8898aa', dash: [5, 5] },
+                bonds: { label: 'US Bonds', color: '#30d158', dash: [3, 3] },
+                world: { label: 'Total World', color: '#ff9f0a', dash: [8, 4] },
+                sixty_forty: { label: '60/40', color: '#bf5af2', dash: [2, 2] }
+            };
+
+            // Build datasets
+            const datasets = [{
+                label: 'Portfolio', data: portfolio,
+                borderColor: '#635bff', backgroundColor: 'rgba(99,91,255,0.1)',
+                borderWidth: 2.5, fill: true, tension: 0.3,
+                pointRadius: 0, pointHoverRadius: 6, pointHoverBackgroundColor: '#635bff'
+            }];
+
+            // Add visible benchmarks
+            Object.entries(benchmarkConfigs).forEach(([key, config]) => {
+                if (visibleBenchmarks[key] && filteredData[key]) {
+                    const bmData = filteredData[key].filter((_, i) => i % step === 0);
+                    datasets.push({
+                        label: config.label, data: bmData,
+                        borderColor: config.color, backgroundColor: 'transparent',
+                        borderWidth: 2, borderDash: config.dash, fill: false, tension: 0.3,
+                        pointRadius: 0, pointHoverRadius: 5, pointHoverBackgroundColor: config.color
+                    });
+                }
+            });
 
             charts.performanceChart = new Chart(ctx, {
                 type: 'line',
-                data: {
-                    labels,
-                    datasets: [
-                        {
-                            label: 'Portfolio', data: portfolio,
-                            borderColor: '#635bff', backgroundColor: 'rgba(99,91,255,0.1)',
-                            borderWidth: 2.5, fill: true, tension: 0.3,
-                            pointRadius: 0, pointHoverRadius: 6, pointHoverBackgroundColor: '#635bff'
-                        },
-                        ...(benchmark ? [{
-                            label: 'S&P 500', data: benchmark,
-                            borderColor: '#8898aa', backgroundColor: 'transparent',
-                            borderWidth: 2, borderDash: [5, 5], fill: false, tension: 0.3,
-                            pointRadius: 0, pointHoverRadius: 5, pointHoverBackgroundColor: '#8898aa'
-                        }] : [])
-                    ]
-                },
+                data: { labels, datasets },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
