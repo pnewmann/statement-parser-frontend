@@ -2266,6 +2266,37 @@
             flex-shrink: 0;
         }
 
+        /* Footer */
+        .site-footer {
+            margin-top: 48px;
+            padding: 24px 0;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.8125rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-bottom: 12px;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+
+        .footer-copyright {
+            color: var(--text-muted);
+        }
+
         /* ========== MOBILE OPTIMIZATIONS ========== */
         @media (max-width: 480px) {
             body {
@@ -3524,6 +3555,17 @@
                 </form>
             </div>
         </div>
+
+        <!-- Footer -->
+        <footer class="site-footer">
+            <div class="footer-links">
+                <a href="/privacy.html">Privacy Policy</a>
+                <a href="mailto:support@statementscan.com">Contact</a>
+            </div>
+            <div class="footer-copyright">
+                &copy; 2025 Statement Scan. All rights reserved.
+            </div>
+        </footer>
     </div>
 
     <script>
