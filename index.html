@@ -3875,14 +3875,13 @@
                 }
             }
 
-            // Generate shades from dark to light
+            // Base color is darkest, then get progressively lighter
             const shades = [];
-            const minL = Math.max(0.25, l - 0.3);
-            const maxL = Math.min(0.85, l + 0.3);
-            const step = count > 1 ? (maxL - minL) / (count - 1) : 0;
+            const maxL = Math.min(0.9, l + 0.45); // How light the lightest shade can be
+            const step = count > 1 ? (maxL - l) / (count - 1) : 0;
 
             for (let i = 0; i < count; i++) {
-                const newL = minL + (step * i);
+                const newL = l + (step * i); // Start at base color lightness, go lighter
                 shades.push(hslToHex(h, s, newL));
             }
             return shades;
