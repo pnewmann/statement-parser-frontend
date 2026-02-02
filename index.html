@@ -57,15 +57,20 @@
 
         /* Header */
         header {
-            text-align: center;
             margin-bottom: 48px;
         }
 
-        .logo {
-            display: inline-flex;
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 20px;
-            margin-bottom: 24px;
+            margin-bottom: 32px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 16px;
         }
 
         .logo-icon {
@@ -118,8 +123,9 @@
         .subtitle {
             color: var(--text-secondary);
             font-size: 1.125rem;
-            margin-top: 12px;
-            max-width: 400px;
+            text-align: center;
+            max-width: 500px;
+            margin: 0 auto;
         }
 
         /* Cards */
@@ -2500,6 +2506,12 @@
             }
 
             /* Logo & Header */
+            .top-nav {
+                flex-direction: column;
+                gap: 16px;
+                margin-bottom: 24px;
+            }
+
             .logo {
                 flex-direction: column;
                 text-align: center;
@@ -2534,12 +2546,8 @@
                 padding: 0 8px;
             }
 
-            /* Auth section positioning */
-            header > div[style*="position: absolute"] {
-                position: static !important;
-                display: flex;
-                justify-content: center;
-                margin-bottom: 16px;
+            #authSection {
+                order: -1;
             }
 
             /* Entry Method Tabs */
@@ -3016,32 +3024,31 @@
 <body>
     <div class="container">
         <header>
-            <div style="position: absolute; top: 24px; right: 24px;">
+            <nav class="top-nav">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <!-- Paul Rand-inspired logo: Bold geometric "S" with scan line -->
+                        <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Abstract S formed by two offset squares with negative space -->
+                            <rect x="0" y="0" width="24" height="24" rx="4" fill="white"/>
+                            <rect x="20" y="20" width="24" height="24" rx="4" fill="white"/>
+                            <!-- Scan line cutting through - the key action element -->
+                            <rect x="0" y="19" width="44" height="6" fill="white" opacity="0.4"/>
+                            <!-- Central diamond connector -->
+                            <rect x="16" y="16" width="12" height="12" rx="2" fill="white" transform="rotate(0 22 22)"/>
+                        </svg>
+                    </div>
+                    <div class="brand-text">
+                        <span class="brand-name">Statement Scan</span>
+                        <span class="brand-tagline">Portfolio Intelligence</span>
+                    </div>
+                </div>
                 <div id="authSection">
-                    <!-- Shows login button or user menu -->
                     <button class="btn btn-secondary" id="loginBtn" onclick="showAuthModal()">
                         Sign In
                     </button>
                 </div>
-            </div>
-            <div class="logo">
-                <div class="logo-icon">
-                    <!-- Paul Rand-inspired logo: Bold geometric "S" with scan line -->
-                    <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <!-- Abstract S formed by two offset squares with negative space -->
-                        <rect x="0" y="0" width="24" height="24" rx="4" fill="white"/>
-                        <rect x="20" y="20" width="24" height="24" rx="4" fill="white"/>
-                        <!-- Scan line cutting through - the key action element -->
-                        <rect x="0" y="19" width="44" height="6" fill="white" opacity="0.4"/>
-                        <!-- Central diamond connector -->
-                        <rect x="16" y="16" width="12" height="12" rx="2" fill="white" transform="rotate(0 22 22)"/>
-                    </svg>
-                </div>
-                <div class="brand-text">
-                    <span class="brand-name">Statement Scan</span>
-                    <span class="brand-tagline">Portfolio Intelligence</span>
-                </div>
-            </div>
+            </nav>
             <p class="subtitle">Upload your brokerage statements and get instant portfolio analytics, benchmarking, and projections.</p>
         </header>
 
