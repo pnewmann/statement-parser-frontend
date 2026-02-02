@@ -708,6 +708,10 @@
             to { transform: rotate(360deg); }
         }
 
+        .spin {
+            animation: spin 1s linear infinite;
+        }
+
         .progress-text {
             color: var(--text-secondary);
             font-size: 1rem;
@@ -3231,7 +3235,16 @@
                 <div class="header-actions">
                     <button class="btn btn-secondary" id="newAnalysisBtn">New Analysis</button>
                     <button class="btn btn-success" id="savePortfolioBtn" style="display: none;">Save Portfolio</button>
-                    <button class="btn btn-primary" id="downloadBtn">Download CSV</button>
+                    <button class="btn btn-primary" id="downloadPdfBtn">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                            <line x1="16" y1="13" x2="8" y2="13"/>
+                            <line x1="16" y1="17" x2="8" y2="17"/>
+                        </svg>
+                        PDF Report
+                    </button>
+                    <button class="btn btn-secondary" id="downloadCsvBtn">CSV</button>
                 </div>
             </div>
 
@@ -5229,7 +5242,8 @@
         analyzeBtn.addEventListener('click', analyzePortfolio);
         clearAllBtn.addEventListener('click', () => { accounts = []; renderAccounts(); });
         document.getElementById('newAnalysisBtn').addEventListener('click', resetUI);
-        document.getElementById('downloadBtn').addEventListener('click', downloadCSV);
+        document.getElementById('downloadPdfBtn').addEventListener('click', downloadPDF);
+        document.getElementById('downloadCsvBtn').addEventListener('click', downloadCSV);
         document.getElementById('savePortfolioBtn').addEventListener('click', showSaveModal);
 
         document.querySelectorAll('.tab').forEach(tab => {
@@ -6356,6 +6370,47 @@
                     }
                 }
             });
+        }
+
+        async function downloadPDF() {
+            if (!portfolioData) return;
+
+            const btn = document.getElementById('downloadPdfBtn');
+            const originalText = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = `
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="spin">
+                    <circle cx="12" cy="12" r="10" stroke-dasharray="32" stroke-dashoffset="32"/>
+                </svg>
+                Generating...
+            `;
+
+            try {
+                const response = await fetch(`${API_URL}/report/pdf`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(portfolioData)
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Failed to generate PDF');
+                }
+
+                const blob = await response.blob();
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `portfolio-report-${new Date().toISOString().split('T')[0]}.pdf`;
+                a.click();
+                URL.revokeObjectURL(url);
+                showToast('PDF report downloaded successfully!');
+            } catch (err) {
+                showError('Failed to generate PDF: ' + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            }
         }
 
         function downloadCSV() {
