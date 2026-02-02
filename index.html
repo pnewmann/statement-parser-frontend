@@ -818,6 +818,129 @@
             display: block;
         }
 
+        /* Insights Section */
+        .insights-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .insights-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .insights-header h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .insights-subtitle {
+            color: var(--text-muted);
+            font-size: 0.9375rem;
+        }
+
+        .insights-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .insight-card {
+            background: var(--bg-primary);
+            border-radius: var(--radius-md);
+            padding: 20px 24px;
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--primary);
+            transition: box-shadow 0.2s ease, transform 0.2s ease;
+        }
+
+        .insight-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .insight-card.insight-warning {
+            border-left-color: var(--warning);
+            background: linear-gradient(to right, rgba(255, 214, 10, 0.05), transparent);
+        }
+
+        .insight-card.insight-positive {
+            border-left-color: var(--success);
+            background: linear-gradient(to right, rgba(48, 209, 88, 0.05), transparent);
+        }
+
+        .insight-card.insight-info {
+            border-left-color: var(--primary);
+        }
+
+        .insight-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .insight-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        .insight-warning .insight-icon {
+            background: rgba(255, 214, 10, 0.15);
+        }
+
+        .insight-positive .insight-icon {
+            background: rgba(48, 209, 88, 0.15);
+        }
+
+        .insight-info .insight-icon {
+            background: rgba(99, 91, 255, 0.15);
+        }
+
+        .insight-category {
+            font-size: 0.6875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            background: var(--bg-secondary);
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .insight-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+        }
+
+        .insight-text {
+            font-size: 0.9375rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .no-insights {
+            text-align: center;
+            padding: 48px 24px;
+            color: var(--text-muted);
+        }
+
+        .no-insights svg {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
         /* Stats Grid */
         .stats-grid {
             display: grid;
@@ -1312,6 +1435,36 @@
 
             .tab {
                 padding: 10px 14px;
+                font-size: 0.875rem;
+            }
+
+            .insights-container {
+                padding: 0;
+            }
+
+            .insights-header {
+                margin-bottom: 24px;
+            }
+
+            .insights-header h3 {
+                font-size: 1.25rem;
+            }
+
+            .insight-card {
+                padding: 16px 18px;
+            }
+
+            .insight-icon {
+                width: 28px;
+                height: 28px;
+                font-size: 0.875rem;
+            }
+
+            .insight-title {
+                font-size: 0.9375rem;
+            }
+
+            .insight-text {
                 font-size: 0.875rem;
             }
         }
@@ -3050,6 +3203,7 @@
 
             <div class="tabs">
                 <button class="tab active" data-tab="allocation">Allocation</button>
+                <button class="tab" data-tab="insights">Insights</button>
                 <button class="tab" data-tab="performance">Performance</button>
                 <button class="tab" data-tab="sectors">Sectors</button>
                 <button class="tab" data-tab="geography">Geography</button>
@@ -3095,6 +3249,19 @@
                         <div class="chart-wrapper">
                             <canvas id="subClassChart"></canvas>
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Insights Tab -->
+            <div class="tab-content" id="tab-insights">
+                <div class="insights-container" id="insightsContainer">
+                    <div class="insights-header">
+                        <h3>Portfolio Insights</h3>
+                        <p class="insights-subtitle">AI-powered analysis of your portfolio</p>
+                    </div>
+                    <div class="insights-list" id="insightsList">
+                        <!-- Insights will be rendered here -->
                     </div>
                 </div>
             </div>
@@ -5092,6 +5259,7 @@
             dashboard.style.display = 'block';
             document.getElementById('totalBadge').textContent = formatCurrency(portfolioData.total_value);
             renderAllocation();
+            renderInsights();
             renderPerformance();
             renderSectors();
             renderGeography();
@@ -5099,6 +5267,52 @@
             renderHoldings();
             updateCompareSelectors();
             initWhatIf();
+        }
+
+        function renderInsights() {
+            const container = document.getElementById('insightsList');
+            const insights = portfolioData.insights || [];
+
+            if (!insights.length) {
+                container.innerHTML = `
+                    <div class="no-insights">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M12 16v-4M12 8h.01"/>
+                        </svg>
+                        <p>No insights available for this portfolio.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const getIcon = (type, category) => {
+                if (type === 'warning') return '⚠️';
+                if (type === 'positive') return '✓';
+                // Category-based icons for info type
+                const categoryIcons = {
+                    'Portfolio Size': '💼',
+                    'Asset Allocation': '📊',
+                    'Concentration': '🎯',
+                    'Sectors': '🏭',
+                    'Geography': '🌍',
+                    'Risk': '📈',
+                    'Projections': '🔮',
+                    'Diversification': '🔄'
+                };
+                return categoryIcons[category] || '💡';
+            };
+
+            container.innerHTML = insights.map(insight => `
+                <div class="insight-card insight-${insight.type || 'info'}">
+                    <div class="insight-header">
+                        <div class="insight-icon">${getIcon(insight.type, insight.category)}</div>
+                        <span class="insight-category">${insight.category || 'Insight'}</span>
+                    </div>
+                    <div class="insight-title">${insight.title}</div>
+                    <div class="insight-text">${insight.text}</div>
+                </div>
+            `).join('');
         }
 
         function renderAllocation() {
