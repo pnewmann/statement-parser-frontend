@@ -1613,6 +1613,45 @@
             display: block;
         }
 
+        .forgot-password-link {
+            text-align: center;
+            margin-top: 16px;
+        }
+
+        .forgot-password-link a,
+        .back-to-login a {
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .forgot-password-link a:hover,
+        .back-to-login a:hover {
+            text-decoration: underline;
+        }
+
+        .back-to-login {
+            text-align: center;
+            margin-top: 16px;
+        }
+
+        .form-description {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .form-success {
+            color: var(--success);
+            font-size: 0.875rem;
+            margin-top: 8px;
+            padding: 12px;
+            background: rgba(48, 209, 88, 0.1);
+            border-radius: var(--radius-sm);
+        }
+
         /* User Menu */
         .user-menu {
             position: relative;
@@ -3664,6 +3703,24 @@
                     </div>
                     <div class="form-error" id="loginError" style="display: none;"></div>
                     <button type="submit" class="btn btn-primary" style="width: 100%;">Sign In</button>
+                    <div class="forgot-password-link">
+                        <a href="#" onclick="showForgotPassword(event)">Forgot your password?</a>
+                    </div>
+                </form>
+
+                <!-- Forgot Password Form -->
+                <form class="auth-form" id="forgotPasswordForm" onsubmit="handleForgotPassword(event)">
+                    <p class="form-description">Enter your email address and we'll send you a link to reset your password.</p>
+                    <div class="form-group">
+                        <label class="form-label" for="forgotEmail">Email</label>
+                        <input type="email" class="form-input" id="forgotEmail" placeholder="you@example.com" required>
+                    </div>
+                    <div class="form-error" id="forgotError" style="display: none;"></div>
+                    <div class="form-success" id="forgotSuccess" style="display: none;"></div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Send Reset Link</button>
+                    <div class="back-to-login">
+                        <a href="#" onclick="backToLogin(event)">Back to sign in</a>
+                    </div>
                 </form>
 
                 <!-- Register Form -->
@@ -3682,6 +3739,36 @@
                     </div>
                     <div class="form-error" id="registerError" style="display: none;"></div>
                     <button type="submit" class="btn btn-primary" style="width: 100%;">Create Account</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reset Password Modal -->
+    <div class="modal-overlay" id="resetPasswordModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Reset Password</h2>
+                <button class="modal-close" onclick="hideResetPasswordModal()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="resetPasswordForm" onsubmit="handleResetPassword(event)">
+                    <p class="form-description">Enter your new password below.</p>
+                    <div class="form-group">
+                        <label class="form-label" for="newPassword">New Password</label>
+                        <input type="password" class="form-input" id="newPassword" placeholder="At least 6 characters" minlength="6" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="confirmPassword">Confirm Password</label>
+                        <input type="password" class="form-input" id="confirmPassword" placeholder="Confirm your password" minlength="6" required>
+                    </div>
+                    <div class="form-error" id="resetError" style="display: none;"></div>
+                    <div class="form-success" id="resetSuccess" style="display: none;"></div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Reset Password</button>
                 </form>
             </div>
         </div>
@@ -3840,6 +3927,137 @@
             updateAuthUI();
             document.getElementById('savedPortfoliosSection').style.display = 'none';
         }
+
+        function showForgotPassword(event) {
+            event.preventDefault();
+            document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+            document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+            document.getElementById('forgotPasswordForm').classList.add('active');
+            document.getElementById('forgotError').style.display = 'none';
+            document.getElementById('forgotSuccess').style.display = 'none';
+        }
+
+        function backToLogin(event) {
+            event.preventDefault();
+            document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+            document.getElementById('loginForm').classList.add('active');
+            document.querySelector('.auth-tab[data-tab="login"]').classList.add('active');
+        }
+
+        async function handleForgotPassword(event) {
+            event.preventDefault();
+            const email = document.getElementById('forgotEmail').value;
+            const errorEl = document.getElementById('forgotError');
+            const successEl = document.getElementById('forgotSuccess');
+            const submitBtn = event.target.querySelector('button[type="submit"]');
+
+            errorEl.style.display = 'none';
+            successEl.style.display = 'none';
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Sending...';
+
+            try {
+                const res = await fetch(`${API_URL}/auth/forgot-password`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+
+                const data = await res.json();
+
+                if (!res.ok) {
+                    errorEl.textContent = data.error || 'Failed to send reset link';
+                    errorEl.style.display = 'block';
+                } else {
+                    successEl.textContent = data.message || 'If an account exists with that email, a reset link has been sent.';
+                    successEl.style.display = 'block';
+                    document.getElementById('forgotEmail').value = '';
+                }
+            } catch (err) {
+                errorEl.textContent = 'Connection error. Please try again.';
+                errorEl.style.display = 'block';
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Send Reset Link';
+            }
+        }
+
+        function showResetPasswordModal(token) {
+            resetToken = token;
+            document.getElementById('resetPasswordModal').classList.add('active');
+            document.getElementById('resetError').style.display = 'none';
+            document.getElementById('resetSuccess').style.display = 'none';
+            document.getElementById('newPassword').value = '';
+            document.getElementById('confirmPassword').value = '';
+        }
+
+        function hideResetPasswordModal() {
+            document.getElementById('resetPasswordModal').classList.remove('active');
+            // Clear reset token from URL
+            const url = new URL(window.location);
+            url.searchParams.delete('reset_token');
+            window.history.replaceState({}, '', url);
+        }
+
+        async function handleResetPassword(event) {
+            event.preventDefault();
+            const password = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const errorEl = document.getElementById('resetError');
+            const successEl = document.getElementById('resetSuccess');
+            const submitBtn = event.target.querySelector('button[type="submit"]');
+
+            errorEl.style.display = 'none';
+            successEl.style.display = 'none';
+
+            if (password !== confirmPassword) {
+                errorEl.textContent = 'Passwords do not match';
+                errorEl.style.display = 'block';
+                return;
+            }
+
+            if (password.length < 6) {
+                errorEl.textContent = 'Password must be at least 6 characters';
+                errorEl.style.display = 'block';
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Resetting...';
+
+            try {
+                const res = await fetch(`${API_URL}/auth/reset-password`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token: resetToken, password })
+                });
+
+                const data = await res.json();
+
+                if (!res.ok) {
+                    errorEl.textContent = data.error || 'Failed to reset password';
+                    errorEl.style.display = 'block';
+                } else {
+                    successEl.textContent = data.message || 'Password reset successfully! You can now sign in.';
+                    successEl.style.display = 'block';
+                    submitBtn.style.display = 'none';
+
+                    // Auto-close and show login after 3 seconds
+                    setTimeout(() => {
+                        hideResetPasswordModal();
+                        showAuthModal();
+                    }, 3000);
+                }
+            } catch (err) {
+                errorEl.textContent = 'Connection error. Please try again.';
+                errorEl.style.display = 'block';
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Reset Password';
+            }
+        }
+
+        let resetToken = null;
 
         function updateAuthUI() {
             const authSection = document.getElementById('authSection');
@@ -4968,6 +5186,13 @@
         // Initialize auth check and Plaid status
         checkAuth();
         checkPlaidStatus();
+
+        // Check for password reset token in URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const resetTokenFromUrl = urlParams.get('reset_token');
+        if (resetTokenFromUrl) {
+            showResetPasswordModal(resetTokenFromUrl);
+        }
 
         // DOM Elements
         const dropZone = document.getElementById('dropZone');
