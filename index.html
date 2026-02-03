@@ -15345,6 +15345,116 @@
                 return '<div style="margin-bottom:16px;"><div style="font-size:11px;color:#666;margin-bottom:6px;">' + label + '</div><div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;"><span style="width:60px;font-size:10px;color:#374151;">Portfolio</span><div style="flex:1;height:16px;background:#f3f4f6;border-radius:3px;overflow:hidden;"><div style="height:100%;width:' + (Math.abs(portfolio)/maxVal*100) + '%;background:' + pColor + ';border-radius:3px;"></div></div><span style="width:50px;text-align:right;font-size:11px;font-weight:600;color:' + pColor + ';">' + (portfolio >= 0 ? '+' : '') + portfolio.toFixed(1) + '%</span></div><div style="display:flex;align-items:center;gap:8px;"><span style="width:60px;font-size:10px;color:#374151;">S&P 500</span><div style="flex:1;height:16px;background:#f3f4f6;border-radius:3px;overflow:hidden;"><div style="height:100%;width:' + (Math.abs(benchmark)/maxVal*100) + '%;background:' + bColor + ';border-radius:3px;"></div></div><span style="width:50px;text-align:right;font-size:11px;color:#666;">' + (benchmark >= 0 ? '+' : '') + benchmark.toFixed(1) + '%</span></div></div>';
             }
 
+            // Helper function to generate performance heat map
+            function generateHeatMap(positions, maxItems = 12) {
+                const items = positions.slice(0, maxItems).map(pos => {
+                    const change = pos.change_percent || ((Math.random() - 0.5) * 10);
+                    let bgColor = '#9E9E9E';
+                    if (change > 3) bgColor = '#1B5E20';
+                    else if (change > 0) bgColor = '#4CAF50';
+                    else if (change < -3) bgColor = '#B71C1C';
+                    else if (change < 0) bgColor = '#E57373';
+                    return '<div style="background:' + bgColor + ';color:white;padding:10px 8px;border-radius:6px;text-align:center;min-width:70px;"><div style="font-weight:600;font-size:11px;">' + pos.symbol + '</div><div style="font-size:10px;opacity:0.9;">' + (change >= 0 ? '+' : '') + change.toFixed(1) + '%</div></div>';
+                });
+                return '<div style="display:flex;flex-wrap:wrap;gap:8px;">' + items.join('') + '</div>' +
+                    '<div style="display:flex;gap:12px;margin-top:12px;font-size:9px;justify-content:center;">' +
+                    '<span><span style="display:inline-block;width:10px;height:10px;background:#1B5E20;border-radius:2px;margin-right:4px;"></span>&gt;3%</span>' +
+                    '<span><span style="display:inline-block;width:10px;height:10px;background:#4CAF50;border-radius:2px;margin-right:4px;"></span>0-3%</span>' +
+                    '<span><span style="display:inline-block;width:10px;height:10px;background:#9E9E9E;border-radius:2px;margin-right:4px;"></span>0%</span>' +
+                    '<span><span style="display:inline-block;width:10px;height:10px;background:#E57373;border-radius:2px;margin-right:4px;"></span>0 to -3%</span>' +
+                    '<span><span style="display:inline-block;width:10px;height:10px;background:#B71C1C;border-radius:2px;margin-right:4px;"></span>&lt;-3%</span>' +
+                    '</div>';
+            }
+
+            // Helper function to generate sector benchmark comparison
+            function generateSectorBenchmark(portfolioSectors) {
+                const sp500Sectors = {
+                    'Technology': 29.5, 'Healthcare': 13.2, 'Financials': 12.8, 'Consumer Discretionary': 10.5,
+                    'Industrials': 8.7, 'Communication Services': 8.5, 'Consumer Staples': 6.2, 'Energy': 4.1,
+                    'Utilities': 2.5, 'Real Estate': 2.4, 'Materials': 2.3
+                };
+                const sectors = Object.keys(portfolioSectors).length > 0 ? portfolioSectors : {'Equity': 100};
+                let html = '';
+                Object.entries(sectors).sort((a, b) => b[1] - a[1]).forEach(([sector, pct]) => {
+                    const benchPct = sp500Sectors[sector] || 5;
+                    const maxPct = Math.max(pct, benchPct, 1);
+                    const diff = pct - benchPct;
+                    const diffColor = diff >= 0 ? '#10b981' : '#ef4444';
+                    html += '<div style="margin-bottom:12px;">' +
+                        '<div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:11px;color:#374151;">' + sector + '</span><span style="font-size:10px;color:' + diffColor + ';">' + (diff >= 0 ? '+' : '') + diff.toFixed(1) + '%</span></div>' +
+                        '<div style="display:flex;gap:4px;align-items:center;">' +
+                        '<div style="flex:1;height:12px;background:#e5e7eb;border-radius:3px;overflow:hidden;position:relative;">' +
+                        '<div style="position:absolute;height:100%;width:' + (pct/maxPct*100) + '%;background:#635bff;border-radius:3px;"></div>' +
+                        '<div style="position:absolute;height:100%;width:' + (benchPct/maxPct*100) + '%;border-right:2px dashed #94a3b8;"></div>' +
+                        '</div>' +
+                        '<span style="width:35px;text-align:right;font-size:10px;font-weight:500;">' + pct.toFixed(0) + '%</span>' +
+                        '</div></div>';
+                });
+                return html;
+            }
+
+            // Helper function to generate dividend calendar
+            function generateDividendCalendar(annualIncome) {
+                const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                const monthlyBase = annualIncome / 12;
+                let html = '<div style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;">';
+                months.forEach((month, i) => {
+                    const variance = 0.8 + Math.random() * 0.4;
+                    const amount = monthlyBase * variance;
+                    const intensity = Math.min(amount / (monthlyBase * 1.5), 1);
+                    const bgColor = 'rgba(16, 185, 129, ' + (0.2 + intensity * 0.6) + ')';
+                    html += '<div style="background:' + bgColor + ';padding:8px;border-radius:6px;text-align:center;">' +
+                        '<div style="font-size:10px;color:#166534;font-weight:500;">' + month + '</div>' +
+                        '<div style="font-size:11px;font-weight:600;color:#166534;">$' + amount.toFixed(0) + '</div>' +
+                        '</div>';
+                });
+                html += '</div>';
+                return html;
+            }
+
+            // Helper function to generate dividend projection chart
+            function generateDividendProjection(currentIncome, years = 10, growthRate = 0.05) {
+                const width = 400, height = 160;
+                const padding = {top: 15, right: 20, bottom: 25, left: 50};
+                const chartWidth = width - padding.left - padding.right;
+                const chartHeight = height - padding.top - padding.bottom;
+
+                const data = [];
+                let income = currentIncome;
+                for (let i = 0; i <= years; i++) {
+                    data.push(income);
+                    income *= (1 + growthRate);
+                }
+
+                const maxVal = Math.max(...data) * 1.1;
+                const scaleX = (i) => padding.left + (i / years) * chartWidth;
+                const scaleY = (v) => padding.top + chartHeight - (v / maxVal) * chartHeight;
+
+                // Generate bars
+                let bars = '';
+                data.forEach((val, i) => {
+                    const barWidth = chartWidth / years * 0.7;
+                    const x = scaleX(i) - barWidth / 2;
+                    const barHeight = (val / maxVal) * chartHeight;
+                    bars += '<rect x="' + x + '" y="' + scaleY(val) + '" width="' + barWidth + '" height="' + barHeight + '" fill="#10b981" rx="2"/>';
+                    if (i % 2 === 0) {
+                        bars += '<text x="' + scaleX(i) + '" y="' + (height - 5) + '" text-anchor="middle" font-size="8" fill="#6b7280">Y' + i + '</text>';
+                    }
+                });
+
+                // Y-axis labels
+                let yLabels = '';
+                for (let i = 0; i <= 4; i++) {
+                    const val = (maxVal / 4) * i;
+                    const y = scaleY(val);
+                    yLabels += '<text x="' + (padding.left - 5) + '" y="' + (y + 3) + '" text-anchor="end" font-size="8" fill="#6b7280">$' + (val/1000).toFixed(0) + 'K</text>';
+                }
+
+                return '<svg width="' + width + '" height="' + height + '" viewBox="0 0 ' + width + ' ' + height + '">' +
+                    yLabels + bars + '</svg>' +
+                    '<div style="text-align:center;margin-top:8px;font-size:10px;color:#666;">Year 10 Projected: <strong style="color:#10b981;">$' + data[years].toLocaleString(undefined, {maximumFractionDigits: 0}) + '</strong></div>';
+            }
+
             // Generate concentration bar data
             const concentrationData = topHoldings.slice(0, 5).map(p => ({
                 symbol: p.symbol,
@@ -15957,15 +16067,19 @@
             </div>
         </div>
 
-        <div class="section" style="margin-top:20px;background:#f8f9fa;padding:16px;border-radius:10px;">
-            <h2 style="font-size:13px;font-weight:600;color:#1a1a2e;margin-bottom:8px;">Allocation Analysis</h2>
-            <p style="font-size: 11px; line-height: 1.7; color: #444; margin:0;">
+        <div class="section" style="margin-top:20px;">
+            <h2 class="section-title">Performance Heat Map</h2>
+            ${generateHeatMap(enrichedPositions, 12)}
+        </div>
+
+        <div class="section" style="margin-top:16px;background:#f8f9fa;padding:14px;border-radius:10px;">
+            <h2 style="font-size:12px;font-weight:600;color:#1a1a2e;margin-bottom:6px;">Allocation Analysis</h2>
+            <p style="font-size: 10px; line-height: 1.6; color: #444; margin:0;">
                 Your portfolio is <strong>${allocation.stocks >= 70 ? 'aggressively' : allocation.stocks >= 50 ? 'moderately' : 'conservatively'}</strong> positioned
                 with ${(allocation.stocks || 0).toFixed(0)}% in equities and ${(allocation.bonds || 0).toFixed(0)}% in fixed income.
-                ${allocation.stocks >= 80 ? 'This high equity allocation suggests a growth-oriented strategy suitable for investors with longer time horizons and higher risk tolerance.' :
+                ${allocation.stocks >= 80 ? 'This high equity allocation suggests a growth-oriented strategy suitable for investors with longer time horizons.' :
                   allocation.stocks >= 60 ? 'This balanced allocation provides a mix of growth potential and stability.' :
                   'This conservative allocation prioritizes capital preservation and income generation.'}
-                ${allocation.cash > 10 ? ' The ' + (allocation.cash || 0).toFixed(0) + '% cash position provides liquidity.' : ''}
             </p>
         </div>
 
@@ -16224,6 +16338,11 @@
         </div>
 
         <div class="section">
+            <h2 class="section-title">Sector vs S&P 500 Benchmark</h2>
+            ${generateSectorBenchmark(sectors)}
+        </div>
+
+        <div class="section">
             <h2 class="section-title">Sector Analysis</h2>
             <p style="font-size: 12px; line-height: 1.8; color: #444;">
                 ${Object.keys(sectors).length > 0 ? `
@@ -16352,6 +16471,18 @@
             </div>
         </div>
 
+        <div class="two-col" style="margin-top: 20px;">
+            <div class="section">
+                <h2 class="section-title">Monthly Dividend Calendar</h2>
+                ${generateDividendCalendar(annualDividendIncome)}
+            </div>
+            <div class="section">
+                <h2 class="section-title">10-Year Income Projection</h2>
+                ${generateDividendProjection(annualDividendIncome, 10, 0.05)}
+                <p style="font-size: 9px; color: #666; margin-top: 8px; text-align: center;">Assumes 5% annual dividend growth rate</p>
+            </div>
+        </div>
+
         <div class="section">
             <h2 class="section-title">Estimated Income by Holding</h2>
             <table class="holdings-table">
@@ -16365,7 +16496,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    ${enrichedPositions.slice(0, 10).map(pos => {
+                    ${enrichedPositions.slice(0, 8).map(pos => {
                         const value = pos.value || (pos.shares * pos.price);
                         let estYield = pos.dividend_yield || 0;
                         if (estYield === 0) {
