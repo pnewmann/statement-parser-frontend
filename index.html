@@ -842,7 +842,7 @@
         .progress-section {
             display: none;
             text-align: center;
-            padding: 80px 40px;
+            padding: 60px 40px;
         }
 
         .spinner {
@@ -866,6 +866,177 @@
         .progress-text {
             color: var(--text-secondary);
             font-size: 1rem;
+        }
+
+        /* Enhanced Progress Indicator */
+        .progress-container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .progress-stages {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        .progress-stages::before {
+            content: '';
+            position: absolute;
+            top: 16px;
+            left: 40px;
+            right: 40px;
+            height: 2px;
+            background: var(--border);
+            z-index: 0;
+        }
+
+        .progress-stage {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .progress-stage-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .progress-stage.active .progress-stage-icon {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+            animation: pulse-stage 1.5s ease-in-out infinite;
+        }
+
+        .progress-stage.completed .progress-stage-icon {
+            background: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+
+        @keyframes pulse-stage {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(99, 91, 255, 0.4); }
+            50% { transform: scale(1.05); box-shadow: 0 0 0 8px rgba(99, 91, 255, 0); }
+        }
+
+        .progress-stage-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .progress-stage.active .progress-stage-label,
+        .progress-stage.completed .progress-stage-label {
+            color: var(--text-primary);
+        }
+
+        .progress-bar-container {
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            height: 8px;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            border-radius: 8px;
+            transition: width 0.3s ease;
+            position: relative;
+        }
+
+        .progress-bar-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 1.5s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .progress-stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .progress-percentage {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .progress-time {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .progress-time svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .progress-details {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-top: 16px;
+        }
+
+        .progress-file-info {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 12px;
+            padding: 12px 16px;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+            font-size: 13px;
+        }
+
+        .progress-file-info svg {
+            width: 16px;
+            height: 16px;
+            color: var(--primary);
+        }
+
+        .progress-tip {
+            margin-top: 24px;
+            padding: 12px 16px;
+            background: rgba(99, 91, 255, 0.08);
+            border-radius: var(--radius-md);
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .progress-tip strong {
+            color: var(--primary);
         }
 
         /* Error */
@@ -6914,8 +7085,86 @@
 
         <!-- Progress -->
         <div class="progress-section" id="progressSection">
-            <div class="spinner"></div>
-            <p class="progress-text" id="progressText">Analyzing your portfolio...</p>
+            <div class="progress-container">
+                <!-- Stage Indicators -->
+                <div class="progress-stages" id="progressStages">
+                    <div class="progress-stage" data-stage="upload">
+                        <div class="progress-stage-icon">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="17 8 12 3 7 8"/>
+                                <line x1="12" y1="3" x2="12" y2="15"/>
+                            </svg>
+                        </div>
+                        <span class="progress-stage-label">Upload</span>
+                    </div>
+                    <div class="progress-stage" data-stage="parse">
+                        <div class="progress-stage-icon">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                                <line x1="16" y1="13" x2="8" y2="13"/>
+                                <line x1="16" y1="17" x2="8" y2="17"/>
+                            </svg>
+                        </div>
+                        <span class="progress-stage-label">Parse</span>
+                    </div>
+                    <div class="progress-stage" data-stage="analyze">
+                        <div class="progress-stage-icon">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="18" y1="20" x2="18" y2="10"/>
+                                <line x1="12" y1="20" x2="12" y2="4"/>
+                                <line x1="6" y1="20" x2="6" y2="14"/>
+                            </svg>
+                        </div>
+                        <span class="progress-stage-label">Analyze</span>
+                    </div>
+                    <div class="progress-stage" data-stage="render">
+                        <div class="progress-stage-icon">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                <line x1="3" y1="9" x2="21" y2="9"/>
+                                <line x1="9" y1="21" x2="9" y2="9"/>
+                            </svg>
+                        </div>
+                        <span class="progress-stage-label">Build</span>
+                    </div>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill" id="progressBarFill" style="width: 0%"></div>
+                </div>
+
+                <!-- Stats Row -->
+                <div class="progress-stats">
+                    <span class="progress-percentage" id="progressPercentage">0%</span>
+                    <span class="progress-time" id="progressTime">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                        <span id="progressElapsed">0s</span>
+                    </span>
+                </div>
+
+                <!-- Status Text -->
+                <p class="progress-text" id="progressText">Analyzing your portfolio...</p>
+
+                <!-- File Info -->
+                <div class="progress-file-info" id="progressFileInfo" style="display: none;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                    </svg>
+                    <span id="progressFileName">--</span>
+                </div>
+
+                <!-- Tip -->
+                <div class="progress-tip" id="progressTip">
+                    <strong>Tip:</strong> Larger files with more positions take longer to process. Complex statements may require additional parsing time.
+                </div>
+            </div>
         </div>
 
         <!-- Market Indicators Widget -->
@@ -8766,6 +9015,154 @@
         let fullChartData = null;
         let currentPeriod = '5Y';
         let visibleBenchmarks = { sp500: true, bonds: false, world: false, sixty_forty: false };
+
+        // =============================================================================
+        // ENHANCED PROGRESS TRACKING SYSTEM
+        // =============================================================================
+
+        const progressManager = {
+            startTime: null,
+            currentStage: null,
+            totalFiles: 0,
+            processedFiles: 0,
+            timerInterval: null,
+
+            stages: ['upload', 'parse', 'analyze', 'render'],
+            stageProgress: {
+                upload: { start: 0, end: 15 },
+                parse: { start: 15, end: 60 },
+                analyze: { start: 60, end: 85 },
+                render: { start: 85, end: 100 }
+            },
+
+            start(totalFiles = 1) {
+                this.startTime = Date.now();
+                this.totalFiles = totalFiles;
+                this.processedFiles = 0;
+                this.currentStage = null;
+
+                // Reset all stages
+                document.querySelectorAll('.progress-stage').forEach(el => {
+                    el.classList.remove('active', 'completed');
+                });
+
+                // Start timer
+                this.updateElapsedTime();
+                this.timerInterval = setInterval(() => this.updateElapsedTime(), 1000);
+
+                // Show file info if multiple files
+                const fileInfoEl = document.getElementById('progressFileInfo');
+                if (totalFiles > 1 && fileInfoEl) {
+                    fileInfoEl.style.display = 'flex';
+                } else if (fileInfoEl) {
+                    fileInfoEl.style.display = 'none';
+                }
+            },
+
+            setStage(stageName, text) {
+                this.currentStage = stageName;
+                const stageIndex = this.stages.indexOf(stageName);
+
+                // Update stage indicators
+                document.querySelectorAll('.progress-stage').forEach((el, i) => {
+                    const stage = el.dataset.stage;
+                    if (this.stages.indexOf(stage) < stageIndex) {
+                        el.classList.remove('active');
+                        el.classList.add('completed');
+                    } else if (stage === stageName) {
+                        el.classList.add('active');
+                        el.classList.remove('completed');
+                    } else {
+                        el.classList.remove('active', 'completed');
+                    }
+                });
+
+                // Update text
+                const textEl = document.getElementById('progressText');
+                if (textEl && text) textEl.textContent = text;
+
+                // Update progress bar to stage start
+                this.setProgress(this.stageProgress[stageName]?.start || 0);
+            },
+
+            setProgress(percent) {
+                const fillEl = document.getElementById('progressBarFill');
+                const percentEl = document.getElementById('progressPercentage');
+
+                if (fillEl) fillEl.style.width = `${percent}%`;
+                if (percentEl) percentEl.textContent = `${Math.round(percent)}%`;
+            },
+
+            updateFileProgress(processedCount, fileName) {
+                this.processedFiles = processedCount;
+
+                const fileNameEl = document.getElementById('progressFileName');
+                if (fileNameEl && fileName) {
+                    fileNameEl.textContent = `${processedCount} of ${this.totalFiles} files processed`;
+                }
+
+                // Calculate progress within parse stage
+                if (this.currentStage === 'parse' && this.totalFiles > 0) {
+                    const stageStart = this.stageProgress.parse.start;
+                    const stageEnd = this.stageProgress.parse.end;
+                    const fileProgress = processedCount / this.totalFiles;
+                    const progress = stageStart + (stageEnd - stageStart) * fileProgress;
+                    this.setProgress(progress);
+                }
+            },
+
+            updateElapsedTime() {
+                if (!this.startTime) return;
+                const elapsed = Math.floor((Date.now() - this.startTime) / 1000);
+                const elapsedEl = document.getElementById('progressElapsed');
+                if (elapsedEl) {
+                    if (elapsed < 60) {
+                        elapsedEl.textContent = `${elapsed}s`;
+                    } else {
+                        const mins = Math.floor(elapsed / 60);
+                        const secs = elapsed % 60;
+                        elapsedEl.textContent = `${mins}m ${secs}s`;
+                    }
+                }
+            },
+
+            complete() {
+                // Mark all stages complete
+                document.querySelectorAll('.progress-stage').forEach(el => {
+                    el.classList.remove('active');
+                    el.classList.add('completed');
+                });
+
+                this.setProgress(100);
+
+                // Stop timer
+                if (this.timerInterval) {
+                    clearInterval(this.timerInterval);
+                    this.timerInterval = null;
+                }
+            },
+
+            reset() {
+                this.startTime = null;
+                this.currentStage = null;
+                this.totalFiles = 0;
+                this.processedFiles = 0;
+
+                if (this.timerInterval) {
+                    clearInterval(this.timerInterval);
+                    this.timerInterval = null;
+                }
+
+                // Reset UI
+                document.querySelectorAll('.progress-stage').forEach(el => {
+                    el.classList.remove('active', 'completed');
+                });
+                this.setProgress(0);
+
+                const elapsedEl = document.getElementById('progressElapsed');
+                if (elapsedEl) elapsedEl.textContent = '0s';
+            }
+        };
 
         // =============================================================================
         // ENTERPRISE ENHANCEMENTS - SETTINGS & PREFERENCES
@@ -11743,6 +12140,23 @@
                 return;
             }
 
+            // Calculate total file size for display
+            const totalSize = validFiles.reduce((sum, f) => sum + f.size, 0);
+            const formatSize = (bytes) => {
+                if (bytes < 1024) return bytes + ' B';
+                if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+                return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+            };
+
+            // Show enhanced progress with stages
+            showProgress('Preparing files...', { start: true, totalFiles: validFiles.length, stage: 'upload' });
+
+            // Update file info display
+            const fileInfoEl = document.getElementById('progressFileName');
+            if (fileInfoEl) {
+                fileInfoEl.textContent = `${validFiles.length} file${validFiles.length > 1 ? 's' : ''} (${formatSize(totalSize)})`;
+            }
+
             // Show upload queue for multiple files
             const queue = document.getElementById('uploadQueue');
             const queueList = document.getElementById('uploadQueueList');
@@ -11771,6 +12185,10 @@
                 `).join('');
             }
 
+            // Transition to parse stage
+            await new Promise(r => setTimeout(r, 300)); // Brief pause for visual feedback
+            progressManager.setStage('parse', `Parsing ${validFiles.length > 1 ? 'statements' : validFiles[0].name}...`);
+
             // Process all files in parallel
             let completed = 0;
             let successful = 0;
@@ -11782,8 +12200,6 @@
                 if (validFiles.length > 1) {
                     iconEl?.classList.add('processing');
                     if (statusEl) statusEl.textContent = 'Processing...';
-                } else {
-                    showProgress(`Parsing ${file.name}...`);
                 }
 
                 try {
@@ -11864,6 +12280,9 @@
                 completed += batch.length;
                 successful += batchResults.filter(r => r.success).length;
 
+                // Update progress manager with file progress
+                progressManager.updateFileProgress(completed, validFiles[Math.min(i + concurrency - 1, validFiles.length - 1)]?.name);
+
                 if (validFiles.length > 1) {
                     queueCount.textContent = `${completed} / ${validFiles.length}`;
                 }
@@ -11879,8 +12298,14 @@
                         queue.style.display = 'none';
                     }, 2000);
                 }
-            } else {
+            }
+
+            // Only hide progress if we're not about to analyze
+            if (successful === 0) {
                 hideProgress();
+            } else {
+                // Keep progress visible - will be used by analyzePortfolio
+                progressManager.setProgress(60); // Parse complete
             }
 
             hideError();
@@ -11947,7 +12372,15 @@
 
         async function analyzePortfolio() {
             if (!accounts.length) return;
-            showProgress('Analyzing portfolio...');
+
+            // Start or continue progress tracking
+            const isNewProgress = !progressManager.startTime;
+            if (isNewProgress) {
+                showProgress('Analyzing portfolio...', { start: true, totalFiles: 1, stage: 'analyze' });
+            } else {
+                progressManager.setStage('analyze', 'Analyzing portfolio...');
+            }
+
             try {
                 const res = await fetch(`${API_URL}/analyze`, {
                     method: 'POST',
@@ -11956,28 +12389,59 @@
                 });
                 if (!res.ok) throw new Error('Analysis failed');
                 portfolioData = await res.json();
-                hideProgress();
+
+                // Transition to render stage
+                progressManager.setStage('render', 'Building dashboard...');
+
                 hideError();
-                showDashboard();
+                await showDashboard();
+
+                // Complete progress
+                progressManager.complete();
+
+                // Brief delay to show 100% before hiding
+                await new Promise(r => setTimeout(r, 400));
+                hideProgress();
+
             } catch (err) {
                 hideProgress();
                 showError('Analysis failed: ' + err.message);
             }
         }
 
-        function showDashboard() {
+        async function showDashboard() {
             uploadSection.style.display = 'none';
             dashboard.style.display = 'block';
             document.getElementById('totalBadge').textContent = formatCurrency(portfolioData.total_value);
-            renderAllocation();
-            renderInsights();
-            renderPerformance();
-            renderSectors();
-            renderGeography();
-            renderRisk();
-            renderHoldings();
+
+            // Chunked rendering for better perceived performance
+            // Each render is wrapped in requestAnimationFrame for smoother UI
+            const renderTasks = [
+                { name: 'Allocation', fn: renderAllocation, progress: 87 },
+                { name: 'Insights', fn: renderInsights, progress: 89 },
+                { name: 'Performance', fn: renderPerformance, progress: 92 },
+                { name: 'Sectors', fn: renderSectors, progress: 94 },
+                { name: 'Geography', fn: renderGeography, progress: 96 },
+                { name: 'Risk', fn: renderRisk, progress: 97 },
+                { name: 'Holdings', fn: renderHoldings, progress: 99 }
+            ];
+
+            for (const task of renderTasks) {
+                await new Promise(resolve => {
+                    requestAnimationFrame(() => {
+                        task.fn();
+                        progressManager.setProgress(task.progress);
+                        resolve();
+                    });
+                });
+                // Small yield to allow UI updates
+                await new Promise(r => setTimeout(r, 10));
+            }
+
+            // Final setup tasks
             updateCompareSelectors();
             initWhatIf();
+
             // Initialize allocation tab features (heat map, suggestions, etc.)
             if (typeof window.switchTab === 'function') {
                 window.switchTab('allocation');
@@ -12912,15 +13376,26 @@
             charts = {};
         }
 
-        function showProgress(text) {
+        function showProgress(text, options = {}) {
             progressSection.style.display = 'block';
             progressText.textContent = text;
             uploadSection.style.display = 'none';
+
+            // Initialize progress manager if starting fresh
+            if (options.start) {
+                progressManager.start(options.totalFiles || 1);
+            }
+
+            // Set stage if specified
+            if (options.stage) {
+                progressManager.setStage(options.stage, text);
+            }
         }
 
         function hideProgress() {
             progressSection.style.display = 'none';
             uploadSection.style.display = 'block';
+            progressManager.reset();
         }
 
         function showError(msg) {
@@ -13405,7 +13880,9 @@
                 }
             }
 
-            showProgress('Analyzing portfolio...');
+            // Start enhanced progress tracking
+            showProgress('Analyzing portfolio...', { start: true, totalFiles: 1, stage: 'analyze' });
+
             try {
                 // Store names from manualHoldings before API call
                 const nameMap = {};
@@ -13430,9 +13907,19 @@
                     });
                 }
 
-                hideProgress();
+                // Transition to render stage
+                progressManager.setStage('render', 'Building dashboard...');
+
                 hideError();
-                showDashboard();
+                await showDashboard();
+
+                // Complete progress
+                progressManager.complete();
+
+                // Brief delay to show 100% before hiding
+                await new Promise(r => setTimeout(r, 400));
+                hideProgress();
+
             } catch (err) {
                 hideProgress();
                 showError('Analysis failed: ' + err.message);
