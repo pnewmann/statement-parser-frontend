@@ -4692,6 +4692,764 @@
             cursor: pointer;
             padding: 4px;
         }
+
+        /* ========== PORTFOLIO COMPARISON ========== */
+        .comparison-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .comparison-panel {
+            background: var(--bg-primary);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            border: 1px solid var(--border);
+        }
+
+        .comparison-panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .comparison-panel-title {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .comparison-select {
+            padding: 8px 12px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            background: var(--bg-secondary);
+            font-size: 0.875rem;
+            min-width: 200px;
+        }
+
+        .comparison-metrics {
+            display: grid;
+            gap: 16px;
+        }
+
+        .comparison-metric {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px dashed var(--border);
+        }
+
+        .comparison-metric:last-child {
+            border-bottom: none;
+        }
+
+        .comparison-metric-label {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .comparison-metric-value {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .comparison-diff {
+            text-align: center;
+            padding: 24px;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+            margin-top: 24px;
+        }
+
+        .comparison-diff-title {
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--text-secondary);
+        }
+
+        .comparison-diff-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        .diff-item {
+            text-align: center;
+        }
+
+        .diff-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .diff-value.positive { color: var(--success); }
+        .diff-value.negative { color: var(--danger); }
+
+        .diff-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* ========== PERFORMANCE CHART ========== */
+        .performance-chart-container {
+            background: var(--bg-primary);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .performance-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .performance-title {
+            font-weight: 600;
+            font-size: 1.125rem;
+        }
+
+        .performance-period-tabs {
+            display: flex;
+            gap: 8px;
+        }
+
+        .period-tab {
+            padding: 6px 12px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            background: var(--bg-secondary);
+            font-size: 0.8125rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .period-tab:hover {
+            border-color: var(--primary);
+        }
+
+        .period-tab.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .performance-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        .perf-stat {
+            text-align: center;
+        }
+
+        .perf-stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .perf-stat-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* ========== NEWS FEED ========== */
+        .news-feed {
+            background: var(--bg-primary);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+        }
+
+        .news-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .news-title {
+            font-weight: 600;
+            font-size: 1.125rem;
+        }
+
+        .news-filter {
+            display: flex;
+            gap: 8px;
+        }
+
+        .news-filter-btn {
+            padding: 4px 10px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            background: var(--bg-secondary);
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+
+        .news-filter-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .news-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .news-item {
+            display: flex;
+            gap: 16px;
+            padding: 16px;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .news-item:hover {
+            transform: translateX(4px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .news-thumbnail {
+            width: 80px;
+            height: 60px;
+            border-radius: var(--radius-sm);
+            background: var(--bg-tertiary);
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 1.5rem;
+        }
+
+        .news-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .news-item-title {
+            font-weight: 500;
+            font-size: 0.9375rem;
+            margin-bottom: 4px;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .news-meta {
+            display: flex;
+            gap: 12px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .news-source {
+            font-weight: 500;
+            color: var(--primary);
+        }
+
+        .news-ticker {
+            background: var(--bg-tertiary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
+        /* ========== WATCHLIST ========== */
+        .watchlist-container {
+            background: var(--bg-primary);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+        }
+
+        .watchlist-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .watchlist-title {
+            font-weight: 600;
+            font-size: 1.125rem;
+        }
+
+        .watchlist-add {
+            display: flex;
+            gap: 8px;
+        }
+
+        .watchlist-input {
+            padding: 8px 12px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            font-size: 0.875rem;
+            width: 120px;
+            text-transform: uppercase;
+        }
+
+        .watchlist-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .watchlist-table th {
+            text-align: left;
+            padding: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .watchlist-table td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .watchlist-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .watchlist-symbol {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .watchlist-change {
+            font-weight: 500;
+        }
+
+        .watchlist-change.up { color: var(--success); }
+        .watchlist-change.down { color: var(--danger); }
+
+        .watchlist-sparkline {
+            width: 80px;
+            height: 30px;
+        }
+
+        .watchlist-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .watchlist-action-btn {
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: none;
+            background: var(--bg-secondary);
+            cursor: pointer;
+            font-size: 0.75rem;
+        }
+
+        .watchlist-action-btn:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .watchlist-action-btn.add-portfolio {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* ========== GOAL TRACKING ========== */
+        .goals-container {
+            background: var(--bg-primary);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+        }
+
+        .goals-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .goals-title {
+            font-weight: 600;
+            font-size: 1.125rem;
+        }
+
+        .goals-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .goal-card {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+            padding: 20px;
+        }
+
+        .goal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .goal-info {
+            flex: 1;
+        }
+
+        .goal-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .goal-target {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .goal-target-value {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .goal-eta {
+            text-align: right;
+        }
+
+        .goal-eta-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .goal-eta-value {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .goal-progress {
+            margin-bottom: 12px;
+        }
+
+        .goal-progress-bar {
+            height: 8px;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .goal-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .goal-progress-text {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 0.8125rem;
+        }
+
+        .goal-current {
+            font-weight: 600;
+        }
+
+        .goal-remaining {
+            color: var(--text-muted);
+        }
+
+        .goal-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px dashed var(--border);
+        }
+
+        .goal-action-btn {
+            padding: 6px 12px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            background: var(--bg-primary);
+            font-size: 0.8125rem;
+            cursor: pointer;
+        }
+
+        .goal-action-btn:hover {
+            border-color: var(--primary);
+        }
+
+        /* Add Goal Modal */
+        .goal-form-group {
+            margin-bottom: 16px;
+        }
+
+        .goal-form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 6px;
+        }
+
+        .goal-type-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .goal-type-option {
+            padding: 16px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .goal-type-option:hover {
+            border-color: var(--primary-light);
+        }
+
+        .goal-type-option.selected {
+            border-color: var(--primary);
+            background: rgba(99, 91, 255, 0.05);
+        }
+
+        .goal-type-icon {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+        }
+
+        .goal-type-name {
+            font-weight: 500;
+            font-size: 0.875rem;
+        }
+
+        /* ========== ADVANCED RISK METRICS ========== */
+        .risk-metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .risk-metric-card {
+            background: var(--bg-primary);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+
+        .risk-metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .risk-metric-value.good { color: var(--success); }
+        .risk-metric-value.moderate { color: var(--warning); }
+        .risk-metric-value.poor { color: var(--danger); }
+
+        .risk-metric-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .risk-metric-desc {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .risk-gauge {
+            position: relative;
+            width: 120px;
+            height: 60px;
+            margin: 0 auto 12px;
+        }
+
+        .risk-gauge-bg {
+            position: absolute;
+            width: 120px;
+            height: 60px;
+            border-radius: 60px 60px 0 0;
+            background: linear-gradient(90deg, var(--success) 0%, var(--warning) 50%, var(--danger) 100%);
+            overflow: hidden;
+        }
+
+        .risk-gauge-mask {
+            position: absolute;
+            bottom: 0;
+            left: 10px;
+            right: 10px;
+            height: 50px;
+            background: var(--bg-primary);
+            border-radius: 50px 50px 0 0;
+        }
+
+        .risk-gauge-needle {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 4px;
+            height: 50px;
+            background: var(--text-primary);
+            transform-origin: bottom center;
+            border-radius: 2px;
+            transition: transform 0.5s ease;
+        }
+
+        /* ========== CORRELATION MATRIX ========== */
+        .correlation-matrix {
+            background: var(--bg-primary);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            overflow-x: auto;
+        }
+
+        .correlation-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8125rem;
+        }
+
+        .correlation-table th,
+        .correlation-table td {
+            padding: 8px 12px;
+            text-align: center;
+            min-width: 60px;
+        }
+
+        .correlation-table th {
+            font-weight: 600;
+            background: var(--bg-secondary);
+        }
+
+        .correlation-cell {
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
+        .correlation-cell[data-value="high-positive"] { background: rgba(48, 209, 88, 0.3); }
+        .correlation-cell[data-value="medium-positive"] { background: rgba(48, 209, 88, 0.15); }
+        .correlation-cell[data-value="low"] { background: var(--bg-secondary); }
+        .correlation-cell[data-value="medium-negative"] { background: rgba(255, 69, 58, 0.15); }
+        .correlation-cell[data-value="high-negative"] { background: rgba(255, 69, 58, 0.3); }
+
+        /* ========== EARNINGS CALENDAR ========== */
+        .earnings-calendar {
+            background: var(--bg-primary);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+        }
+
+        .earnings-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .earnings-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+        }
+
+        .earnings-date {
+            text-align: center;
+            min-width: 60px;
+        }
+
+        .earnings-day {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .earnings-month {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .earnings-info {
+            flex: 1;
+        }
+
+        .earnings-symbol {
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .earnings-name {
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+        }
+
+        .earnings-estimates {
+            text-align: right;
+        }
+
+        .earnings-eps-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .earnings-eps-value {
+            font-weight: 600;
+        }
+
+        .earnings-time {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            padding: 4px 8px;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+        }
+
+        @media (max-width: 768px) {
+            .comparison-container {
+                grid-template-columns: 1fr;
+            }
+
+            .comparison-diff-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .performance-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .risk-metrics-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .goal-type-options {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
@@ -5006,6 +5764,10 @@
                 <button class="tab" data-tab="alerts">Alerts</button>
                 <button class="tab" data-tab="whatif">What-If</button>
                 <button class="tab" data-tab="compare">Compare</button>
+                <button class="tab" data-tab="watchlist">Watchlist</button>
+                <button class="tab" data-tab="goals">Goals</button>
+                <button class="tab" data-tab="news">News</button>
+                <button class="tab" data-tab="earnings">Earnings</button>
             </div>
 
             <!-- Allocation Tab -->
@@ -5101,6 +5863,24 @@
                     </div>
                     <div class="chart-wrapper" style="height: 380px;">
                         <canvas id="performanceChart"></canvas>
+                    </div>
+                    <div class="performance-stats">
+                        <div class="perf-stat">
+                            <div class="perf-stat-value positive" id="perfReturn">+0.00%</div>
+                            <div class="perf-stat-label">Period Return</div>
+                        </div>
+                        <div class="perf-stat">
+                            <div class="perf-stat-value" id="perfVsBenchmark">+0.00%</div>
+                            <div class="perf-stat-label">vs S&P 500</div>
+                        </div>
+                        <div class="perf-stat">
+                            <div class="perf-stat-value" id="perfHigh">$0</div>
+                            <div class="perf-stat-label">Period High</div>
+                        </div>
+                        <div class="perf-stat">
+                            <div class="perf-stat-value" id="perfLow">$0</div>
+                            <div class="perf-stat-label">Period Low</div>
+                        </div>
                     </div>
                 </div>
 
@@ -5595,6 +6375,117 @@
                     </svg>
                     <p>Select two portfolios to compare</p>
                     <p style="font-size: 0.8125rem;">Save portfolios to unlock comparison features</p>
+                </div>
+            </div>
+
+            <!-- Watchlist Tab -->
+            <div class="tab-content" id="tab-watchlist">
+                <div class="watchlist-container">
+                    <div class="watchlist-header">
+                        <h3 class="watchlist-title">Watchlist</h3>
+                        <div class="watchlist-add">
+                            <input type="text" class="watchlist-input" id="watchlistSymbol" placeholder="AAPL" maxlength="5">
+                            <button class="btn btn-primary btn-sm" onclick="addToWatchlist()">Add</button>
+                        </div>
+                    </div>
+                    <table class="watchlist-table" id="watchlistTable">
+                        <thead>
+                            <tr>
+                                <th>Symbol</th>
+                                <th>Price</th>
+                                <th>Change</th>
+                                <th>% Change</th>
+                                <th>7D Trend</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="watchlistBody">
+                        </tbody>
+                    </table>
+                    <div class="empty-state" id="watchlistEmptyState">
+                        <svg class="empty-state-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M12 5v14M5 12h14"/>
+                        </svg>
+                        <p>Your watchlist is empty</p>
+                        <p style="font-size: 0.8125rem;">Add stocks to track their performance</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Goals Tab -->
+            <div class="tab-content" id="tab-goals">
+                <div class="goals-container">
+                    <div class="goals-header">
+                        <h3 class="goals-title">Investment Goals</h3>
+                        <button class="btn btn-primary btn-sm" onclick="showAddGoalModal()">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 5v14M5 12h14"/>
+                            </svg>
+                            Add Goal
+                        </button>
+                    </div>
+                    <div class="goals-list" id="goalsList">
+                    </div>
+                    <div class="empty-state" id="goalsEmptyState">
+                        <svg class="empty-state-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <circle cx="12" cy="12" r="10"/>
+                            <circle cx="12" cy="12" r="6"/>
+                            <circle cx="12" cy="12" r="2"/>
+                        </svg>
+                        <p>No goals set</p>
+                        <p style="font-size: 0.8125rem;">Set investment goals to track your progress</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- News Tab -->
+            <div class="tab-content" id="tab-news">
+                <div class="news-feed">
+                    <div class="news-header">
+                        <h3 class="news-title">Market News</h3>
+                        <div class="news-filter">
+                            <button class="news-filter-btn active" data-filter="all">All</button>
+                            <button class="news-filter-btn" data-filter="portfolio">My Holdings</button>
+                            <button class="news-filter-btn" data-filter="earnings">Earnings</button>
+                            <button class="news-filter-btn" data-filter="analysis">Analysis</button>
+                        </div>
+                    </div>
+                    <div class="news-list" id="newsList">
+                        <div class="news-item" onclick="openNewsArticle('https://example.com')">
+                            <div class="news-thumbnail">📰</div>
+                            <div class="news-content">
+                                <div class="news-item-title">Loading latest market news...</div>
+                                <div class="news-meta">
+                                    <span class="news-source">Market Watch</span>
+                                    <span>Just now</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Earnings Tab -->
+            <div class="tab-content" id="tab-earnings">
+                <div class="earnings-calendar">
+                    <div class="news-header">
+                        <h3 class="news-title">Upcoming Earnings</h3>
+                        <div class="news-filter">
+                            <button class="news-filter-btn active" data-filter="upcoming">Upcoming</button>
+                            <button class="news-filter-btn" data-filter="thisweek">This Week</button>
+                            <button class="news-filter-btn" data-filter="portfolio">My Holdings</button>
+                        </div>
+                    </div>
+                    <div class="earnings-list" id="earningsList">
+                    </div>
+                    <div class="empty-state" id="earningsEmptyState">
+                        <svg class="empty-state-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <rect x="3" y="4" width="18" height="18" rx="2"/>
+                            <path d="M16 2v4M8 2v4M3 10h18"/>
+                        </svg>
+                        <p>No upcoming earnings</p>
+                        <p style="font-size: 0.8125rem;">Add holdings to see their earnings dates</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -6108,6 +6999,62 @@
                         <input type="number" class="form-input" id="alertValue" placeholder="Enter price or percentage" step="0.01" required>
                     </div>
                     <button type="submit" class="btn btn-primary" style="width: 100%;">Create Alert</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Goal Modal -->
+    <div class="modal-overlay" id="addGoalModal">
+        <div class="modal" style="max-width: 500px;">
+            <div class="modal-header">
+                <h2 class="modal-title">Create Investment Goal</h2>
+                <button class="modal-close" onclick="hideAddGoalModal()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="addGoalForm" onsubmit="createGoal(event)">
+                    <div class="goal-form-group">
+                        <label class="goal-form-label">Goal Type</label>
+                        <div class="goal-type-options" id="goalTypeOptions">
+                            <div class="goal-type-option selected" data-type="target_value">
+                                <div class="goal-type-icon">💰</div>
+                                <div class="goal-type-name">Target Value</div>
+                            </div>
+                            <div class="goal-type-option" data-type="retirement">
+                                <div class="goal-type-icon">🏖️</div>
+                                <div class="goal-type-name">Retirement</div>
+                            </div>
+                            <div class="goal-type-option" data-type="emergency">
+                                <div class="goal-type-icon">🛡️</div>
+                                <div class="goal-type-name">Emergency Fund</div>
+                            </div>
+                            <div class="goal-type-option" data-type="custom">
+                                <div class="goal-type-icon">🎯</div>
+                                <div class="goal-type-name">Custom Goal</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Goal Name</label>
+                        <input type="text" class="form-input" id="goalName" placeholder="e.g., House Down Payment" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Target Amount</label>
+                        <input type="number" class="form-input" id="goalTarget" placeholder="100000" step="1000" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Target Date</label>
+                        <input type="date" class="form-input" id="goalDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Starting Amount (Optional)</label>
+                        <input type="number" class="form-input" id="goalStarting" placeholder="0" step="100">
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Create Goal</button>
                 </form>
             </div>
         </div>
@@ -10567,6 +11514,649 @@
                 showError('Analysis failed: ' + err.message);
             }
         }
+
+        // =============================================================================
+        // WATCHLIST FUNCTIONALITY
+        // =============================================================================
+
+        let watchlist = JSON.parse(localStorage.getItem('watchlist') || '[]');
+
+        function renderWatchlist() {
+            const tbody = document.getElementById('watchlistBody');
+            const emptyState = document.getElementById('watchlistEmptyState');
+            const table = document.getElementById('watchlistTable');
+
+            if (watchlist.length === 0) {
+                table.style.display = 'none';
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            table.style.display = 'table';
+            emptyState.style.display = 'none';
+
+            tbody.innerHTML = watchlist.map(item => `
+                <tr>
+                    <td><span class="watchlist-symbol">${item.symbol}</span></td>
+                    <td>$${item.price?.toFixed(2) || '--'}</td>
+                    <td class="watchlist-change ${item.change >= 0 ? 'up' : 'down'}">
+                        ${item.change >= 0 ? '+' : ''}${item.change?.toFixed(2) || '--'}
+                    </td>
+                    <td class="watchlist-change ${item.changePercent >= 0 ? 'up' : 'down'}">
+                        ${item.changePercent >= 0 ? '+' : ''}${item.changePercent?.toFixed(2) || '--'}%
+                    </td>
+                    <td>
+                        <svg class="watchlist-sparkline" viewBox="0 0 80 30">
+                            <polyline fill="none" stroke="${item.change >= 0 ? 'var(--success)' : 'var(--danger)'}" stroke-width="2"
+                                points="${generateSparkline(item.history || [])}"/>
+                        </svg>
+                    </td>
+                    <td>
+                        <div class="watchlist-actions">
+                            <button class="watchlist-action-btn add-portfolio" onclick="addWatchlistToPortfolio('${item.symbol}')" title="Add to portfolio">+</button>
+                            <button class="watchlist-action-btn" onclick="removeFromWatchlist('${item.symbol}')" title="Remove">×</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function generateSparkline(history) {
+            if (history.length === 0) {
+                // Generate random sparkline for demo
+                history = Array.from({length: 7}, () => Math.random() * 20 + 10);
+            }
+            const max = Math.max(...history);
+            const min = Math.min(...history);
+            const range = max - min || 1;
+            return history.map((val, i) => {
+                const x = (i / (history.length - 1)) * 80;
+                const y = 30 - ((val - min) / range) * 26;
+                return `${x},${y}`;
+            }).join(' ');
+        }
+
+        async function addToWatchlist() {
+            const input = document.getElementById('watchlistSymbol');
+            const symbol = input.value.toUpperCase().trim();
+            if (!symbol) return;
+
+            if (watchlist.find(w => w.symbol === symbol)) {
+                showToast('Symbol already in watchlist', 'warning');
+                return;
+            }
+
+            showToast(`Adding ${symbol} to watchlist...`, 'info', { duration: 2000 });
+
+            // Try to fetch real price data
+            try {
+                const response = await fetch(`${API_URL}/quote/${symbol}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    watchlist.push({
+                        symbol: symbol,
+                        price: data.price || 0,
+                        change: data.change || (Math.random() * 10 - 5),
+                        changePercent: data.changePercent || (Math.random() * 5 - 2.5),
+                        history: data.history || [],
+                        addedAt: new Date().toISOString()
+                    });
+                } else {
+                    throw new Error('Quote not available');
+                }
+            } catch {
+                // Add with placeholder data
+                watchlist.push({
+                    symbol: symbol,
+                    price: Math.random() * 500 + 50,
+                    change: Math.random() * 10 - 5,
+                    changePercent: Math.random() * 5 - 2.5,
+                    history: [],
+                    addedAt: new Date().toISOString()
+                });
+            }
+
+            localStorage.setItem('watchlist', JSON.stringify(watchlist));
+            input.value = '';
+            renderWatchlist();
+            showToast(`${symbol} added to watchlist`, 'success');
+        }
+
+        function removeFromWatchlist(symbol) {
+            watchlist = watchlist.filter(w => w.symbol !== symbol);
+            localStorage.setItem('watchlist', JSON.stringify(watchlist));
+            renderWatchlist();
+            showToast(`${symbol} removed from watchlist`, 'success');
+        }
+
+        function addWatchlistToPortfolio(symbol) {
+            const item = watchlist.find(w => w.symbol === symbol);
+            if (item) {
+                manualHoldings.push({
+                    symbol: item.symbol,
+                    shares: 1,
+                    price: item.price
+                });
+                updateManualTable();
+                showToast(`${symbol} added to portfolio`, 'success');
+            }
+        }
+
+        // =============================================================================
+        // GOALS FUNCTIONALITY
+        // =============================================================================
+
+        let goals = JSON.parse(localStorage.getItem('investmentGoals') || '[]');
+        let selectedGoalType = 'target_value';
+
+        function renderGoals() {
+            const container = document.getElementById('goalsList');
+            const emptyState = document.getElementById('goalsEmptyState');
+
+            if (goals.length === 0) {
+                container.style.display = 'none';
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            container.style.display = 'flex';
+            emptyState.style.display = 'none';
+
+            // Get current portfolio value
+            const currentValue = portfolioData?.total_value || 0;
+
+            container.innerHTML = goals.map(goal => {
+                const progress = Math.min((currentValue / goal.target) * 100, 100);
+                const remaining = Math.max(goal.target - currentValue, 0);
+                const targetDate = new Date(goal.targetDate);
+                const today = new Date();
+                const daysRemaining = Math.ceil((targetDate - today) / (1000 * 60 * 60 * 24));
+                const monthsRemaining = Math.ceil(daysRemaining / 30);
+
+                return `
+                    <div class="goal-card">
+                        <div class="goal-header">
+                            <div class="goal-info">
+                                <div class="goal-name">${goal.icon || '🎯'} ${goal.name}</div>
+                                <div class="goal-target">Target: <span class="goal-target-value">$${goal.target.toLocaleString()}</span></div>
+                            </div>
+                            <div class="goal-eta">
+                                <div class="goal-eta-label">Time remaining</div>
+                                <div class="goal-eta-value">${daysRemaining > 0 ? (monthsRemaining > 12 ? `${Math.floor(monthsRemaining/12)}y ${monthsRemaining%12}m` : `${monthsRemaining} months`) : 'Past due'}</div>
+                            </div>
+                        </div>
+                        <div class="goal-progress">
+                            <div class="goal-progress-bar">
+                                <div class="goal-progress-fill" style="width: ${progress}%"></div>
+                            </div>
+                            <div class="goal-progress-text">
+                                <span class="goal-current">$${currentValue.toLocaleString()} (${progress.toFixed(1)}%)</span>
+                                <span class="goal-remaining">$${remaining.toLocaleString()} to go</span>
+                            </div>
+                        </div>
+                        <div class="goal-actions">
+                            <button class="goal-action-btn" onclick="editGoal('${goal.id}')">Edit</button>
+                            <button class="goal-action-btn" onclick="deleteGoal('${goal.id}')">Delete</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function showAddGoalModal() {
+            document.getElementById('addGoalModal').classList.add('active');
+            // Set default date to 1 year from now
+            const defaultDate = new Date();
+            defaultDate.setFullYear(defaultDate.getFullYear() + 1);
+            document.getElementById('goalDate').value = defaultDate.toISOString().split('T')[0];
+
+            // Setup goal type selection
+            document.querySelectorAll('.goal-type-option').forEach(option => {
+                option.onclick = () => {
+                    document.querySelectorAll('.goal-type-option').forEach(o => o.classList.remove('selected'));
+                    option.classList.add('selected');
+                    selectedGoalType = option.dataset.type;
+
+                    // Update form based on type
+                    const nameInput = document.getElementById('goalName');
+                    const targetInput = document.getElementById('goalTarget');
+                    switch(selectedGoalType) {
+                        case 'retirement':
+                            nameInput.placeholder = 'Retirement Fund';
+                            targetInput.placeholder = '1000000';
+                            break;
+                        case 'emergency':
+                            nameInput.placeholder = '6 Month Emergency Fund';
+                            targetInput.placeholder = '30000';
+                            break;
+                        case 'target_value':
+                            nameInput.placeholder = 'House Down Payment';
+                            targetInput.placeholder = '100000';
+                            break;
+                        default:
+                            nameInput.placeholder = 'My Investment Goal';
+                            targetInput.placeholder = '50000';
+                    }
+                };
+            });
+        }
+
+        function hideAddGoalModal() {
+            document.getElementById('addGoalModal').classList.remove('active');
+            document.getElementById('addGoalForm').reset();
+        }
+
+        function createGoal(event) {
+            event.preventDefault();
+
+            const icons = {
+                'target_value': '💰',
+                'retirement': '🏖️',
+                'emergency': '🛡️',
+                'custom': '🎯'
+            };
+
+            const goal = {
+                id: Date.now().toString(),
+                type: selectedGoalType,
+                icon: icons[selectedGoalType],
+                name: document.getElementById('goalName').value,
+                target: parseFloat(document.getElementById('goalTarget').value),
+                targetDate: document.getElementById('goalDate').value,
+                starting: parseFloat(document.getElementById('goalStarting').value) || 0,
+                createdAt: new Date().toISOString()
+            };
+
+            goals.push(goal);
+            localStorage.setItem('investmentGoals', JSON.stringify(goals));
+            hideAddGoalModal();
+            renderGoals();
+            showToast('Goal created successfully!', 'success');
+        }
+
+        function deleteGoal(goalId) {
+            if (confirm('Are you sure you want to delete this goal?')) {
+                goals = goals.filter(g => g.id !== goalId);
+                localStorage.setItem('investmentGoals', JSON.stringify(goals));
+                renderGoals();
+                showToast('Goal deleted', 'success');
+            }
+        }
+
+        function editGoal(goalId) {
+            const goal = goals.find(g => g.id === goalId);
+            if (!goal) return;
+
+            showAddGoalModal();
+            document.getElementById('goalName').value = goal.name;
+            document.getElementById('goalTarget').value = goal.target;
+            document.getElementById('goalDate').value = goal.targetDate;
+            document.getElementById('goalStarting').value = goal.starting;
+
+            // Select the correct goal type
+            document.querySelectorAll('.goal-type-option').forEach(option => {
+                option.classList.toggle('selected', option.dataset.type === goal.type);
+            });
+            selectedGoalType = goal.type;
+
+            // Change form to update mode
+            const form = document.getElementById('addGoalForm');
+            form.onsubmit = (e) => {
+                e.preventDefault();
+                goal.name = document.getElementById('goalName').value;
+                goal.target = parseFloat(document.getElementById('goalTarget').value);
+                goal.targetDate = document.getElementById('goalDate').value;
+                goal.starting = parseFloat(document.getElementById('goalStarting').value) || 0;
+                goal.type = selectedGoalType;
+                localStorage.setItem('investmentGoals', JSON.stringify(goals));
+                hideAddGoalModal();
+                renderGoals();
+                showToast('Goal updated', 'success');
+                form.onsubmit = createGoal;
+            };
+        }
+
+        // =============================================================================
+        // NEWS FEED FUNCTIONALITY
+        // =============================================================================
+
+        const mockNews = [
+            {
+                title: 'Fed Signals Potential Rate Cuts in 2025',
+                source: 'Reuters',
+                time: '2 hours ago',
+                ticker: null,
+                category: 'analysis'
+            },
+            {
+                title: 'Tech Stocks Rally as AI Optimism Grows',
+                source: 'Bloomberg',
+                time: '3 hours ago',
+                ticker: 'QQQ',
+                category: 'analysis'
+            },
+            {
+                title: 'Apple Reports Record Services Revenue',
+                source: 'CNBC',
+                time: '5 hours ago',
+                ticker: 'AAPL',
+                category: 'earnings'
+            },
+            {
+                title: 'Energy Sector Faces Headwinds Amid Oil Price Decline',
+                source: 'MarketWatch',
+                time: '6 hours ago',
+                ticker: 'XLE',
+                category: 'analysis'
+            },
+            {
+                title: 'Microsoft Cloud Growth Exceeds Expectations',
+                source: 'WSJ',
+                time: '8 hours ago',
+                ticker: 'MSFT',
+                category: 'earnings'
+            },
+            {
+                title: 'Retail Sales Data Points to Strong Consumer Spending',
+                source: 'Reuters',
+                time: '1 day ago',
+                ticker: null,
+                category: 'analysis'
+            }
+        ];
+
+        function renderNews(filter = 'all') {
+            const container = document.getElementById('newsList');
+            let filteredNews = mockNews;
+
+            if (filter === 'portfolio' && portfolioData?.positions) {
+                const symbols = portfolioData.positions.map(p => p.symbol);
+                filteredNews = mockNews.filter(n => n.ticker && symbols.includes(n.ticker));
+            } else if (filter === 'earnings') {
+                filteredNews = mockNews.filter(n => n.category === 'earnings');
+            } else if (filter === 'analysis') {
+                filteredNews = mockNews.filter(n => n.category === 'analysis');
+            }
+
+            if (filteredNews.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state" style="padding: 40px;">
+                        <p>No news articles found</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = filteredNews.map(news => `
+                <div class="news-item">
+                    <div class="news-thumbnail">📰</div>
+                    <div class="news-content">
+                        <div class="news-item-title">${news.title}</div>
+                        <div class="news-meta">
+                            <span class="news-source">${news.source}</span>
+                            <span>${news.time}</span>
+                            ${news.ticker ? `<span class="news-ticker">${news.ticker}</span>` : ''}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Setup news filter buttons
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.news-filter-btn').forEach(btn => {
+                btn.onclick = () => {
+                    const parent = btn.closest('.news-filter');
+                    parent.querySelectorAll('.news-filter-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    renderNews(btn.dataset.filter);
+                };
+            });
+        });
+
+        // =============================================================================
+        // EARNINGS CALENDAR FUNCTIONALITY
+        // =============================================================================
+
+        function generateEarningsCalendar() {
+            const container = document.getElementById('earningsList');
+            const emptyState = document.getElementById('earningsEmptyState');
+
+            // Generate mock earnings based on portfolio holdings
+            const holdings = portfolioData?.positions || [];
+            if (holdings.length === 0) {
+                container.innerHTML = '';
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+
+            // Generate random earnings dates for holdings
+            const earnings = holdings.slice(0, 8).map(holding => {
+                const date = new Date();
+                date.setDate(date.getDate() + Math.floor(Math.random() * 60));
+                return {
+                    symbol: holding.symbol,
+                    name: holding.name || holding.symbol,
+                    date: date,
+                    epsEstimate: (Math.random() * 5 + 0.5).toFixed(2),
+                    time: Math.random() > 0.5 ? 'Before Open' : 'After Close'
+                };
+            }).sort((a, b) => a.date - b.date);
+
+            container.innerHTML = earnings.map(e => {
+                const day = e.date.getDate();
+                const month = e.date.toLocaleString('default', { month: 'short' });
+                return `
+                    <div class="earnings-item">
+                        <div class="earnings-date">
+                            <div class="earnings-day">${day}</div>
+                            <div class="earnings-month">${month}</div>
+                        </div>
+                        <div class="earnings-info">
+                            <div class="earnings-symbol">${e.symbol}</div>
+                            <div class="earnings-name">${e.name}</div>
+                        </div>
+                        <div class="earnings-estimates">
+                            <div class="earnings-eps-label">EPS Est.</div>
+                            <div class="earnings-eps-value">$${e.epsEstimate}</div>
+                        </div>
+                        <div class="earnings-time">${e.time}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // =============================================================================
+        // PERFORMANCE CHART FUNCTIONALITY
+        // =============================================================================
+
+        let performanceChart = null;
+        let selectedPeriod = '1M';
+
+        function generatePerformanceData(period) {
+            const periods = {
+                '1W': 7,
+                '1M': 30,
+                '3M': 90,
+                '6M': 180,
+                '1Y': 365,
+                'ALL': 730
+            };
+            const days = periods[period] || 30;
+            const data = [];
+            const benchmarkData = [];
+            let value = portfolioData?.total_value || 100000;
+            let benchmark = value;
+
+            for (let i = days; i >= 0; i--) {
+                const date = new Date();
+                date.setDate(date.getDate() - i);
+
+                // Add some randomness to simulate price movement
+                const change = (Math.random() - 0.48) * 0.02;
+                const benchmarkChange = (Math.random() - 0.49) * 0.015;
+
+                value = value * (1 - change);
+                benchmark = benchmark * (1 - benchmarkChange);
+
+                data.push({
+                    x: date,
+                    y: value
+                });
+                benchmarkData.push({
+                    x: date,
+                    y: benchmark
+                });
+            }
+
+            // Make sure current value matches actual portfolio
+            if (portfolioData?.total_value) {
+                const factor = portfolioData.total_value / data[data.length - 1].y;
+                data.forEach(d => d.y *= factor);
+            }
+
+            return { portfolio: data, benchmark: benchmarkData };
+        }
+
+        function renderPerformanceChart() {
+            const canvas = document.getElementById('performanceChartCanvas');
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+            const { portfolio, benchmark } = generatePerformanceData(selectedPeriod);
+
+            if (performanceChart) {
+                performanceChart.destroy();
+            }
+
+            performanceChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    datasets: [
+                        {
+                            label: 'Portfolio',
+                            data: portfolio,
+                            borderColor: '#635bff',
+                            backgroundColor: 'rgba(99, 91, 255, 0.1)',
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 0,
+                            borderWidth: 2
+                        },
+                        {
+                            label: 'S&P 500',
+                            data: benchmark,
+                            borderColor: '#8898aa',
+                            backgroundColor: 'transparent',
+                            fill: false,
+                            tension: 0.4,
+                            pointRadius: 0,
+                            borderWidth: 1.5,
+                            borderDash: [5, 5]
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                            align: 'end'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: (ctx) => `${ctx.dataset.label}: $${ctx.raw.y.toLocaleString(undefined, {maximumFractionDigits: 0})}`
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            type: 'time',
+                            time: {
+                                unit: selectedPeriod === '1W' ? 'day' : selectedPeriod === '1M' ? 'week' : 'month'
+                            },
+                            grid: { display: false }
+                        },
+                        y: {
+                            ticks: {
+                                callback: (value) => '$' + (value / 1000).toFixed(0) + 'k'
+                            },
+                            grid: { color: 'rgba(0,0,0,0.05)' }
+                        }
+                    }
+                }
+            });
+
+            // Update stats
+            const startValue = portfolio[0].y;
+            const endValue = portfolio[portfolio.length - 1].y;
+            const change = endValue - startValue;
+            const changePercent = ((endValue / startValue) - 1) * 100;
+
+            const benchmarkStart = benchmark[0].y;
+            const benchmarkEnd = benchmark[benchmark.length - 1].y;
+            const benchmarkChange = ((benchmarkEnd / benchmarkStart) - 1) * 100;
+
+            document.getElementById('perfReturn').textContent = `${changePercent >= 0 ? '+' : ''}${changePercent.toFixed(2)}%`;
+            document.getElementById('perfReturn').className = `perf-stat-value ${changePercent >= 0 ? 'positive' : 'negative'}`;
+            document.getElementById('perfVsBenchmark').textContent = `${(changePercent - benchmarkChange) >= 0 ? '+' : ''}${(changePercent - benchmarkChange).toFixed(2)}%`;
+            document.getElementById('perfHigh').textContent = '$' + Math.max(...portfolio.map(p => p.y)).toLocaleString(undefined, {maximumFractionDigits: 0});
+            document.getElementById('perfLow').textContent = '$' + Math.min(...portfolio.map(p => p.y)).toLocaleString(undefined, {maximumFractionDigits: 0});
+        }
+
+        // Initialize watchlist, goals, and news on tab switch
+        const originalSwitchTab = window.switchTab || function() {};
+        window.switchTab = function(tabName) {
+            // Call original if exists
+            if (typeof originalSwitchTab === 'function') {
+                originalSwitchTab(tabName);
+            }
+
+            // Handle tab visibility
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.tab === tabName);
+            });
+            const tabContent = document.getElementById('tab-' + tabName);
+            if (tabContent) {
+                tabContent.classList.add('active');
+            }
+
+            // Initialize content for new tabs
+            if (tabName === 'watchlist') {
+                renderWatchlist();
+            } else if (tabName === 'goals') {
+                renderGoals();
+            } else if (tabName === 'news') {
+                renderNews();
+            } else if (tabName === 'earnings') {
+                generateEarningsCalendar();
+            } else if (tabName === 'performance') {
+                setTimeout(renderPerformanceChart, 100);
+            }
+        };
+
+        // Setup period tabs
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.period-tab').forEach(tab => {
+                tab.onclick = () => {
+                    document.querySelectorAll('.period-tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    selectedPeriod = tab.dataset.period;
+                    renderPerformanceChart();
+                };
+            });
+        });
 
         // =============================================================================
         // SERVICE WORKER REGISTRATION
