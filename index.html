@@ -5812,6 +5812,293 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        /* ========== RISK GAUGE VISUALIZATION ========== */
+        .risk-gauge-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 24px;
+            background: var(--bg-primary);
+            border-radius: var(--radius-lg);
+            margin-bottom: 24px;
+        }
+
+        .risk-gauge-wrapper {
+            position: relative;
+            width: 200px;
+            height: 120px;
+            margin-bottom: 16px;
+        }
+
+        .risk-gauge-arc {
+            position: absolute;
+            width: 200px;
+            height: 100px;
+            border-radius: 100px 100px 0 0;
+            background: conic-gradient(from 180deg,
+                var(--success) 0deg,
+                var(--success) 36deg,
+                #8BC34A 36deg,
+                #8BC34A 72deg,
+                var(--warning) 72deg,
+                var(--warning) 108deg,
+                #FF9800 108deg,
+                #FF9800 144deg,
+                var(--danger) 144deg,
+                var(--danger) 180deg
+            );
+            clip-path: polygon(0 100%, 100% 100%, 100% 0, 0 0);
+        }
+
+        .risk-gauge-inner {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 160px;
+            height: 80px;
+            background: var(--bg-primary);
+            border-radius: 80px 80px 0 0;
+        }
+
+        .risk-gauge-needle {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 4px;
+            height: 80px;
+            background: linear-gradient(to top, var(--text-primary), var(--text-primary) 70%, transparent);
+            transform-origin: bottom center;
+            transform: translateX(-50%) rotate(-90deg);
+            transition: transform 1s ease-out;
+            border-radius: 2px;
+        }
+
+        .risk-gauge-center {
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            width: 16px;
+            height: 16px;
+            background: var(--text-primary);
+            border-radius: 50%;
+            transform: translateX(-50%);
+        }
+
+        .risk-gauge-labels {
+            display: flex;
+            justify-content: space-between;
+            width: 200px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .risk-gauge-score {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .risk-gauge-label {
+            font-size: 1rem;
+            color: var(--text-secondary);
+        }
+
+        /* ========== FACTOR EXPOSURE ========== */
+        .factor-exposure-container {
+            background: var(--bg-primary);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .factor-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .factor-item {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .factor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .factor-name {
+            font-weight: 500;
+            font-size: 0.9375rem;
+        }
+
+        .factor-value {
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .factor-bar {
+            height: 8px;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .factor-bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .factor-bar-fill.value { background: #4CAF50; }
+        .factor-bar-fill.growth { background: #2196F3; }
+        .factor-bar-fill.momentum { background: #9C27B0; }
+        .factor-bar-fill.quality { background: #FF9800; }
+        .factor-bar-fill.size { background: #607D8B; }
+        .factor-bar-fill.volatility { background: #f44336; }
+
+        .factor-description {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* ========== MARKET INDICATORS ========== */
+        .market-indicators {
+            display: flex;
+            gap: 12px;
+            padding: 16px 24px;
+            background: var(--bg-primary);
+            border-radius: var(--radius-lg);
+            margin-bottom: 24px;
+            overflow-x: auto;
+        }
+
+        .market-indicator {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 100px;
+            padding: 12px 16px;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+        }
+
+        .market-indicator-name {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+            white-space: nowrap;
+        }
+
+        .market-indicator-value {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 2px;
+        }
+
+        .market-indicator-change {
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .market-indicator-change.up { color: var(--success); }
+        .market-indicator-change.down { color: var(--danger); }
+
+        /* ========== INCOME PROJECTION ========== */
+        .income-projection {
+            background: var(--bg-primary);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+        }
+
+        .income-projection-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .income-chart-container {
+            height: 300px;
+            margin-bottom: 20px;
+        }
+
+        .income-summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        .income-summary-item {
+            text-align: center;
+            padding: 16px;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+        }
+
+        .income-summary-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--success);
+            margin-bottom: 4px;
+        }
+
+        .income-summary-label {
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+        }
+
+        /* ========== STOCK SCREENER MINI ========== */
+        .screener-mini {
+            background: var(--bg-primary);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+        }
+
+        .screener-filters {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .screener-filter {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .screener-filter label {
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+        }
+
+        .screener-filter select,
+        .screener-filter input {
+            padding: 6px 10px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            font-size: 0.875rem;
+            min-width: 100px;
+        }
+
+        .screener-results {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        @media (max-width: 768px) {
+            .factor-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .income-summary-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
     </style>
 </head>
 <body>
@@ -6065,6 +6352,45 @@
             <p class="progress-text" id="progressText">Analyzing your portfolio...</p>
         </div>
 
+        <!-- Market Indicators Widget -->
+        <div class="market-indicators" id="marketIndicators">
+            <div class="market-indicator">
+                <span class="market-indicator-name">S&P 500</span>
+                <span class="market-indicator-value" id="spyValue">--</span>
+                <span class="market-indicator-change up" id="spyChange">--</span>
+            </div>
+            <div class="market-indicator">
+                <span class="market-indicator-name">NASDAQ</span>
+                <span class="market-indicator-value" id="qqqValue">--</span>
+                <span class="market-indicator-change up" id="qqqChange">--</span>
+            </div>
+            <div class="market-indicator">
+                <span class="market-indicator-name">DOW</span>
+                <span class="market-indicator-value" id="diaValue">--</span>
+                <span class="market-indicator-change up" id="diaChange">--</span>
+            </div>
+            <div class="market-indicator">
+                <span class="market-indicator-name">VIX</span>
+                <span class="market-indicator-value" id="vixValue">--</span>
+                <span class="market-indicator-change" id="vixChange">--</span>
+            </div>
+            <div class="market-indicator">
+                <span class="market-indicator-name">10Y Treasury</span>
+                <span class="market-indicator-value" id="tltValue">--</span>
+                <span class="market-indicator-change" id="tltChange">--</span>
+            </div>
+            <div class="market-indicator">
+                <span class="market-indicator-name">Gold</span>
+                <span class="market-indicator-value" id="gldValue">--</span>
+                <span class="market-indicator-change up" id="gldChange">--</span>
+            </div>
+            <div class="market-indicator">
+                <span class="market-indicator-name">Bitcoin</span>
+                <span class="market-indicator-value" id="btcValue">--</span>
+                <span class="market-indicator-change up" id="btcChange">--</span>
+            </div>
+        </div>
+
         <!-- Dashboard -->
         <div class="dashboard" id="dashboard">
             <div class="dashboard-header">
@@ -6316,6 +6642,53 @@
                     </div>
                 </div>
 
+                <!-- Income Projection Calculator -->
+                <div class="income-projection" style="margin-top: 24px;">
+                    <div class="income-projection-header">
+                        <h3 style="font-size: 1.125rem;">Income Projection Calculator</h3>
+                    </div>
+                    <div class="contribution-inputs">
+                        <div class="contribution-input-group">
+                            <label>Annual Dividend</label>
+                            <input type="number" id="incomeCurrentDiv" placeholder="From portfolio" readonly>
+                        </div>
+                        <div class="contribution-input-group">
+                            <label>Growth Rate (%)</label>
+                            <input type="number" id="incomeGrowthRate" value="5" min="0" max="20" step="0.5">
+                        </div>
+                        <div class="contribution-input-group">
+                            <label>Reinvest Dividends</label>
+                            <select id="incomeReinvest">
+                                <option value="yes">Yes (DRIP)</option>
+                                <option value="no">No</option>
+                            </select>
+                        </div>
+                        <div class="contribution-input-group">
+                            <label>Years</label>
+                            <input type="number" id="incomeYears" value="10" min="1" max="30">
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="calculateIncomeProjection()">Calculate Projection</button>
+                    <div class="income-summary-grid" id="incomeSummary" style="display: none; margin-top: 20px;">
+                        <div class="income-summary-item">
+                            <div class="income-summary-value" id="incomeYear1">$0</div>
+                            <div class="income-summary-label">Year 1 Income</div>
+                        </div>
+                        <div class="income-summary-item">
+                            <div class="income-summary-value" id="incomeYear5">$0</div>
+                            <div class="income-summary-label">Year 5 Income</div>
+                        </div>
+                        <div class="income-summary-item">
+                            <div class="income-summary-value" id="incomeYear10">$0</div>
+                            <div class="income-summary-label">Year 10 Income</div>
+                        </div>
+                        <div class="income-summary-item">
+                            <div class="income-summary-value" id="incomeTotalReceived">$0</div>
+                            <div class="income-summary-label">Total Received</div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="card chart-card" style="margin-top: 24px;">
                     <div class="card-title">10-Year Dividend Projection</div>
                     <div class="chart-wrapper">
@@ -6381,6 +6754,78 @@
 
             <!-- Risk Tab -->
             <div class="tab-content" id="tab-risk">
+                <!-- Risk Gauge -->
+                <div class="risk-gauge-container">
+                    <div class="risk-gauge-wrapper">
+                        <div class="risk-gauge-arc"></div>
+                        <div class="risk-gauge-inner"></div>
+                        <div class="risk-gauge-needle" id="riskGaugeNeedle"></div>
+                        <div class="risk-gauge-center"></div>
+                    </div>
+                    <div class="risk-gauge-labels">
+                        <span>Low</span>
+                        <span>Moderate</span>
+                        <span>High</span>
+                    </div>
+                    <div class="risk-gauge-score" id="riskScoreValue">--</div>
+                    <div class="risk-gauge-label" id="riskScoreLabel">Overall Risk Score</div>
+                </div>
+
+                <!-- Factor Exposure -->
+                <div class="factor-exposure-container">
+                    <h3 style="margin-bottom: 20px; font-size: 1.125rem;">Factor Exposure</h3>
+                    <div class="factor-grid" id="factorGrid">
+                        <div class="factor-item">
+                            <div class="factor-header">
+                                <span class="factor-name">Value</span>
+                                <span class="factor-value" id="factorValue">0%</span>
+                            </div>
+                            <div class="factor-bar"><div class="factor-bar-fill value" id="factorValueBar" style="width: 0%"></div></div>
+                            <div class="factor-description">Exposure to undervalued stocks</div>
+                        </div>
+                        <div class="factor-item">
+                            <div class="factor-header">
+                                <span class="factor-name">Growth</span>
+                                <span class="factor-value" id="factorGrowth">0%</span>
+                            </div>
+                            <div class="factor-bar"><div class="factor-bar-fill growth" id="factorGrowthBar" style="width: 0%"></div></div>
+                            <div class="factor-description">Exposure to high-growth stocks</div>
+                        </div>
+                        <div class="factor-item">
+                            <div class="factor-header">
+                                <span class="factor-name">Momentum</span>
+                                <span class="factor-value" id="factorMomentum">0%</span>
+                            </div>
+                            <div class="factor-bar"><div class="factor-bar-fill momentum" id="factorMomentumBar" style="width: 0%"></div></div>
+                            <div class="factor-description">Exposure to trending stocks</div>
+                        </div>
+                        <div class="factor-item">
+                            <div class="factor-header">
+                                <span class="factor-name">Quality</span>
+                                <span class="factor-value" id="factorQuality">0%</span>
+                            </div>
+                            <div class="factor-bar"><div class="factor-bar-fill quality" id="factorQualityBar" style="width: 0%"></div></div>
+                            <div class="factor-description">Exposure to profitable companies</div>
+                        </div>
+                        <div class="factor-item">
+                            <div class="factor-header">
+                                <span class="factor-name">Size</span>
+                                <span class="factor-value" id="factorSize">0%</span>
+                            </div>
+                            <div class="factor-bar"><div class="factor-bar-fill size" id="factorSizeBar" style="width: 0%"></div></div>
+                            <div class="factor-description">Exposure to small-cap stocks</div>
+                        </div>
+                        <div class="factor-item">
+                            <div class="factor-header">
+                                <span class="factor-name">Volatility</span>
+                                <span class="factor-value" id="factorVol">0%</span>
+                            </div>
+                            <div class="factor-bar"><div class="factor-bar-fill volatility" id="factorVolBar" style="width: 0%"></div></div>
+                            <div class="factor-description">Exposure to high-volatility stocks</div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="risk-grid">
                     <div class="card risk-card">
                         <div class="risk-value" id="volatilityVal">--</div>
@@ -12970,8 +13415,179 @@
             if (tabName === 'tools') {
                 initRebalancer();
                 generateCorrelationMatrix();
+            } else if (tabName === 'risk') {
+                updateRiskGauge();
+                updateFactorExposure();
+            } else if (tabName === 'dividends') {
+                initIncomeProjection();
             }
         };
+
+        // =============================================================================
+        // MARKET INDICATORS
+        // =============================================================================
+
+        async function updateMarketIndicators() {
+            // Mock market data - in production, this would come from a real API
+            const mockData = {
+                'spy': { value: 4892.15, change: 0.45 },
+                'qqq': { value: 17234.56, change: 0.72 },
+                'dia': { value: 38234.12, change: 0.23 },
+                'vix': { value: 14.32, change: -5.2 },
+                'tlt': { value: 4.28, change: 0.02 },
+                'gld': { value: 2034.50, change: 0.15 },
+                'btc': { value: 67234, change: 2.34 }
+            };
+
+            // Update UI with mock data
+            document.getElementById('spyValue').textContent = mockData.spy.value.toLocaleString();
+            document.getElementById('spyChange').textContent = `${mockData.spy.change >= 0 ? '+' : ''}${mockData.spy.change}%`;
+            document.getElementById('spyChange').className = `market-indicator-change ${mockData.spy.change >= 0 ? 'up' : 'down'}`;
+
+            document.getElementById('qqqValue').textContent = mockData.qqq.value.toLocaleString();
+            document.getElementById('qqqChange').textContent = `${mockData.qqq.change >= 0 ? '+' : ''}${mockData.qqq.change}%`;
+            document.getElementById('qqqChange').className = `market-indicator-change ${mockData.qqq.change >= 0 ? 'up' : 'down'}`;
+
+            document.getElementById('diaValue').textContent = mockData.dia.value.toLocaleString();
+            document.getElementById('diaChange').textContent = `${mockData.dia.change >= 0 ? '+' : ''}${mockData.dia.change}%`;
+            document.getElementById('diaChange').className = `market-indicator-change ${mockData.dia.change >= 0 ? 'up' : 'down'}`;
+
+            document.getElementById('vixValue').textContent = mockData.vix.value.toFixed(2);
+            document.getElementById('vixChange').textContent = `${mockData.vix.change >= 0 ? '+' : ''}${mockData.vix.change}%`;
+            document.getElementById('vixChange').className = `market-indicator-change ${mockData.vix.change <= 0 ? 'up' : 'down'}`;
+
+            document.getElementById('tltValue').textContent = mockData.tlt.value.toFixed(2) + '%';
+            document.getElementById('tltChange').textContent = `${mockData.tlt.change >= 0 ? '+' : ''}${mockData.tlt.change}%`;
+
+            document.getElementById('gldValue').textContent = '$' + mockData.gld.value.toLocaleString();
+            document.getElementById('gldChange').textContent = `${mockData.gld.change >= 0 ? '+' : ''}${mockData.gld.change}%`;
+            document.getElementById('gldChange').className = `market-indicator-change ${mockData.gld.change >= 0 ? 'up' : 'down'}`;
+
+            document.getElementById('btcValue').textContent = '$' + mockData.btc.value.toLocaleString();
+            document.getElementById('btcChange').textContent = `${mockData.btc.change >= 0 ? '+' : ''}${mockData.btc.change}%`;
+            document.getElementById('btcChange').className = `market-indicator-change ${mockData.btc.change >= 0 ? 'up' : 'down'}`;
+        }
+
+        // Initialize market indicators on page load
+        document.addEventListener('DOMContentLoaded', updateMarketIndicators);
+
+        // =============================================================================
+        // RISK GAUGE VISUALIZATION
+        // =============================================================================
+
+        function updateRiskGauge() {
+            // Calculate risk score based on portfolio metrics
+            const volatility = portfolioData?.risk_metrics?.volatility || 15;
+            const beta = portfolioData?.risk_metrics?.beta || 1.0;
+            const maxDrawdown = Math.abs(portfolioData?.risk_metrics?.max_drawdown || 20);
+
+            // Composite risk score (0-100)
+            const volScore = Math.min(volatility / 30 * 50, 50);
+            const betaScore = Math.min((beta - 0.5) / 1.5 * 25, 25);
+            const ddScore = Math.min(maxDrawdown / 40 * 25, 25);
+            const riskScore = Math.round(volScore + betaScore + ddScore);
+
+            // Update gauge needle rotation (-90deg = 0, 90deg = 100)
+            const rotation = -90 + (riskScore / 100 * 180);
+            document.getElementById('riskGaugeNeedle').style.transform = `translateX(-50%) rotate(${rotation}deg)`;
+
+            // Update score display
+            document.getElementById('riskScoreValue').textContent = riskScore;
+
+            // Update label based on score
+            let label = 'Very Low Risk';
+            let color = 'var(--success)';
+            if (riskScore >= 80) { label = 'Very High Risk'; color = 'var(--danger)'; }
+            else if (riskScore >= 60) { label = 'High Risk'; color = '#FF9800'; }
+            else if (riskScore >= 40) { label = 'Moderate Risk'; color = 'var(--warning)'; }
+            else if (riskScore >= 20) { label = 'Low Risk'; color = '#8BC34A'; }
+
+            document.getElementById('riskScoreLabel').textContent = label;
+            document.getElementById('riskScoreValue').style.color = color;
+        }
+
+        // =============================================================================
+        // FACTOR EXPOSURE ANALYSIS
+        // =============================================================================
+
+        function updateFactorExposure() {
+            // Mock factor exposures - in production, this would come from the API
+            const factors = {
+                value: Math.random() * 60 + 20,
+                growth: Math.random() * 60 + 20,
+                momentum: Math.random() * 50 + 10,
+                quality: Math.random() * 70 + 20,
+                size: Math.random() * 40,
+                volatility: Math.random() * 50 + 10
+            };
+
+            // Update UI
+            document.getElementById('factorValue').textContent = factors.value.toFixed(0) + '%';
+            document.getElementById('factorValueBar').style.width = factors.value + '%';
+
+            document.getElementById('factorGrowth').textContent = factors.growth.toFixed(0) + '%';
+            document.getElementById('factorGrowthBar').style.width = factors.growth + '%';
+
+            document.getElementById('factorMomentum').textContent = factors.momentum.toFixed(0) + '%';
+            document.getElementById('factorMomentumBar').style.width = factors.momentum + '%';
+
+            document.getElementById('factorQuality').textContent = factors.quality.toFixed(0) + '%';
+            document.getElementById('factorQualityBar').style.width = factors.quality + '%';
+
+            document.getElementById('factorSize').textContent = factors.size.toFixed(0) + '%';
+            document.getElementById('factorSizeBar').style.width = factors.size + '%';
+
+            document.getElementById('factorVol').textContent = factors.volatility.toFixed(0) + '%';
+            document.getElementById('factorVolBar').style.width = factors.volatility + '%';
+        }
+
+        // =============================================================================
+        // INCOME PROJECTION CALCULATOR
+        // =============================================================================
+
+        function initIncomeProjection() {
+            // Pre-fill current annual dividend from portfolio
+            const annualDiv = portfolioData?.dividend_summary?.annual_income || 0;
+            document.getElementById('incomeCurrentDiv').value = annualDiv.toFixed(2);
+        }
+
+        function calculateIncomeProjection() {
+            const currentDiv = parseFloat(document.getElementById('incomeCurrentDiv').value) || 0;
+            const growthRate = parseFloat(document.getElementById('incomeGrowthRate').value) || 5;
+            const reinvest = document.getElementById('incomeReinvest').value === 'yes';
+            const years = parseInt(document.getElementById('incomeYears').value) || 10;
+
+            let annualIncome = currentDiv;
+            let totalReceived = 0;
+            let year1 = 0, year5 = 0, year10 = 0;
+
+            for (let year = 1; year <= years; year++) {
+                // Apply growth rate
+                if (year > 1) {
+                    annualIncome *= (1 + growthRate / 100);
+                }
+
+                // If reinvesting, assume dividends grow the income base
+                if (reinvest && year > 1) {
+                    annualIncome *= 1.02; // Assume 2% extra growth from reinvestment
+                }
+
+                totalReceived += annualIncome;
+
+                if (year === 1) year1 = annualIncome;
+                if (year === 5) year5 = annualIncome;
+                if (year === 10) year10 = annualIncome;
+            }
+
+            // Show results
+            document.getElementById('incomeSummary').style.display = 'grid';
+            document.getElementById('incomeYear1').textContent = '$' + Math.round(year1).toLocaleString();
+            document.getElementById('incomeYear5').textContent = '$' + Math.round(year5).toLocaleString();
+            document.getElementById('incomeYear10').textContent = years >= 10 ? '$' + Math.round(year10).toLocaleString() : '--';
+            document.getElementById('incomeTotalReceived').textContent = '$' + Math.round(totalReceived).toLocaleString();
+
+            showToast('Income projection calculated', 'success');
+        }
 
         // =============================================================================
         // SERVICE WORKER REGISTRATION
