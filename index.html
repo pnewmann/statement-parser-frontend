@@ -14377,21 +14377,31 @@
 
             const totalValue = portfolioData.total_value || 0;
             const positions = portfolioData.positions || [];
-            const allocation = portfolioData.allocation || {};
-            const sectors = portfolioData.sector_breakdown || {};
+            // Map asset_allocation to lowercase keys for report compatibility
+            const rawAllocation = portfolioData.asset_allocation || {};
+            const allocation = {
+                stocks: rawAllocation.Stocks || 0,
+                bonds: rawAllocation.Bonds || 0,
+                cash: rawAllocation.Cash || 0,
+                realEstate: rawAllocation['Real Estate'] || 0,
+                crypto: rawAllocation.Crypto || 0,
+                commodities: rawAllocation.Commodities || 0
+            };
+            const allocationValues = portfolioData.asset_allocation_values || {};
+            const sectors = portfolioData.sector_exposure || portfolioData.sector_breakdown || {};
             const riskMetrics = portfolioData.risk_metrics || {};
             const insights = portfolioData.insights || [];
-            const performance = portfolioData.performance || {};
+            const performance = portfolioData.historical_performance || portfolioData.performance || {};
             const dividends = portfolioData.dividend_info || portfolioData.dividends || {};
-            const geography = portfolioData.geographic_breakdown || portfolioData.geography || {};
+            const geography = portfolioData.geography || portfolioData.geographic_breakdown || {};
             const topHoldings = positions.slice().sort((a, b) => (b.value || 0) - (a.value || 0)).slice(0, 10);
 
             // Calculate additional metrics
             const avgDividendYield = dividends.portfolio_yield || positions.reduce((sum, p) => sum + (p.dividend_yield || 0), 0) / positions.length || 0;
             const annualDividendIncome = dividends.annual_income || totalValue * (avgDividendYield / 100) || 0;
-            const stocksValue = totalValue * (allocation.stocks || 0) / 100;
-            const bondsValue = totalValue * (allocation.bonds || 0) / 100;
-            const cashValue = totalValue * (allocation.cash || 0) / 100;
+            const stocksValue = allocationValues.Stocks || totalValue * allocation.stocks / 100;
+            const bondsValue = allocationValues.Bonds || totalValue * allocation.bonds / 100;
+            const cashValue = allocationValues.Cash || totalValue * allocation.cash / 100;
 
             // Create report HTML
             const reportHTML = `
