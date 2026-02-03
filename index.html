@@ -570,6 +570,87 @@
             color: var(--primary);
         }
 
+        /* Stock search autocomplete */
+        .symbol-input-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .stock-search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow-lg);
+            max-height: 280px;
+            overflow-y: auto;
+            z-index: 100;
+            display: none;
+        }
+
+        .stock-search-results.visible {
+            display: block;
+        }
+
+        .stock-search-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border);
+            transition: background 0.15s;
+        }
+
+        .stock-search-item:last-child {
+            border-bottom: none;
+        }
+
+        .stock-search-item:hover {
+            background: var(--bg-secondary);
+        }
+
+        .stock-search-item .symbol {
+            font-weight: 600;
+            color: var(--primary);
+            min-width: 60px;
+        }
+
+        .stock-search-item .name {
+            flex: 1;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .stock-search-item .type {
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            background: var(--bg-secondary);
+            border-radius: 4px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .stock-search-loading {
+            padding: 12px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+
+        .stock-search-empty {
+            padding: 12px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+
         .holding-value {
             color: var(--text-secondary);
         }
@@ -6704,8 +6785,16 @@
 
                     <div class="manual-entry-form">
                         <div class="form-group" style="flex: 1.5;">
-                            <label>Symbol</label>
-                            <input type="text" id="manualSymbol" placeholder="e.g., AAPL" onblur="fetchSymbolPrice()" onkeypress="if(event.key==='Enter') addManualHolding()">
+                            <label>Symbol or Name</label>
+                            <div class="symbol-input-wrapper">
+                                <input type="text" id="manualSymbol" placeholder="e.g., AAPL or Apple"
+                                    oninput="searchStocks(this.value)"
+                                    onblur="setTimeout(() => hideStockSearch(), 200)"
+                                    onfocus="if(this.value.length >= 1) searchStocks(this.value)"
+                                    onkeydown="handleSymbolKeydown(event)"
+                                    autocomplete="off">
+                                <div class="stock-search-results" id="stockSearchResults"></div>
+                            </div>
                         </div>
                         <div class="form-group" id="quantityGroup">
                             <label id="quantityLabel">Quantity</label>
@@ -12938,6 +13027,100 @@
             }
         }
 
+        // Stock search functionality
+        let searchTimeout = null;
+        let searchResults = [];
+        let selectedSearchIndex = -1;
+
+        async function searchStocks(query) {
+            const resultsContainer = document.getElementById('stockSearchResults');
+
+            if (!query || query.length < 1) {
+                hideStockSearch();
+                return;
+            }
+
+            // Debounce search
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(async () => {
+                resultsContainer.innerHTML = '<div class="stock-search-loading">Searching...</div>';
+                resultsContainer.classList.add('visible');
+
+                try {
+                    const response = await fetch(`${API_URL}/search?q=${encodeURIComponent(query)}`);
+                    const data = await response.json();
+                    searchResults = data.results || [];
+                    selectedSearchIndex = -1;
+
+                    if (searchResults.length === 0) {
+                        resultsContainer.innerHTML = '<div class="stock-search-empty">No results found. Press Enter to use as symbol.</div>';
+                    } else {
+                        resultsContainer.innerHTML = searchResults.map((r, i) => `
+                            <div class="stock-search-item" onclick="selectStock(${i})">
+                                <span class="symbol">${r.symbol}</span>
+                                <span class="name">${r.name}</span>
+                                <span class="type">${r.type}</span>
+                            </div>
+                        `).join('');
+                    }
+                } catch (err) {
+                    resultsContainer.innerHTML = '<div class="stock-search-empty">Search unavailable. Enter symbol manually.</div>';
+                }
+            }, 300);
+        }
+
+        function hideStockSearch() {
+            const resultsContainer = document.getElementById('stockSearchResults');
+            resultsContainer.classList.remove('visible');
+            selectedSearchIndex = -1;
+        }
+
+        function selectStock(index) {
+            const result = searchResults[index];
+            if (result) {
+                document.getElementById('manualSymbol').value = result.symbol;
+                hideStockSearch();
+                fetchSymbolPrice();
+            }
+        }
+
+        function handleSymbolKeydown(event) {
+            const resultsContainer = document.getElementById('stockSearchResults');
+            const isVisible = resultsContainer.classList.contains('visible');
+
+            if (event.key === 'ArrowDown' && isVisible && searchResults.length > 0) {
+                event.preventDefault();
+                selectedSearchIndex = Math.min(selectedSearchIndex + 1, searchResults.length - 1);
+                highlightSearchItem();
+            } else if (event.key === 'ArrowUp' && isVisible && searchResults.length > 0) {
+                event.preventDefault();
+                selectedSearchIndex = Math.max(selectedSearchIndex - 1, -1);
+                highlightSearchItem();
+            } else if (event.key === 'Enter') {
+                event.preventDefault();
+                if (isVisible && selectedSearchIndex >= 0 && searchResults[selectedSearchIndex]) {
+                    selectStock(selectedSearchIndex);
+                } else if (isVisible && searchResults.length > 0) {
+                    selectStock(0);
+                } else {
+                    hideStockSearch();
+                    fetchSymbolPrice();
+                }
+            } else if (event.key === 'Escape') {
+                hideStockSearch();
+            } else if (event.key === 'Tab') {
+                hideStockSearch();
+                fetchSymbolPrice();
+            }
+        }
+
+        function highlightSearchItem() {
+            const items = document.querySelectorAll('.stock-search-item');
+            items.forEach((item, i) => {
+                item.style.background = i === selectedSearchIndex ? 'var(--bg-secondary)' : '';
+            });
+        }
+
         async function fetchSymbolPrice() {
             const symbolInput = document.getElementById('manualSymbol');
             const priceInput = document.getElementById('manualPrice');
@@ -13121,7 +13304,7 @@
                 header.classList.add('percent-mode');
                 header.innerHTML = `
                     <span>Symbol</span>
-                    <span>%</span>
+                    <span>Alloc %</span>
                     <span>Shares</span>
                     <span>Price</span>
                     <span>Value</span>
@@ -13154,7 +13337,7 @@
                     return `
                         <div class="holdings-list-item percent-mode">
                             <span class="holding-symbol">${h.symbol}</span>
-                            <span class="holding-percent">${h.percent}%</span>
+                            <span class="holding-percent">${h.percent}</span>
                             <span class="holding-value">${formatNumber(h.shares)}</span>
                             <span class="holding-value">${formatCurrency(h.price)}</span>
                             <span class="holding-total">${formatCurrency(h.value)}</span>
