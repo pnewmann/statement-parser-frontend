@@ -5450,6 +5450,368 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        /* ========== REBALANCING CALCULATOR ========== */
+        .rebalance-container {
+            background: var(--bg-primary);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+        }
+
+        .rebalance-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .rebalance-mode-toggle {
+            display: flex;
+            gap: 8px;
+        }
+
+        .rebalance-mode-btn {
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            background: var(--bg-secondary);
+            font-size: 0.875rem;
+            cursor: pointer;
+        }
+
+        .rebalance-mode-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .rebalance-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .rebalance-current, .rebalance-target {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+            padding: 20px;
+        }
+
+        .rebalance-section-title {
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .rebalance-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+        }
+
+        .rebalance-table th {
+            text-align: left;
+            padding: 10px 8px;
+            font-weight: 600;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .rebalance-table td {
+            padding: 10px 8px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .rebalance-table input {
+            width: 70px;
+            padding: 6px 8px;
+            border-radius: 4px;
+            border: 1px solid var(--border);
+            text-align: right;
+            font-size: 0.875rem;
+        }
+
+        .rebalance-trades {
+            margin-top: 24px;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+            padding: 20px;
+        }
+
+        .trade-action {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: var(--bg-primary);
+            border-radius: var(--radius-sm);
+            margin-bottom: 8px;
+        }
+
+        .trade-action:last-child {
+            margin-bottom: 0;
+        }
+
+        .trade-direction {
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+        }
+
+        .trade-direction.buy {
+            background: rgba(48, 209, 88, 0.15);
+            color: var(--success);
+        }
+
+        .trade-direction.sell {
+            background: rgba(255, 69, 58, 0.15);
+            color: var(--danger);
+        }
+
+        .trade-symbol {
+            font-weight: 600;
+            min-width: 60px;
+        }
+
+        .trade-details {
+            flex: 1;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .trade-value {
+            font-weight: 600;
+        }
+
+        /* ========== CONTRIBUTION CALCULATOR ========== */
+        .contribution-calculator {
+            background: var(--bg-primary);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+        }
+
+        .contribution-inputs {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .contribution-input-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .contribution-input-group label {
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .contribution-input-group input,
+        .contribution-input-group select {
+            padding: 10px 12px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            font-size: 0.9375rem;
+        }
+
+        .contribution-results {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+        }
+
+        .contribution-result {
+            text-align: center;
+            padding: 20px;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+        }
+
+        .contribution-result-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .contribution-result-label {
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+        }
+
+        .contribution-breakdown {
+            margin-top: 24px;
+        }
+
+        .contribution-breakdown-title {
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .contribution-bar {
+            height: 32px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            overflow: hidden;
+        }
+
+        .contribution-bar-segment {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: white;
+        }
+
+        .contribution-bar-principal {
+            background: var(--primary);
+        }
+
+        .contribution-bar-contributions {
+            background: var(--success);
+        }
+
+        .contribution-bar-growth {
+            background: var(--warning);
+        }
+
+        /* ========== HOLDING NOTES & TAGS ========== */
+        .holding-notes-btn {
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: 1px solid var(--border);
+            background: var(--bg-secondary);
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+
+        .holding-notes-btn:hover {
+            border-color: var(--primary);
+        }
+
+        .holding-tags {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+            margin-top: 4px;
+        }
+
+        .holding-tag {
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.6875rem;
+            font-weight: 500;
+        }
+
+        .holding-tag.growth { background: rgba(99, 91, 255, 0.15); color: var(--primary); }
+        .holding-tag.value { background: rgba(48, 209, 88, 0.15); color: var(--success); }
+        .holding-tag.dividend { background: rgba(255, 159, 10, 0.15); color: #ff9f0a; }
+        .holding-tag.speculative { background: rgba(255, 69, 58, 0.15); color: var(--danger); }
+        .holding-tag.core { background: rgba(136, 152, 170, 0.15); color: var(--text-secondary); }
+
+        .notes-modal-content {
+            max-width: 500px;
+        }
+
+        .notes-textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 12px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            font-family: inherit;
+            font-size: 0.9375rem;
+            resize: vertical;
+            margin-bottom: 16px;
+        }
+
+        .tag-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .tag-option {
+            padding: 6px 12px;
+            border-radius: 16px;
+            border: 2px solid var(--border);
+            font-size: 0.8125rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tag-option:hover {
+            border-color: var(--primary-light);
+        }
+
+        .tag-option.selected {
+            border-color: var(--primary);
+            background: rgba(99, 91, 255, 0.1);
+        }
+
+        /* ========== QUICK STATS MINI CARDS ========== */
+        .quick-stats-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+        }
+
+        .quick-stat-mini {
+            flex-shrink: 0;
+            background: var(--bg-primary);
+            border-radius: var(--radius-md);
+            padding: 16px 20px;
+            min-width: 140px;
+            border: 1px solid var(--border);
+        }
+
+        .quick-stat-mini-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .quick-stat-mini-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .quick-stat-mini-change {
+            font-size: 0.75rem;
+            margin-top: 4px;
+        }
+
+        .quick-stat-mini-change.positive { color: var(--success); }
+        .quick-stat-mini-change.negative { color: var(--danger); }
+
+        @media (max-width: 768px) {
+            .rebalance-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .contribution-inputs {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .contribution-results {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
@@ -5768,6 +6130,7 @@
                 <button class="tab" data-tab="goals">Goals</button>
                 <button class="tab" data-tab="news">News</button>
                 <button class="tab" data-tab="earnings">Earnings</button>
+                <button class="tab" data-tab="tools">Tools</button>
             </div>
 
             <!-- Allocation Tab -->
@@ -6485,6 +6848,127 @@
                         </svg>
                         <p>No upcoming earnings</p>
                         <p style="font-size: 0.8125rem;">Add holdings to see their earnings dates</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tools Tab -->
+            <div class="tab-content" id="tab-tools">
+                <!-- Contribution Calculator -->
+                <div class="contribution-calculator" style="margin-bottom: 24px;">
+                    <h3 style="margin-bottom: 20px; font-size: 1.125rem;">Contribution Calculator</h3>
+                    <div class="contribution-inputs">
+                        <div class="contribution-input-group">
+                            <label>Starting Amount</label>
+                            <input type="number" id="contribStarting" value="10000" min="0">
+                        </div>
+                        <div class="contribution-input-group">
+                            <label>Monthly Contribution</label>
+                            <input type="number" id="contribMonthly" value="500" min="0">
+                        </div>
+                        <div class="contribution-input-group">
+                            <label>Expected Return (%)</label>
+                            <input type="number" id="contribReturn" value="7" min="0" max="30" step="0.5">
+                        </div>
+                        <div class="contribution-input-group">
+                            <label>Time Horizon (Years)</label>
+                            <input type="number" id="contribYears" value="20" min="1" max="50">
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="calculateContributions()">Calculate Growth</button>
+                    <div class="contribution-results" id="contribResults" style="display: none;">
+                        <div class="contribution-result">
+                            <div class="contribution-result-value" id="contribFinalValue">$0</div>
+                            <div class="contribution-result-label">Final Portfolio Value</div>
+                        </div>
+                        <div class="contribution-result">
+                            <div class="contribution-result-value" id="contribTotalContrib">$0</div>
+                            <div class="contribution-result-label">Total Contributions</div>
+                        </div>
+                        <div class="contribution-result">
+                            <div class="contribution-result-value" id="contribTotalGrowth">$0</div>
+                            <div class="contribution-result-label">Investment Growth</div>
+                        </div>
+                    </div>
+                    <div class="contribution-breakdown" id="contribBreakdown" style="display: none;">
+                        <div class="contribution-breakdown-title">Value Breakdown</div>
+                        <div class="contribution-bar" id="contribBar"></div>
+                        <div style="display: flex; justify-content: space-between; margin-top: 12px; font-size: 0.8125rem;">
+                            <span><span style="color: var(--primary);">●</span> Initial: <span id="contribInitialPct">0%</span></span>
+                            <span><span style="color: var(--success);">●</span> Contributions: <span id="contribContribPct">0%</span></span>
+                            <span><span style="color: var(--warning);">●</span> Growth: <span id="contribGrowthPct">0%</span></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rebalancing Calculator -->
+                <div class="rebalance-container">
+                    <div class="rebalance-header">
+                        <h3 style="font-size: 1.125rem;">Portfolio Rebalancer</h3>
+                        <div class="rebalance-mode-toggle">
+                            <button class="rebalance-mode-btn active" data-mode="percent">By Percentage</button>
+                            <button class="rebalance-mode-btn" data-mode="value">By Value</button>
+                        </div>
+                    </div>
+                    <div class="rebalance-grid">
+                        <div class="rebalance-current">
+                            <div class="rebalance-section-title">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <path d="M12 6v6l4 2"/>
+                                </svg>
+                                Current Allocation
+                            </div>
+                            <table class="rebalance-table" id="rebalanceCurrentTable">
+                                <thead>
+                                    <tr>
+                                        <th>Asset</th>
+                                        <th>Value</th>
+                                        <th>Weight</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="rebalanceCurrentBody">
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="rebalance-target">
+                            <div class="rebalance-section-title">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <circle cx="12" cy="12" r="6"/>
+                                    <circle cx="12" cy="12" r="2"/>
+                                </svg>
+                                Target Allocation
+                            </div>
+                            <table class="rebalance-table" id="rebalanceTargetTable">
+                                <thead>
+                                    <tr>
+                                        <th>Asset</th>
+                                        <th>Target %</th>
+                                        <th>Target Value</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="rebalanceTargetBody">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="calculateRebalance()" style="margin-top: 20px;">Calculate Trades</button>
+                    <div class="rebalance-trades" id="rebalanceTrades" style="display: none;">
+                        <div class="rebalance-section-title">Suggested Trades</div>
+                        <div id="rebalanceTradesList"></div>
+                    </div>
+                </div>
+
+                <!-- Correlation Matrix -->
+                <div class="correlation-matrix" style="margin-top: 24px;">
+                    <h3 style="margin-bottom: 20px; font-size: 1.125rem;">Correlation Matrix</h3>
+                    <p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 16px;">
+                        Shows how your holdings move relative to each other. Lower correlation = better diversification.
+                    </p>
+                    <div id="correlationMatrixContainer">
+                        <table class="correlation-table" id="correlationTable">
+                        </table>
                     </div>
                 </div>
             </div>
@@ -12157,6 +12641,337 @@
                 };
             });
         });
+
+        // =============================================================================
+        // CONTRIBUTION CALCULATOR
+        // =============================================================================
+
+        function calculateContributions() {
+            const starting = parseFloat(document.getElementById('contribStarting').value) || 0;
+            const monthly = parseFloat(document.getElementById('contribMonthly').value) || 0;
+            const annualReturn = parseFloat(document.getElementById('contribReturn').value) || 7;
+            const years = parseInt(document.getElementById('contribYears').value) || 20;
+
+            const monthlyRate = annualReturn / 100 / 12;
+            const months = years * 12;
+
+            // Future value calculation
+            // FV = P(1+r)^n + PMT × (((1+r)^n - 1) / r)
+            const principalGrowth = starting * Math.pow(1 + monthlyRate, months);
+            const contributionGrowth = monthly * ((Math.pow(1 + monthlyRate, months) - 1) / monthlyRate);
+            const finalValue = principalGrowth + contributionGrowth;
+
+            const totalContributions = starting + (monthly * months);
+            const totalGrowth = finalValue - totalContributions;
+
+            // Update display
+            document.getElementById('contribResults').style.display = 'grid';
+            document.getElementById('contribBreakdown').style.display = 'block';
+
+            document.getElementById('contribFinalValue').textContent = '$' + Math.round(finalValue).toLocaleString();
+            document.getElementById('contribTotalContrib').textContent = '$' + Math.round(totalContributions).toLocaleString();
+            document.getElementById('contribTotalGrowth').textContent = '$' + Math.round(totalGrowth).toLocaleString();
+
+            // Breakdown bar
+            const initialPct = (starting / finalValue) * 100;
+            const contribPct = ((monthly * months) / finalValue) * 100;
+            const growthPct = (totalGrowth / finalValue) * 100;
+
+            document.getElementById('contribBar').innerHTML = `
+                <div class="contribution-bar-segment contribution-bar-principal" style="width: ${initialPct}%">${initialPct > 10 ? Math.round(initialPct) + '%' : ''}</div>
+                <div class="contribution-bar-segment contribution-bar-contributions" style="width: ${contribPct}%">${contribPct > 10 ? Math.round(contribPct) + '%' : ''}</div>
+                <div class="contribution-bar-segment contribution-bar-growth" style="width: ${growthPct}%">${growthPct > 10 ? Math.round(growthPct) + '%' : ''}</div>
+            `;
+
+            document.getElementById('contribInitialPct').textContent = initialPct.toFixed(1) + '%';
+            document.getElementById('contribContribPct').textContent = contribPct.toFixed(1) + '%';
+            document.getElementById('contribGrowthPct').textContent = growthPct.toFixed(1) + '%';
+
+            showToast('Calculation complete!', 'success');
+        }
+
+        // =============================================================================
+        // REBALANCING CALCULATOR
+        // =============================================================================
+
+        let rebalanceMode = 'percent';
+        let targetAllocations = {};
+
+        function initRebalancer() {
+            const positions = portfolioData?.positions || [];
+            const totalValue = portfolioData?.total_value || 0;
+
+            if (positions.length === 0) {
+                document.getElementById('rebalanceCurrentBody').innerHTML = `
+                    <tr><td colspan="3" style="text-align: center; color: var(--text-muted);">No holdings to rebalance</td></tr>
+                `;
+                document.getElementById('rebalanceTargetBody').innerHTML = `
+                    <tr><td colspan="3" style="text-align: center; color: var(--text-muted);">Analyze a portfolio first</td></tr>
+                `;
+                return;
+            }
+
+            // Current allocation
+            document.getElementById('rebalanceCurrentBody').innerHTML = positions.map(pos => {
+                const weight = ((pos.value || pos.shares * pos.price) / totalValue * 100).toFixed(1);
+                const value = pos.value || pos.shares * pos.price;
+                targetAllocations[pos.symbol] = parseFloat(weight);
+                return `
+                    <tr>
+                        <td><strong>${pos.symbol}</strong></td>
+                        <td>$${value.toLocaleString(undefined, {maximumFractionDigits: 0})}</td>
+                        <td>${weight}%</td>
+                    </tr>
+                `;
+            }).join('');
+
+            // Target allocation (editable)
+            document.getElementById('rebalanceTargetBody').innerHTML = positions.map(pos => {
+                const weight = ((pos.value || pos.shares * pos.price) / totalValue * 100).toFixed(1);
+                const targetValue = (parseFloat(weight) / 100 * totalValue).toFixed(0);
+                return `
+                    <tr>
+                        <td><strong>${pos.symbol}</strong></td>
+                        <td><input type="number" id="target-${pos.symbol}" value="${weight}" min="0" max="100" step="0.5" onchange="updateTargetValue('${pos.symbol}')">%</td>
+                        <td id="targetVal-${pos.symbol}">$${parseInt(targetValue).toLocaleString()}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function updateTargetValue(symbol) {
+            const totalValue = portfolioData?.total_value || 0;
+            const targetPct = parseFloat(document.getElementById(`target-${symbol}`).value) || 0;
+            targetAllocations[symbol] = targetPct;
+            const targetValue = (targetPct / 100 * totalValue).toFixed(0);
+            document.getElementById(`targetVal-${symbol}`).textContent = '$' + parseInt(targetValue).toLocaleString();
+        }
+
+        function calculateRebalance() {
+            const positions = portfolioData?.positions || [];
+            const totalValue = portfolioData?.total_value || 0;
+
+            if (positions.length === 0) {
+                showToast('No holdings to rebalance', 'warning');
+                return;
+            }
+
+            // Check if targets sum to ~100%
+            const totalTarget = Object.values(targetAllocations).reduce((a, b) => a + b, 0);
+            if (Math.abs(totalTarget - 100) > 1) {
+                showToast(`Target allocations sum to ${totalTarget.toFixed(1)}% (should be 100%)`, 'warning');
+            }
+
+            const trades = [];
+
+            positions.forEach(pos => {
+                const currentValue = pos.value || pos.shares * pos.price;
+                const targetPct = targetAllocations[pos.symbol] || 0;
+                const targetValue = (targetPct / 100) * totalValue;
+                const difference = targetValue - currentValue;
+
+                if (Math.abs(difference) > 10) { // Only show trades > $10
+                    trades.push({
+                        symbol: pos.symbol,
+                        direction: difference > 0 ? 'buy' : 'sell',
+                        amount: Math.abs(difference),
+                        shares: Math.abs(difference / pos.price).toFixed(2),
+                        price: pos.price
+                    });
+                }
+            });
+
+            // Sort by absolute value
+            trades.sort((a, b) => b.amount - a.amount);
+
+            document.getElementById('rebalanceTrades').style.display = 'block';
+            document.getElementById('rebalanceTradesList').innerHTML = trades.length > 0 ? trades.map(trade => `
+                <div class="trade-action">
+                    <span class="trade-direction ${trade.direction}">${trade.direction}</span>
+                    <span class="trade-symbol">${trade.symbol}</span>
+                    <span class="trade-details">${trade.shares} shares @ $${trade.price.toFixed(2)}</span>
+                    <span class="trade-value">$${trade.amount.toLocaleString(undefined, {maximumFractionDigits: 0})}</span>
+                </div>
+            `).join('') : '<p style="color: var(--text-muted); text-align: center;">Portfolio is already balanced!</p>';
+
+            showToast('Rebalance calculated', 'success');
+        }
+
+        // Setup rebalance mode toggle
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.rebalance-mode-btn').forEach(btn => {
+                btn.onclick = () => {
+                    document.querySelectorAll('.rebalance-mode-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    rebalanceMode = btn.dataset.mode;
+                };
+            });
+        });
+
+        // =============================================================================
+        // CORRELATION MATRIX
+        // =============================================================================
+
+        function generateCorrelationMatrix() {
+            const positions = portfolioData?.positions || [];
+            if (positions.length < 2) {
+                document.getElementById('correlationTable').innerHTML = `
+                    <tr><td style="text-align: center; color: var(--text-muted); padding: 40px;">
+                        Need at least 2 holdings to show correlation
+                    </td></tr>
+                `;
+                return;
+            }
+
+            const symbols = positions.slice(0, 10).map(p => p.symbol); // Limit to 10 holdings
+
+            // Generate mock correlation data (in a real app, this would come from the API)
+            const correlations = {};
+            symbols.forEach(s1 => {
+                correlations[s1] = {};
+                symbols.forEach(s2 => {
+                    if (s1 === s2) {
+                        correlations[s1][s2] = 1.0;
+                    } else if (correlations[s2] && correlations[s2][s1] !== undefined) {
+                        correlations[s1][s2] = correlations[s2][s1];
+                    } else {
+                        // Generate realistic-ish correlations
+                        correlations[s1][s2] = (Math.random() * 1.4 - 0.2).toFixed(2);
+                    }
+                });
+            });
+
+            // Build table HTML
+            let html = '<thead><tr><th></th>';
+            symbols.forEach(s => {
+                html += `<th>${s}</th>`;
+            });
+            html += '</tr></thead><tbody>';
+
+            symbols.forEach(s1 => {
+                html += `<tr><th>${s1}</th>`;
+                symbols.forEach(s2 => {
+                    const corr = parseFloat(correlations[s1][s2]);
+                    let dataValue = 'low';
+                    if (corr > 0.7) dataValue = 'high-positive';
+                    else if (corr > 0.3) dataValue = 'medium-positive';
+                    else if (corr < -0.7) dataValue = 'high-negative';
+                    else if (corr < -0.3) dataValue = 'medium-negative';
+
+                    html += `<td class="correlation-cell" data-value="${dataValue}">${corr.toFixed(2)}</td>`;
+                });
+                html += '</tr>';
+            });
+            html += '</tbody>';
+
+            document.getElementById('correlationTable').innerHTML = html;
+        }
+
+        // =============================================================================
+        // HOLDING NOTES & TAGS
+        // =============================================================================
+
+        let holdingNotes = JSON.parse(localStorage.getItem('holdingNotes') || '{}');
+        let holdingTags = JSON.parse(localStorage.getItem('holdingTags') || '{}');
+
+        const availableTags = [
+            { id: 'growth', name: 'Growth', color: 'growth' },
+            { id: 'value', name: 'Value', color: 'value' },
+            { id: 'dividend', name: 'Dividend', color: 'dividend' },
+            { id: 'speculative', name: 'Speculative', color: 'speculative' },
+            { id: 'core', name: 'Core', color: 'core' }
+        ];
+
+        function showHoldingNotesModal(symbol) {
+            const note = holdingNotes[symbol] || '';
+            const tags = holdingTags[symbol] || [];
+
+            const modalHtml = `
+                <div class="modal-overlay active" id="holdingNotesModal">
+                    <div class="modal notes-modal-content">
+                        <div class="modal-header">
+                            <h2 class="modal-title">Notes for ${symbol}</h2>
+                            <button class="modal-close" onclick="hideHoldingNotesModal()">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <label style="font-weight: 500; margin-bottom: 8px; display: block;">Tags</label>
+                            <div class="tag-selector">
+                                ${availableTags.map(tag => `
+                                    <div class="tag-option ${tags.includes(tag.id) ? 'selected' : ''}" data-tag="${tag.id}" onclick="toggleHoldingTag('${symbol}', '${tag.id}', this)">
+                                        ${tag.name}
+                                    </div>
+                                `).join('')}
+                            </div>
+                            <label style="font-weight: 500; margin-bottom: 8px; display: block;">Notes</label>
+                            <textarea class="notes-textarea" id="holdingNoteText" placeholder="Add your investment thesis, reminders, or notes about this holding...">${note}</textarea>
+                            <button class="btn btn-primary" style="width: 100%;" onclick="saveHoldingNotes('${symbol}')">Save</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Remove existing modal if present
+            const existing = document.getElementById('holdingNotesModal');
+            if (existing) existing.remove();
+
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+        }
+
+        function hideHoldingNotesModal() {
+            const modal = document.getElementById('holdingNotesModal');
+            if (modal) modal.remove();
+        }
+
+        function toggleHoldingTag(symbol, tagId, element) {
+            if (!holdingTags[symbol]) holdingTags[symbol] = [];
+
+            const index = holdingTags[symbol].indexOf(tagId);
+            if (index > -1) {
+                holdingTags[symbol].splice(index, 1);
+                element.classList.remove('selected');
+            } else {
+                holdingTags[symbol].push(tagId);
+                element.classList.add('selected');
+            }
+        }
+
+        function saveHoldingNotes(symbol) {
+            holdingNotes[symbol] = document.getElementById('holdingNoteText').value;
+            localStorage.setItem('holdingNotes', JSON.stringify(holdingNotes));
+            localStorage.setItem('holdingTags', JSON.stringify(holdingTags));
+            hideHoldingNotesModal();
+            showToast('Notes saved', 'success');
+            // Refresh holdings table if visible
+            if (document.getElementById('tab-holdings')?.classList.contains('active')) {
+                renderHoldingsWithNotes();
+            }
+        }
+
+        function getTagsHtml(symbol) {
+            const tags = holdingTags[symbol] || [];
+            if (tags.length === 0) return '';
+            return `<div class="holding-tags">${tags.map(tagId => {
+                const tag = availableTags.find(t => t.id === tagId);
+                return tag ? `<span class="holding-tag ${tag.color}">${tag.name}</span>` : '';
+            }).join('')}</div>`;
+        }
+
+        // Update the tab switching to initialize tools
+        const originalSwitchTabTools = window.switchTab;
+        window.switchTab = function(tabName) {
+            if (originalSwitchTabTools) {
+                originalSwitchTabTools(tabName);
+            }
+
+            if (tabName === 'tools') {
+                initRebalancer();
+                generateCorrelationMatrix();
+            }
+        };
 
         // =============================================================================
         // SERVICE WORKER REGISTRATION
