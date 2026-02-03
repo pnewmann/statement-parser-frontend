@@ -462,6 +462,57 @@
             padding: 10px 20px;
         }
 
+        /* Input Mode Toggle */
+        .input-mode-toggle {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            padding: 6px;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+            max-width: 280px;
+            margin: 0 auto 20px;
+        }
+
+        .mode-btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 10px 16px;
+            border: none;
+            background: transparent;
+            border-radius: var(--radius-sm);
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .mode-btn:hover {
+            color: var(--text-primary);
+        }
+
+        .mode-btn.active {
+            background: var(--bg-primary);
+            color: var(--primary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .mode-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .manual-entry-form .form-group .price-loading {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
         .holdings-list {
             border: 1px solid var(--border);
             border-radius: var(--radius-md);
@@ -6601,20 +6652,41 @@
             <div class="entry-panel" id="manualPanel">
                 <div class="card manual-entry-card">
                     <div class="upload-title" style="text-align: center; margin-bottom: 8px;">Enter your holdings</div>
-                    <p class="upload-hint" style="text-align: center; margin-bottom: 24px;">Add each position with its symbol, shares, and price per share</p>
+                    <p class="upload-hint" style="text-align: center; margin-bottom: 16px;">Add positions by quantity or percentage allocation</p>
+
+                    <!-- Input Mode Toggle -->
+                    <div class="input-mode-toggle" style="display: flex; justify-content: center; gap: 8px; margin-bottom: 20px;">
+                        <button class="mode-btn active" id="modeQuantity" onclick="setInputMode('quantity')">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="7" height="7"/>
+                                <rect x="14" y="3" width="7" height="7"/>
+                                <rect x="14" y="14" width="7" height="7"/>
+                                <rect x="3" y="14" width="7" height="7"/>
+                            </svg>
+                            Quantity
+                        </button>
+                        <button class="mode-btn" id="modePercent" onclick="setInputMode('percent')">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="19" cy="5" r="2"/>
+                                <circle cx="5" cy="19" r="2"/>
+                                <line x1="5" y1="5" x2="19" y2="19"/>
+                            </svg>
+                            % Allocation
+                        </button>
+                    </div>
 
                     <div class="manual-entry-form">
                         <div class="form-group" style="flex: 1.5;">
                             <label>Symbol</label>
-                            <input type="text" id="manualSymbol" placeholder="e.g., AAPL" onkeypress="if(event.key==='Enter') addManualHolding()">
+                            <input type="text" id="manualSymbol" placeholder="e.g., AAPL" onblur="fetchSymbolPrice()" onkeypress="if(event.key==='Enter') addManualHolding()">
                         </div>
-                        <div class="form-group">
-                            <label>Shares</label>
+                        <div class="form-group" id="quantityGroup">
+                            <label id="quantityLabel">Quantity</label>
                             <input type="number" id="manualShares" placeholder="100" step="any" onkeypress="if(event.key==='Enter') addManualHolding()">
                         </div>
-                        <div class="form-group">
-                            <label>Price</label>
-                            <input type="number" id="manualPrice" placeholder="150.00" step="0.01" onkeypress="if(event.key==='Enter') addManualHolding()">
+                        <div class="form-group" id="priceGroup">
+                            <label>Price <span id="priceStatus" style="font-weight: normal; font-size: 0.7rem; color: var(--text-muted);"></span></label>
+                            <input type="number" id="manualPrice" placeholder="Auto-fetch" step="0.01" onkeypress="if(event.key==='Enter') addManualHolding()">
                         </div>
                         <button class="btn btn-primary btn-add" onclick="addManualHolding()">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -12763,6 +12835,68 @@
 
         // Manual Holdings Entry
         let manualHoldings = [];
+        let manualInputMode = 'quantity'; // 'quantity' or 'percent'
+        let manualTotalValue = 100000; // Default portfolio value for percentage mode
+
+        function setInputMode(mode) {
+            manualInputMode = mode;
+
+            // Update button states
+            document.getElementById('modeQuantity').classList.toggle('active', mode === 'quantity');
+            document.getElementById('modePercent').classList.toggle('active', mode === 'percent');
+
+            // Update labels and placeholders
+            const quantityLabel = document.getElementById('quantityLabel');
+            const sharesInput = document.getElementById('manualShares');
+
+            if (mode === 'quantity') {
+                quantityLabel.textContent = 'Quantity';
+                sharesInput.placeholder = '100';
+                sharesInput.step = 'any';
+            } else {
+                quantityLabel.textContent = '% Allocation';
+                sharesInput.placeholder = '10';
+                sharesInput.step = '0.1';
+                sharesInput.max = '100';
+            }
+        }
+
+        async function fetchSymbolPrice() {
+            const symbolInput = document.getElementById('manualSymbol');
+            const priceInput = document.getElementById('manualPrice');
+            const priceStatus = document.getElementById('priceStatus');
+
+            const symbol = symbolInput.value.trim().toUpperCase();
+            if (!symbol || symbol.length < 1) return;
+
+            // Update symbol to uppercase in input
+            symbolInput.value = symbol;
+
+            priceStatus.textContent = '(fetching...)';
+            priceInput.placeholder = 'Loading...';
+
+            try {
+                const response = await fetch(`${API_URL}/quote/${symbol}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    priceInput.value = data.price;
+                    priceInput.placeholder = data.price.toFixed(2);
+                    priceStatus.textContent = '(live)';
+                    priceStatus.style.color = 'var(--success)';
+
+                    // Focus on quantity/shares input
+                    document.getElementById('manualShares').focus();
+                } else {
+                    priceStatus.textContent = '(not found)';
+                    priceStatus.style.color = 'var(--danger)';
+                    priceInput.placeholder = 'Enter price';
+                }
+            } catch (err) {
+                priceStatus.textContent = '(enter manually)';
+                priceStatus.style.color = 'var(--text-muted)';
+                priceInput.placeholder = '150.00';
+            }
+        }
 
         function addManualHolding() {
             const symbolInput = document.getElementById('manualSymbol');
@@ -12770,20 +12904,38 @@
             const priceInput = document.getElementById('manualPrice');
 
             const symbol = symbolInput.value.trim().toUpperCase();
-            const shares = parseFloat(sharesInput.value);
+            let shares = parseFloat(sharesInput.value);
             const price = parseFloat(priceInput.value);
 
             if (!symbol) {
                 symbolInput.focus();
                 return;
             }
-            if (isNaN(shares) || shares <= 0) {
-                sharesInput.focus();
-                return;
-            }
+
             if (isNaN(price) || price <= 0) {
                 priceInput.focus();
+                showToast('Please enter a valid price', 'warning');
                 return;
+            }
+
+            // Handle percentage mode
+            if (manualInputMode === 'percent') {
+                const percent = shares;
+                if (isNaN(percent) || percent <= 0 || percent > 100) {
+                    sharesInput.focus();
+                    showToast('Enter a percentage between 0 and 100', 'warning');
+                    return;
+                }
+
+                // Calculate current total value for percentage calculation
+                const currentTotal = manualHoldings.reduce((sum, h) => sum + h.value, 0) || manualTotalValue;
+                const targetValue = (percent / 100) * currentTotal;
+                shares = targetValue / price;
+            } else {
+                if (isNaN(shares) || shares <= 0) {
+                    sharesInput.focus();
+                    return;
+                }
             }
 
             // Check for duplicate
@@ -12808,6 +12960,7 @@
             symbolInput.value = '';
             sharesInput.value = '';
             priceInput.value = '';
+            document.getElementById('priceStatus').textContent = '';
             symbolInput.focus();
 
             renderManualHoldings();
