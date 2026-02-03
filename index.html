@@ -13045,6 +13045,7 @@
         let searchTimeout = null;
         let searchResults = [];
         let selectedSearchIndex = -1;
+        let pendingStockName = ''; // Store company name from search selection
 
         async function searchStocks(query) {
             const resultsContainer = document.getElementById('stockSearchResults');
@@ -13093,6 +13094,7 @@
             const result = searchResults[index];
             if (result) {
                 document.getElementById('manualSymbol').value = result.symbol;
+                pendingStockName = result.name || ''; // Store company name
                 hideStockSearch();
                 fetchSymbolPrice();
             }
@@ -13244,13 +13246,17 @@
                     shares,
                     price,
                     value: shares * price,
-                    description: symbol
+                    description: symbol,
+                    name: pendingStockName || '' // Include company name
                 };
                 if (manualInputMode === 'percent') {
                     holding.percent = percent;
                 }
                 manualHoldings.push(holding);
             }
+
+            // Clear pending stock name
+            pendingStockName = '';
 
             // Clear inputs
             symbolInput.value = '';
@@ -13401,6 +13407,12 @@
 
             showProgress('Analyzing portfolio...');
             try {
+                // Store names from manualHoldings before API call
+                const nameMap = {};
+                manualHoldings.forEach(h => {
+                    if (h.name) nameMap[h.symbol] = h.name;
+                });
+
                 const res = await fetch(`${API_URL}/analyze`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -13408,6 +13420,16 @@
                 });
                 if (!res.ok) throw new Error('Analysis failed');
                 portfolioData = await res.json();
+
+                // Merge names back into positions
+                if (portfolioData.positions) {
+                    portfolioData.positions.forEach(p => {
+                        if (nameMap[p.symbol]) {
+                            p.name = nameMap[p.symbol];
+                        }
+                    });
+                }
+
                 hideProgress();
                 hideError();
                 showDashboard();
