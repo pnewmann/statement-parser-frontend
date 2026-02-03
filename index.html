@@ -8475,6 +8475,7 @@
         let authToken = localStorage.getItem('authToken');
         let fullChartData = null;
         let currentPeriod = '5Y';
+        let visibleBenchmarks = { sp500: true, bonds: false, world: false, sixty_forty: false };
 
         // =============================================================================
         // ENTERPRISE ENHANCEMENTS - SETTINGS & PREFERENCES
@@ -12052,9 +12053,6 @@
 
             return result;
         }
-
-        // Track which benchmarks are visible
-        let visibleBenchmarks = { sp500: true, bonds: false, world: false, sixty_forty: false };
 
         function toggleBenchmark(key, checked) {
             visibleBenchmarks[key] = checked;
