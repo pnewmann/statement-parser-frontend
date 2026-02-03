@@ -533,6 +533,14 @@
             letter-spacing: 0.05em;
         }
 
+        .holdings-list-header.percent-mode {
+            grid-template-columns: 1.5fr 0.8fr 1fr 1fr 1.2fr 40px;
+        }
+
+        .holdings-list-item.percent-mode {
+            grid-template-columns: 1.5fr 0.8fr 1fr 1fr 1.2fr 40px;
+        }
+
         .holdings-list-empty {
             padding: 48px 24px;
             text-align: center;
@@ -555,6 +563,11 @@
         .holding-symbol {
             font-weight: 600;
             color: var(--text-primary);
+        }
+
+        .holding-percent {
+            font-weight: 500;
+            color: var(--primary);
         }
 
         .holding-value {
@@ -6673,6 +6686,20 @@
                             </svg>
                             % Allocation
                         </button>
+                    </div>
+
+                    <!-- Portfolio Value Input (for % Allocation mode) -->
+                    <div id="portfolioValueSection" style="display: none; margin-bottom: 20px;">
+                        <div style="display: flex; align-items: center; justify-content: center; gap: 12px; padding: 16px; background: var(--bg-secondary); border-radius: var(--radius-md);">
+                            <label style="font-weight: 500; color: var(--text-secondary);">Total Portfolio Value:</label>
+                            <div style="position: relative;">
+                                <span style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted);">$</span>
+                                <input type="number" id="portfolioValueInput" placeholder="100,000" value="100000" step="1000" min="1"
+                                    style="padding: 10px 12px 10px 24px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 1rem; width: 150px;"
+                                    onchange="updatePortfolioValue()">
+                            </div>
+                            <span id="allocationSummary" style="font-size: 0.875rem; color: var(--text-muted);">0% allocated</span>
+                        </div>
                     </div>
 
                     <div class="manual-entry-form">
@@ -12845,6 +12872,10 @@
             document.getElementById('modeQuantity').classList.toggle('active', mode === 'quantity');
             document.getElementById('modePercent').classList.toggle('active', mode === 'percent');
 
+            // Show/hide portfolio value section
+            const portfolioSection = document.getElementById('portfolioValueSection');
+            portfolioSection.style.display = mode === 'percent' ? 'block' : 'none';
+
             // Update labels and placeholders
             const quantityLabel = document.getElementById('quantityLabel');
             const sharesInput = document.getElementById('manualShares');
@@ -12853,11 +12884,57 @@
                 quantityLabel.textContent = 'Quantity';
                 sharesInput.placeholder = '100';
                 sharesInput.step = 'any';
+                sharesInput.removeAttribute('max');
             } else {
                 quantityLabel.textContent = '% Allocation';
                 sharesInput.placeholder = '10';
                 sharesInput.step = '0.1';
                 sharesInput.max = '100';
+                // Clear holdings when switching to percent mode
+                if (manualHoldings.length > 0 && !manualHoldings[0].percent) {
+                    manualHoldings = [];
+                    renderManualHoldings();
+                }
+            }
+
+            updateAllocationSummary();
+        }
+
+        function updatePortfolioValue() {
+            const input = document.getElementById('portfolioValueInput');
+            const value = parseFloat(input.value);
+            if (!isNaN(value) && value > 0) {
+                manualTotalValue = value;
+                // Recalculate all holdings based on new portfolio value
+                manualHoldings.forEach(h => {
+                    if (h.percent) {
+                        h.shares = (h.percent / 100) * manualTotalValue / h.price;
+                        h.value = h.shares * h.price;
+                    }
+                });
+                renderManualHoldings();
+            }
+        }
+
+        function updateAllocationSummary() {
+            const summaryEl = document.getElementById('allocationSummary');
+            if (!summaryEl) return;
+
+            const totalPercent = manualHoldings.reduce((sum, h) => sum + (h.percent || 0), 0);
+            const remaining = 100 - totalPercent;
+
+            if (totalPercent === 0) {
+                summaryEl.textContent = '0% allocated';
+                summaryEl.style.color = 'var(--text-muted)';
+            } else if (totalPercent === 100) {
+                summaryEl.textContent = '100% allocated ✓';
+                summaryEl.style.color = 'var(--success)';
+            } else if (totalPercent > 100) {
+                summaryEl.textContent = `${totalPercent.toFixed(1)}% (over by ${(totalPercent - 100).toFixed(1)}%)`;
+                summaryEl.style.color = 'var(--danger)';
+            } else {
+                summaryEl.textContent = `${totalPercent.toFixed(1)}% allocated (${remaining.toFixed(1)}% remaining)`;
+                summaryEl.style.color = 'var(--warning)';
             }
         }
 
@@ -12919,17 +12996,28 @@
             }
 
             // Handle percentage mode
+            let percent = null;
             if (manualInputMode === 'percent') {
-                const percent = shares;
+                percent = parseFloat(sharesInput.value);
                 if (isNaN(percent) || percent <= 0 || percent > 100) {
                     sharesInput.focus();
                     showToast('Enter a percentage between 0 and 100', 'warning');
                     return;
                 }
 
-                // Calculate current total value for percentage calculation
-                const currentTotal = manualHoldings.reduce((sum, h) => sum + h.value, 0) || manualTotalValue;
-                const targetValue = (percent / 100) * currentTotal;
+                // Check if total allocation would exceed 100%
+                const currentTotal = manualHoldings.reduce((sum, h) => sum + (h.percent || 0), 0);
+                const existingHolding = manualHoldings.find(h => h.symbol === symbol);
+                const existingPercent = existingHolding ? existingHolding.percent : 0;
+
+                if (currentTotal - existingPercent + percent > 100) {
+                    const maxAllowed = 100 - currentTotal + existingPercent;
+                    showToast(`Only ${maxAllowed.toFixed(1)}% remaining. Total must equal 100%.`, 'warning');
+                    return;
+                }
+
+                // Calculate shares based on portfolio value
+                const targetValue = (percent / 100) * manualTotalValue;
                 shares = targetValue / price;
             } else {
                 if (isNaN(shares) || shares <= 0) {
@@ -12942,18 +13030,29 @@
             const existing = manualHoldings.findIndex(h => h.symbol === symbol);
             if (existing >= 0) {
                 // Update existing
-                manualHoldings[existing].shares += shares;
-                manualHoldings[existing].price = price;
-                manualHoldings[existing].value = manualHoldings[existing].shares * price;
+                if (manualInputMode === 'percent') {
+                    manualHoldings[existing].percent = percent;
+                    manualHoldings[existing].shares = shares;
+                    manualHoldings[existing].price = price;
+                    manualHoldings[existing].value = shares * price;
+                } else {
+                    manualHoldings[existing].shares += shares;
+                    manualHoldings[existing].price = price;
+                    manualHoldings[existing].value = manualHoldings[existing].shares * price;
+                }
             } else {
                 // Add new
-                manualHoldings.push({
+                const holding = {
                     symbol,
                     shares,
                     price,
                     value: shares * price,
                     description: symbol
-                });
+                };
+                if (manualInputMode === 'percent') {
+                    holding.percent = percent;
+                }
+                manualHoldings.push(holding);
             }
 
             // Clear inputs
@@ -12997,13 +13096,47 @@
             const empty = document.getElementById('holdingsEmpty');
             const totalEl = document.getElementById('manualTotal');
             const analyzeBtn = document.getElementById('analyzeManualBtn');
+            const header = list.querySelector('.holdings-list-header');
 
             // Calculate total
             const total = manualHoldings.reduce((sum, h) => sum + h.value, 0);
             totalEl.textContent = formatCurrency(total);
 
-            // Enable/disable analyze button
-            analyzeBtn.disabled = manualHoldings.length === 0;
+            // Update allocation summary for percent mode
+            updateAllocationSummary();
+
+            // Enable/disable analyze button based on mode
+            const totalPercent = manualHoldings.reduce((sum, h) => sum + (h.percent || 0), 0);
+            const hasPercentHoldings = manualHoldings.some(h => h.percent);
+
+            if (hasPercentHoldings) {
+                // In percent mode, require exactly 100%
+                analyzeBtn.disabled = manualHoldings.length === 0 || Math.abs(totalPercent - 100) > 0.01;
+            } else {
+                analyzeBtn.disabled = manualHoldings.length === 0;
+            }
+
+            // Update header based on mode
+            if (hasPercentHoldings) {
+                header.classList.add('percent-mode');
+                header.innerHTML = `
+                    <span>Symbol</span>
+                    <span>%</span>
+                    <span>Shares</span>
+                    <span>Price</span>
+                    <span>Value</span>
+                    <span></span>
+                `;
+            } else {
+                header.classList.remove('percent-mode');
+                header.innerHTML = `
+                    <span>Symbol</span>
+                    <span>Shares</span>
+                    <span>Price</span>
+                    <span>Value</span>
+                    <span></span>
+                `;
+            }
 
             // Render list
             if (manualHoldings.length === 0) {
@@ -13016,20 +13149,40 @@
             empty.style.display = 'none';
 
             // Build items HTML
-            const itemsHtml = manualHoldings.map((h, i) => `
-                <div class="holdings-list-item">
-                    <span class="holding-symbol">${h.symbol}</span>
-                    <span class="holding-value">${formatNumber(h.shares)}</span>
-                    <span class="holding-value">${formatCurrency(h.price)}</span>
-                    <span class="holding-total">${formatCurrency(h.value)}</span>
-                    <button class="btn-remove" onclick="removeManualHolding(${i})" title="Remove">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <line x1="18" y1="6" x2="6" y2="18"/>
-                            <line x1="6" y1="6" x2="18" y2="18"/>
-                        </svg>
-                    </button>
-                </div>
-            `).join('');
+            const itemsHtml = manualHoldings.map((h, i) => {
+                if (h.percent) {
+                    return `
+                        <div class="holdings-list-item percent-mode">
+                            <span class="holding-symbol">${h.symbol}</span>
+                            <span class="holding-percent">${h.percent}%</span>
+                            <span class="holding-value">${formatNumber(h.shares)}</span>
+                            <span class="holding-value">${formatCurrency(h.price)}</span>
+                            <span class="holding-total">${formatCurrency(h.value)}</span>
+                            <button class="btn-remove" onclick="removeManualHolding(${i})" title="Remove">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="18" y1="6" x2="6" y2="18"/>
+                                    <line x1="6" y1="6" x2="18" y2="18"/>
+                                </svg>
+                            </button>
+                        </div>
+                    `;
+                } else {
+                    return `
+                        <div class="holdings-list-item">
+                            <span class="holding-symbol">${h.symbol}</span>
+                            <span class="holding-value">${formatNumber(h.shares)}</span>
+                            <span class="holding-value">${formatCurrency(h.price)}</span>
+                            <span class="holding-total">${formatCurrency(h.value)}</span>
+                            <button class="btn-remove" onclick="removeManualHolding(${i})" title="Remove">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="18" y1="6" x2="6" y2="18"/>
+                                    <line x1="6" y1="6" x2="18" y2="18"/>
+                                </svg>
+                            </button>
+                        </div>
+                    `;
+                }
+            }).join('');
 
             // Update list (keep header)
             list.querySelectorAll('.holdings-list-item').forEach(el => el.remove());
@@ -13038,6 +13191,16 @@
 
         async function analyzeManualHoldings() {
             if (manualHoldings.length === 0) return;
+
+            // Validate percentage allocation if in percent mode
+            const hasPercentHoldings = manualHoldings.some(h => h.percent);
+            if (hasPercentHoldings) {
+                const totalPercent = manualHoldings.reduce((sum, h) => sum + (h.percent || 0), 0);
+                if (Math.abs(totalPercent - 100) > 0.01) {
+                    showToast(`Allocation must equal 100%. Currently at ${totalPercent.toFixed(1)}%`, 'error');
+                    return;
+                }
+            }
 
             showProgress('Analyzing portfolio...');
             try {
