@@ -11412,10 +11412,10 @@
 
         analyzeBtn.addEventListener('click', analyzePortfolio);
         clearAllBtn.addEventListener('click', () => { accounts = []; renderAccounts(); });
-        document.getElementById('newAnalysisBtn').addEventListener('click', resetUI);
-        document.getElementById('downloadPdfBtn').addEventListener('click', downloadPDF);
-        document.getElementById('downloadCsvBtn').addEventListener('click', downloadCSV);
-        document.getElementById('savePortfolioBtn').addEventListener('click', showSaveModal);
+        document.getElementById('newAnalysisBtn')?.addEventListener('click', resetUI);
+        document.getElementById('downloadPdfBtn')?.addEventListener('click', downloadPDF);
+        document.getElementById('downloadCsvBtn')?.addEventListener('click', downloadCSV);
+        document.getElementById('savePortfolioBtn')?.addEventListener('click', showSaveModal);
 
         document.querySelectorAll('.tab').forEach(tab => {
             tab.addEventListener('click', () => {
