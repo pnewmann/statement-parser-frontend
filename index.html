@@ -13875,44 +13875,49 @@
         // =============================================================================
 
         async function updateMarketIndicators() {
-            // Mock market data - in production, this would come from a real API
-            const mockData = {
-                'spy': { value: 4892.15, change: 0.45 },
-                'qqq': { value: 17234.56, change: 0.72 },
-                'dia': { value: 38234.12, change: 0.23 },
-                'vix': { value: 14.32, change: -5.2 },
-                'tlt': { value: 4.28, change: 0.02 },
-                'gld': { value: 2034.50, change: 0.15 },
-                'btc': { value: 67234, change: 2.34 }
-            };
+            try {
+                // Fetch live market data from API
+                const response = await fetch(`${API_URL}/market`);
+                if (!response.ok) throw new Error('Failed to fetch market data');
+                const data = await response.json();
 
-            // Update UI with mock data
-            document.getElementById('spyValue').textContent = mockData.spy.value.toLocaleString();
-            document.getElementById('spyChange').textContent = `${mockData.spy.change >= 0 ? '+' : ''}${mockData.spy.change}%`;
-            document.getElementById('spyChange').className = `market-indicator-change ${mockData.spy.change >= 0 ? 'up' : 'down'}`;
+                // Helper function to update indicator
+                const updateIndicator = (id, value, change, prefix = '', suffix = '') => {
+                    const valEl = document.getElementById(id + 'Value');
+                    const chgEl = document.getElementById(id + 'Change');
+                    if (value !== null && value !== undefined) {
+                        valEl.textContent = prefix + value.toLocaleString(undefined, {maximumFractionDigits: 2}) + suffix;
+                        if (change !== null && change !== undefined) {
+                            chgEl.textContent = `${change >= 0 ? '+' : ''}${change.toFixed(2)}%`;
+                            // VIX is inverted - down is good
+                            const isGood = id === 'vix' ? change <= 0 : change >= 0;
+                            chgEl.className = `market-indicator-change ${isGood ? 'up' : 'down'}`;
+                        }
+                    } else {
+                        valEl.textContent = '--';
+                        chgEl.textContent = '--';
+                    }
+                };
 
-            document.getElementById('qqqValue').textContent = mockData.qqq.value.toLocaleString();
-            document.getElementById('qqqChange').textContent = `${mockData.qqq.change >= 0 ? '+' : ''}${mockData.qqq.change}%`;
-            document.getElementById('qqqChange').className = `market-indicator-change ${mockData.qqq.change >= 0 ? 'up' : 'down'}`;
+                // Update each market indicator
+                updateIndicator('spy', data.spy?.value, data.spy?.change);
+                updateIndicator('qqq', data.qqq?.value, data.qqq?.change);
+                updateIndicator('dia', data.dia?.value, data.dia?.change);
+                updateIndicator('vix', data.vix?.value, data.vix?.change);
+                updateIndicator('tlt', data.tlt?.value, data.tlt?.change, '', '%');
+                updateIndicator('gld', data.gld?.value, data.gld?.change, '$');
+                updateIndicator('btc', data.btc?.value, data.btc?.change, '$');
 
-            document.getElementById('diaValue').textContent = mockData.dia.value.toLocaleString();
-            document.getElementById('diaChange').textContent = `${mockData.dia.change >= 0 ? '+' : ''}${mockData.dia.change}%`;
-            document.getElementById('diaChange').className = `market-indicator-change ${mockData.dia.change >= 0 ? 'up' : 'down'}`;
-
-            document.getElementById('vixValue').textContent = mockData.vix.value.toFixed(2);
-            document.getElementById('vixChange').textContent = `${mockData.vix.change >= 0 ? '+' : ''}${mockData.vix.change}%`;
-            document.getElementById('vixChange').className = `market-indicator-change ${mockData.vix.change <= 0 ? 'up' : 'down'}`;
-
-            document.getElementById('tltValue').textContent = mockData.tlt.value.toFixed(2) + '%';
-            document.getElementById('tltChange').textContent = `${mockData.tlt.change >= 0 ? '+' : ''}${mockData.tlt.change}%`;
-
-            document.getElementById('gldValue').textContent = '$' + mockData.gld.value.toLocaleString();
-            document.getElementById('gldChange').textContent = `${mockData.gld.change >= 0 ? '+' : ''}${mockData.gld.change}%`;
-            document.getElementById('gldChange').className = `market-indicator-change ${mockData.gld.change >= 0 ? 'up' : 'down'}`;
-
-            document.getElementById('btcValue').textContent = '$' + mockData.btc.value.toLocaleString();
-            document.getElementById('btcChange').textContent = `${mockData.btc.change >= 0 ? '+' : ''}${mockData.btc.change}%`;
-            document.getElementById('btcChange').className = `market-indicator-change ${mockData.btc.change >= 0 ? 'up' : 'down'}`;
+            } catch (err) {
+                console.error('Failed to fetch market data:', err);
+                // Show dashes on error
+                ['spy', 'qqq', 'dia', 'vix', 'tlt', 'gld', 'btc'].forEach(id => {
+                    const valEl = document.getElementById(id + 'Value');
+                    const chgEl = document.getElementById(id + 'Change');
+                    if (valEl) valEl.textContent = '--';
+                    if (chgEl) chgEl.textContent = '--';
+                });
+            }
         }
 
         // Initialize market indicators on page load
