@@ -6099,6 +6099,294 @@
                 grid-template-columns: repeat(2, 1fr);
             }
         }
+
+        /* ========== PORTFOLIO HEAT MAP ========== */
+        .heat-map-container {
+            background: var(--bg-primary);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .heat-map-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .heat-map-period-selector {
+            display: flex;
+            gap: 8px;
+        }
+
+        .heat-map-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 8px;
+        }
+
+        .heat-map-cell {
+            aspect-ratio: 1.5;
+            border-radius: var(--radius-sm);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 8px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .heat-map-cell:hover {
+            transform: scale(1.05);
+            z-index: 1;
+        }
+
+        .heat-map-symbol {
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: white;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .heat-map-change {
+            font-size: 0.75rem;
+            color: white;
+            opacity: 0.9;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .heat-map-cell.gain-large { background: #1B5E20; }
+        .heat-map-cell.gain-medium { background: #388E3C; }
+        .heat-map-cell.gain-small { background: #4CAF50; }
+        .heat-map-cell.neutral { background: #9E9E9E; }
+        .heat-map-cell.loss-small { background: #E57373; }
+        .heat-map-cell.loss-medium { background: #E53935; }
+        .heat-map-cell.loss-large { background: #B71C1C; }
+
+        .heat-map-legend {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 16px;
+            font-size: 0.75rem;
+        }
+
+        .heat-map-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .heat-map-legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 2px;
+        }
+
+        /* ========== ALLOCATION SUGGESTIONS ========== */
+        .suggestions-container {
+            background: var(--bg-primary);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .suggestion-card {
+            display: flex;
+            gap: 16px;
+            padding: 16px;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+            margin-bottom: 12px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .suggestion-card.warning {
+            border-left-color: var(--warning);
+        }
+
+        .suggestion-card.success {
+            border-left-color: var(--success);
+        }
+
+        .suggestion-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--bg-tertiary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .suggestion-content {
+            flex: 1;
+        }
+
+        .suggestion-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .suggestion-text {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .suggestion-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.8125rem;
+            color: var(--primary);
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .suggestion-action:hover {
+            text-decoration: underline;
+        }
+
+        /* ========== VALUATION METRICS ========== */
+        .valuation-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .valuation-card {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+            padding: 16px;
+        }
+
+        .valuation-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .valuation-symbol {
+            font-weight: 600;
+        }
+
+        .valuation-sector {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .valuation-metrics {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        .valuation-metric {
+            text-align: center;
+        }
+
+        .valuation-metric-value {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .valuation-metric-value.undervalued { color: var(--success); }
+        .valuation-metric-value.fair { color: var(--text-primary); }
+        .valuation-metric-value.overvalued { color: var(--danger); }
+
+        .valuation-metric-label {
+            font-size: 0.6875rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        /* ========== CURRENCY EXPOSURE ========== */
+        .currency-exposure-container {
+            background: var(--bg-primary);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+        }
+
+        .currency-chart-container {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+        }
+
+        .currency-donut {
+            width: 200px;
+            height: 200px;
+            flex-shrink: 0;
+        }
+
+        .currency-list {
+            flex: 1;
+        }
+
+        .currency-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .currency-item:last-child {
+            border-bottom: none;
+        }
+
+        .currency-flag {
+            width: 32px;
+            height: 24px;
+            border-radius: 4px;
+            background: var(--bg-tertiary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .currency-info {
+            flex: 1;
+        }
+
+        .currency-name {
+            font-weight: 500;
+            font-size: 0.9375rem;
+        }
+
+        .currency-code {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .currency-allocation {
+            text-align: right;
+        }
+
+        .currency-percent {
+            font-weight: 600;
+        }
+
+        .currency-value {
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 768px) {
+            .currency-chart-container {
+                flex-direction: column;
+            }
+
+            .heat-map-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
     </style>
 </head>
 <body>
@@ -6494,6 +6782,65 @@
                         <div class="card-title">Sub-Asset Breakdown</div>
                         <div class="chart-wrapper">
                             <canvas id="subClassChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Portfolio Heat Map -->
+                <div class="heat-map-container" style="margin-top: 24px;">
+                    <div class="heat-map-header">
+                        <h3 style="font-size: 1.125rem;">Performance Heat Map</h3>
+                        <div class="heat-map-period-selector">
+                            <button class="period-tab active" data-period="1D" onclick="updateHeatMap('1D')">1D</button>
+                            <button class="period-tab" data-period="1W" onclick="updateHeatMap('1W')">1W</button>
+                            <button class="period-tab" data-period="1M" onclick="updateHeatMap('1M')">1M</button>
+                            <button class="period-tab" data-period="YTD" onclick="updateHeatMap('YTD')">YTD</button>
+                        </div>
+                    </div>
+                    <div class="heat-map-grid" id="heatMapGrid">
+                        <!-- Populated dynamically -->
+                    </div>
+                    <div class="heat-map-legend">
+                        <div class="heat-map-legend-item">
+                            <div class="heat-map-legend-color" style="background: #1B5E20;"></div>
+                            <span>&gt;3%</span>
+                        </div>
+                        <div class="heat-map-legend-item">
+                            <div class="heat-map-legend-color" style="background: #4CAF50;"></div>
+                            <span>0-3%</span>
+                        </div>
+                        <div class="heat-map-legend-item">
+                            <div class="heat-map-legend-color" style="background: #9E9E9E;"></div>
+                            <span>0%</span>
+                        </div>
+                        <div class="heat-map-legend-item">
+                            <div class="heat-map-legend-color" style="background: #E57373;"></div>
+                            <span>0-3%</span>
+                        </div>
+                        <div class="heat-map-legend-item">
+                            <div class="heat-map-legend-color" style="background: #B71C1C;"></div>
+                            <span>&lt;-3%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Allocation Suggestions -->
+                <div class="suggestions-container">
+                    <h3 style="margin-bottom: 20px; font-size: 1.125rem;">AI Suggestions</h3>
+                    <div id="allocationSuggestions">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+
+                <!-- Currency Exposure -->
+                <div class="currency-exposure-container" style="margin-top: 24px;">
+                    <h3 style="margin-bottom: 20px; font-size: 1.125rem;">Currency Exposure</h3>
+                    <div class="currency-chart-container">
+                        <div class="currency-donut">
+                            <canvas id="currencyChart"></canvas>
+                        </div>
+                        <div class="currency-list" id="currencyList">
+                            <!-- Populated dynamically -->
                         </div>
                     </div>
                 </div>
@@ -7013,6 +7360,14 @@
                         </thead>
                         <tbody id="holdingsBody"></tbody>
                     </table>
+                </div>
+
+                <!-- Valuation Metrics -->
+                <div style="margin-top: 24px; background: var(--bg-primary); border-radius: var(--radius-lg); padding: 24px;">
+                    <h3 style="margin-bottom: 20px; font-size: 1.125rem;">Valuation Metrics</h3>
+                    <div class="valuation-grid" id="valuationGrid">
+                        <!-- Populated dynamically -->
+                    </div>
                 </div>
             </div>
 
@@ -13588,6 +13943,290 @@
 
             showToast('Income projection calculated', 'success');
         }
+
+        // =============================================================================
+        // PORTFOLIO HEAT MAP
+        // =============================================================================
+
+        let heatMapPeriod = '1D';
+
+        function updateHeatMap(period = '1D') {
+            heatMapPeriod = period;
+
+            // Update period buttons
+            document.querySelectorAll('.heat-map-period-selector .period-tab').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.period === period);
+            });
+
+            const positions = portfolioData?.positions || [];
+            const grid = document.getElementById('heatMapGrid');
+
+            if (positions.length === 0) {
+                grid.innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 40px;">No holdings to display</p>';
+                return;
+            }
+
+            grid.innerHTML = positions.map(pos => {
+                // Generate mock change data based on period
+                const multiplier = period === '1D' ? 1 : period === '1W' ? 2.5 : period === '1M' ? 5 : 10;
+                const change = (Math.random() - 0.45) * multiplier * 2;
+
+                let cellClass = 'neutral';
+                if (change > 3) cellClass = 'gain-large';
+                else if (change > 1) cellClass = 'gain-medium';
+                else if (change > 0) cellClass = 'gain-small';
+                else if (change < -3) cellClass = 'loss-large';
+                else if (change < -1) cellClass = 'loss-medium';
+                else if (change < 0) cellClass = 'loss-small';
+
+                return `
+                    <div class="heat-map-cell ${cellClass}" title="${pos.name || pos.symbol}">
+                        <span class="heat-map-symbol">${pos.symbol}</span>
+                        <span class="heat-map-change">${change >= 0 ? '+' : ''}${change.toFixed(2)}%</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // =============================================================================
+        // ALLOCATION SUGGESTIONS
+        // =============================================================================
+
+        function generateAllocationSuggestions() {
+            const container = document.getElementById('allocationSuggestions');
+            const positions = portfolioData?.positions || [];
+            const allocation = portfolioData?.allocation || {};
+
+            const suggestions = [];
+
+            // Check for concentration risk
+            if (positions.length > 0) {
+                const topHolding = positions.sort((a, b) => (b.value || 0) - (a.value || 0))[0];
+                const topWeight = ((topHolding.value || 0) / (portfolioData?.total_value || 1)) * 100;
+                if (topWeight > 15) {
+                    suggestions.push({
+                        type: 'warning',
+                        icon: '⚠️',
+                        title: 'High Concentration Risk',
+                        text: `${topHolding.symbol} represents ${topWeight.toFixed(1)}% of your portfolio. Consider reducing to below 10% for better diversification.`,
+                        action: 'View Rebalancer'
+                    });
+                }
+            }
+
+            // Check for sector imbalance
+            const sectors = portfolioData?.sector_breakdown || {};
+            const topSector = Object.entries(sectors).sort((a, b) => b[1] - a[1])[0];
+            if (topSector && topSector[1] > 30) {
+                suggestions.push({
+                    type: 'warning',
+                    icon: '📊',
+                    title: 'Sector Concentration',
+                    text: `${topSector[0]} sector is ${topSector[1].toFixed(1)}% of your portfolio, which is above the recommended 25% threshold.`,
+                    action: 'View Sectors'
+                });
+            }
+
+            // Check for cash allocation
+            const cashPct = allocation.cash || 0;
+            if (cashPct > 20) {
+                suggestions.push({
+                    type: 'info',
+                    icon: '💵',
+                    title: 'High Cash Position',
+                    text: `You have ${cashPct.toFixed(1)}% in cash. Consider investing some for potential growth opportunities.`,
+                    action: 'View Tools'
+                });
+            } else if (cashPct < 5) {
+                suggestions.push({
+                    type: 'success',
+                    icon: '✅',
+                    title: 'Fully Invested',
+                    text: 'Your portfolio is nearly fully invested with minimal cash drag.',
+                    action: null
+                });
+            }
+
+            // Add diversification score
+            if (positions.length < 10) {
+                suggestions.push({
+                    type: 'info',
+                    icon: '🎯',
+                    title: 'Increase Diversification',
+                    text: `With only ${positions.length} holdings, consider adding more positions for better diversification.`,
+                    action: 'Add Holdings'
+                });
+            }
+
+            container.innerHTML = suggestions.length > 0 ? suggestions.map(s => `
+                <div class="suggestion-card ${s.type}">
+                    <div class="suggestion-icon">${s.icon}</div>
+                    <div class="suggestion-content">
+                        <div class="suggestion-title">${s.title}</div>
+                        <div class="suggestion-text">${s.text}</div>
+                        ${s.action ? `<span class="suggestion-action">${s.action} →</span>` : ''}
+                    </div>
+                </div>
+            `).join('') : `
+                <div class="suggestion-card success">
+                    <div class="suggestion-icon">✅</div>
+                    <div class="suggestion-content">
+                        <div class="suggestion-title">Portfolio Looks Good</div>
+                        <div class="suggestion-text">No major issues detected with your current allocation.</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // =============================================================================
+        // CURRENCY EXPOSURE
+        // =============================================================================
+
+        let currencyChart = null;
+
+        function generateCurrencyExposure() {
+            const positions = portfolioData?.positions || [];
+            const totalValue = portfolioData?.total_value || 1;
+
+            // Mock currency exposure based on holdings
+            // In a real app, this would come from the API
+            const currencyData = {
+                'USD': { name: 'US Dollar', flag: '🇺🇸', value: 0 },
+                'EUR': { name: 'Euro', flag: '🇪🇺', value: 0 },
+                'GBP': { name: 'British Pound', flag: '🇬🇧', value: 0 },
+                'JPY': { name: 'Japanese Yen', flag: '🇯🇵', value: 0 },
+                'CHF': { name: 'Swiss Franc', flag: '🇨🇭', value: 0 }
+            };
+
+            // Assign currencies based on holdings
+            positions.forEach(pos => {
+                const value = pos.value || pos.shares * pos.price;
+                // Default most to USD, some international exposure
+                if (pos.symbol?.includes('.L') || pos.symbol?.includes('UK')) {
+                    currencyData['GBP'].value += value;
+                } else if (pos.symbol?.includes('.PA') || pos.symbol?.includes('EU')) {
+                    currencyData['EUR'].value += value;
+                } else if (pos.symbol?.includes('.T') || pos.symbol?.includes('JP')) {
+                    currencyData['JPY'].value += value;
+                } else {
+                    currencyData['USD'].value += value;
+                }
+            });
+
+            // If no international exposure, add mock data
+            if (currencyData['EUR'].value === 0) currencyData['EUR'].value = totalValue * 0.05;
+            if (currencyData['GBP'].value === 0) currencyData['GBP'].value = totalValue * 0.03;
+
+            // Render currency list
+            const currencyList = document.getElementById('currencyList');
+            const currencies = Object.entries(currencyData)
+                .filter(([_, data]) => data.value > 0)
+                .sort((a, b) => b[1].value - a[1].value);
+
+            currencyList.innerHTML = currencies.map(([code, data]) => {
+                const percent = (data.value / totalValue * 100).toFixed(1);
+                return `
+                    <div class="currency-item">
+                        <div class="currency-flag">${data.flag}</div>
+                        <div class="currency-info">
+                            <div class="currency-name">${data.name}</div>
+                            <div class="currency-code">${code}</div>
+                        </div>
+                        <div class="currency-allocation">
+                            <div class="currency-percent">${percent}%</div>
+                            <div class="currency-value">$${Math.round(data.value).toLocaleString()}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Render currency chart
+            const ctx = document.getElementById('currencyChart')?.getContext('2d');
+            if (ctx) {
+                if (currencyChart) currencyChart.destroy();
+                currencyChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: currencies.map(([_, d]) => d.name),
+                        datasets: [{
+                            data: currencies.map(([_, d]) => d.value),
+                            backgroundColor: ['#635bff', '#30d158', '#ff9f0a', '#ff453a', '#8898aa'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        cutout: '65%'
+                    }
+                });
+            }
+        }
+
+        // =============================================================================
+        // VALUATION METRICS
+        // =============================================================================
+
+        function generateValuationMetrics() {
+            const positions = portfolioData?.positions || [];
+            const grid = document.getElementById('valuationGrid');
+
+            if (positions.length === 0) {
+                grid.innerHTML = '<p style="color: var(--text-muted); text-align: center;">No holdings to display</p>';
+                return;
+            }
+
+            grid.innerHTML = positions.slice(0, 12).map(pos => {
+                // Generate mock valuation data
+                const pe = (Math.random() * 40 + 5).toFixed(1);
+                const pb = (Math.random() * 8 + 0.5).toFixed(2);
+                const ps = (Math.random() * 10 + 0.5).toFixed(2);
+
+                const peClass = pe < 15 ? 'undervalued' : pe > 30 ? 'overvalued' : 'fair';
+                const pbClass = pb < 1.5 ? 'undervalued' : pb > 5 ? 'overvalued' : 'fair';
+                const psClass = ps < 2 ? 'undervalued' : ps > 7 ? 'overvalued' : 'fair';
+
+                return `
+                    <div class="valuation-card">
+                        <div class="valuation-header">
+                            <span class="valuation-symbol">${pos.symbol}</span>
+                            <span class="valuation-sector">${pos.sector || 'Unknown'}</span>
+                        </div>
+                        <div class="valuation-metrics">
+                            <div class="valuation-metric">
+                                <div class="valuation-metric-value ${peClass}">${pe}</div>
+                                <div class="valuation-metric-label">P/E</div>
+                            </div>
+                            <div class="valuation-metric">
+                                <div class="valuation-metric-value ${pbClass}">${pb}</div>
+                                <div class="valuation-metric-label">P/B</div>
+                            </div>
+                            <div class="valuation-metric">
+                                <div class="valuation-metric-value ${psClass}">${ps}</div>
+                                <div class="valuation-metric-label">P/S</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Update tab switching to include new visualizations
+        const origSwitchTab = window.switchTab;
+        window.switchTab = function(tabName) {
+            if (origSwitchTab) origSwitchTab(tabName);
+
+            if (tabName === 'allocation') {
+                updateHeatMap(heatMapPeriod);
+                generateAllocationSuggestions();
+                generateCurrencyExposure();
+            } else if (tabName === 'holdings') {
+                generateValuationMetrics();
+            }
+        };
 
         // =============================================================================
         // SERVICE WORKER REGISTRATION
