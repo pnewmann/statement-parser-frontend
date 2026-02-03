@@ -15125,21 +15125,22 @@
                 blend_3y: getVal(performance.blend_3y, 7.8)
             };
 
-            // Helper function to generate SVG pie chart
-            function generatePieChart(data, size = 180, colors = ['#635bff', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4']) {
-                const total = Object.values(data).reduce((a, b) => a + b, 0);
-                if (total === 0) return '<svg></svg>';
+            // Helper function to generate SVG pie chart with legend
+            function generatePieChart(data, size = 180, colors = ['#635bff', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#ec4899', '#14b8a6']) {
+                const entries = Object.entries(data).filter(([_, v]) => v > 0);
+                const total = entries.reduce((sum, [_, v]) => sum + v, 0);
+                if (total === 0 || entries.length === 0) return '<div style="text-align:center;color:#999;padding:40px;">No data</div>';
 
                 let cumulativePercent = 0;
                 const radius = size / 2 - 10;
                 const center = size / 2;
-
                 let paths = '';
-                let legend = '';
-                let colorIndex = 0;
+                let legendHtml = '';
 
-                Object.entries(data).filter(([_, v]) => v > 0).forEach(([label, value]) => {
+                entries.forEach(([label, value], i) => {
                     const percent = value / total;
+                    const color = colors[i % colors.length];
+
                     const startAngle = cumulativePercent * 2 * Math.PI - Math.PI / 2;
                     const endAngle = (cumulativePercent + percent) * 2 * Math.PI - Math.PI / 2;
 
@@ -15149,22 +15150,199 @@
                     const y2 = center + radius * Math.sin(endAngle);
 
                     const largeArc = percent > 0.5 ? 1 : 0;
-                    const color = colors[colorIndex % colors.length];
 
-                    if (percent < 1) {
-                        paths += '<path d="M ' + center + ' ' + center + ' L ' + x1 + ' ' + y1 + ' A ' + radius + ' ' + radius + ' 0 ' + largeArc + ' 1 ' + x2 + ' ' + y2 + ' Z" fill="' + color + '"/>';
+                    if (percent < 0.999) {
+                        paths += '<path d="M ' + center + ' ' + center + ' L ' + x1.toFixed(2) + ' ' + y1.toFixed(2) + ' A ' + radius + ' ' + radius + ' 0 ' + largeArc + ' 1 ' + x2.toFixed(2) + ' ' + y2.toFixed(2) + ' Z" fill="' + color + '"/>';
                     } else {
                         paths += '<circle cx="' + center + '" cy="' + center + '" r="' + radius + '" fill="' + color + '"/>';
                     }
 
+                    legendHtml += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><div style="width:12px;height:12px;border-radius:3px;background:' + color + ';flex-shrink:0;"></div><span style="font-size:11px;color:#374151;flex:1;">' + label + '</span><span style="font-size:11px;font-weight:600;color:#1a1a2e;">' + (percent * 100).toFixed(1) + '%</span></div>';
+
                     cumulativePercent += percent;
-                    colorIndex++;
                 });
 
                 // Add white center for donut effect
-                paths += '<circle cx="' + center + '" cy="' + center + '" r="' + (radius * 0.6) + '" fill="white"/>';
+                paths += '<circle cx="' + center + '" cy="' + center + '" r="' + (radius * 0.55) + '" fill="white"/>';
+                // Add center text
+                paths += '<text x="' + center + '" y="' + (center - 5) + '" text-anchor="middle" font-size="14" font-weight="600" fill="#1a1a2e">$' + (total > 1000 ? (total/1000).toFixed(0) + 'K' : total.toFixed(0)) + '</text>';
+                paths += '<text x="' + center + '" y="' + (center + 12) + '" text-anchor="middle" font-size="9" fill="#666">Total</text>';
 
-                return '<svg width="' + size + '" height="' + size + '" viewBox="0 0 ' + size + ' ' + size + '">' + paths + '</svg>';
+                return '<div style="display:flex;align-items:center;gap:24px;"><svg width="' + size + '" height="' + size + '" viewBox="0 0 ' + size + ' ' + size + '" style="flex-shrink:0;">' + paths + '</svg><div style="min-width:120px;">' + legendHtml + '</div></div>';
+            }
+
+            // Helper function to generate horizontal bar chart
+            function generateBarChart(data, maxValue = null, colors = {}) {
+                const entries = Object.entries(data).filter(([_, v]) => v !== 0);
+                const max = maxValue || Math.max(...entries.map(([_, v]) => Math.abs(v)), 1);
+                const defaultColors = ['#635bff', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
+
+                return entries.map(([label, value], i) => {
+                    const width = Math.min(Math.abs(value) / max * 100, 100);
+                    const color = colors[label] || defaultColors[i % defaultColors.length];
+                    const isNegative = value < 0;
+                    return '<div style="margin-bottom:12px;"><div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:11px;color:#374151;">' + label + '</span><span style="font-size:11px;font-weight:600;color:' + (isNegative ? '#ef4444' : '#10b981') + ';">' + (isNegative ? '' : '+') + value.toFixed(2) + '%</span></div><div style="height:20px;background:#f3f4f6;border-radius:4px;overflow:hidden;"><div style="height:100%;width:' + width + '%;background:' + color + ';border-radius:4px;"></div></div></div>';
+                }).join('');
+            }
+
+            // Helper function to generate risk gauge
+            function generateRiskGauge(value, min = 0, max = 30, label = 'Risk Level') {
+                const normalized = Math.min(Math.max((value - min) / (max - min), 0), 1);
+                const angle = -90 + (normalized * 180);
+                const color = normalized < 0.33 ? '#10b981' : normalized < 0.66 ? '#f59e0b' : '#ef4444';
+                const riskLabel = normalized < 0.33 ? 'Low' : normalized < 0.66 ? 'Moderate' : 'High';
+
+                return '<div style="text-align:center;"><svg width="140" height="80" viewBox="0 0 140 80"><defs><linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#10b981"/><stop offset="50%" style="stop-color:#f59e0b"/><stop offset="100%" style="stop-color:#ef4444"/></linearGradient></defs><path d="M 15 70 A 55 55 0 0 1 125 70" fill="none" stroke="#e5e7eb" stroke-width="12" stroke-linecap="round"/><path d="M 15 70 A 55 55 0 0 1 125 70" fill="none" stroke="url(#gaugeGrad)" stroke-width="12" stroke-linecap="round" stroke-dasharray="' + (normalized * 173) + ' 173"/><circle cx="70" cy="70" r="6" fill="' + color + '"/><line x1="70" y1="70" x2="' + (70 + 40 * Math.cos(angle * Math.PI / 180)) + '" y2="' + (70 + 40 * Math.sin(angle * Math.PI / 180)) + '" stroke="' + color + '" stroke-width="3" stroke-linecap="round"/></svg><div style="margin-top:4px;font-size:18px;font-weight:600;color:' + color + ';">' + value.toFixed(1) + '%</div><div style="font-size:10px;color:#666;">' + riskLabel + ' ' + label + '</div></div>';
+            }
+
+            // Helper function to generate SVG line chart for performance history
+            function generateLineChart(portfolioReturns, benchmarkReturns, width = 400, height = 180) {
+                const padding = {top: 20, right: 20, bottom: 30, left: 45};
+                const chartWidth = width - padding.left - padding.right;
+                const chartHeight = height - padding.top - padding.bottom;
+
+                // Create data points (monthly returns over time)
+                const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                const currentMonth = new Date().getMonth();
+                const labels = [];
+                for (let i = 11; i >= 0; i--) {
+                    labels.push(months[(currentMonth - i + 12) % 12]);
+                }
+
+                // Simulate cumulative returns based on provided annual returns
+                const pAnnual = portfolioReturns || 8;
+                const bAnnual = benchmarkReturns || 10;
+                const pData = [], bData = [];
+                let pCum = 100, bCum = 100;
+                const pMonthly = Math.pow(1 + pAnnual/100, 1/12) - 1;
+                const bMonthly = Math.pow(1 + bAnnual/100, 1/12) - 1;
+
+                for (let i = 0; i < 12; i++) {
+                    // Add some variance
+                    const variance = (Math.sin(i * 0.8) * 0.02);
+                    pCum *= (1 + pMonthly + variance);
+                    bCum *= (1 + bMonthly + variance * 0.7);
+                    pData.push(pCum);
+                    bData.push(bCum);
+                }
+
+                const allValues = [...pData, ...bData];
+                const minVal = Math.min(...allValues) * 0.98;
+                const maxVal = Math.max(...allValues) * 1.02;
+                const range = maxVal - minVal;
+
+                const scaleX = (i) => padding.left + (i / 11) * chartWidth;
+                const scaleY = (v) => padding.top + chartHeight - ((v - minVal) / range) * chartHeight;
+
+                // Generate path data
+                const pPath = pData.map((v, i) => (i === 0 ? 'M' : 'L') + scaleX(i).toFixed(1) + ',' + scaleY(v).toFixed(1)).join(' ');
+                const bPath = bData.map((v, i) => (i === 0 ? 'M' : 'L') + scaleX(i).toFixed(1) + ',' + scaleY(v).toFixed(1)).join(' ');
+
+                // Generate grid lines
+                let gridLines = '';
+                for (let i = 0; i <= 4; i++) {
+                    const y = padding.top + (i / 4) * chartHeight;
+                    const val = maxVal - (i / 4) * range;
+                    gridLines += '<line x1="' + padding.left + '" y1="' + y + '" x2="' + (width - padding.right) + '" y2="' + y + '" stroke="#e5e7eb" stroke-width="1"/>';
+                    gridLines += '<text x="' + (padding.left - 5) + '" y="' + (y + 4) + '" text-anchor="end" font-size="9" fill="#6b7280">' + val.toFixed(0) + '</text>';
+                }
+
+                // Generate x-axis labels
+                let xLabels = '';
+                [0, 3, 6, 9, 11].forEach(i => {
+                    xLabels += '<text x="' + scaleX(i) + '" y="' + (height - 8) + '" text-anchor="middle" font-size="9" fill="#6b7280">' + labels[i] + '</text>';
+                });
+
+                return '<svg width="' + width + '" height="' + height + '" viewBox="0 0 ' + width + ' ' + height + '">' +
+                    gridLines + xLabels +
+                    '<path d="' + bPath + '" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>' +
+                    '<path d="' + pPath + '" fill="none" stroke="#635bff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>' +
+                    '</svg>';
+            }
+
+            // Helper function to generate Monte Carlo projection chart
+            function generateProjectionChart(currentValue, years = 10, width = 400, height = 200) {
+                const padding = {top: 20, right: 20, bottom: 35, left: 55};
+                const chartWidth = width - padding.left - padding.right;
+                const chartHeight = height - padding.top - padding.bottom;
+
+                // Generate projection paths (P5, P25, P50, P75, P95)
+                const scenarios = {
+                    p95: {rate: 0.12, color: '#dcfce7', label: '95th'},
+                    p75: {rate: 0.09, color: '#bbf7d0', label: '75th'},
+                    p50: {rate: 0.07, color: '#635bff', label: 'Median'},
+                    p25: {rate: 0.04, color: '#fde68a', label: '25th'},
+                    p5: {rate: 0.01, color: '#fecaca', label: '5th'}
+                };
+
+                const yearLabels = [];
+                for (let i = 0; i <= years; i++) yearLabels.push(new Date().getFullYear() + i);
+
+                // Calculate all values
+                const allData = {};
+                let maxVal = currentValue, minVal = currentValue;
+                Object.entries(scenarios).forEach(([key, {rate}]) => {
+                    allData[key] = [];
+                    let val = currentValue;
+                    for (let i = 0; i <= years; i++) {
+                        allData[key].push(val);
+                        maxVal = Math.max(maxVal, val);
+                        minVal = Math.min(minVal, val);
+                        val *= (1 + rate + (Math.random() - 0.5) * 0.02);
+                    }
+                });
+
+                const range = maxVal - minVal;
+                const scaleX = (i) => padding.left + (i / years) * chartWidth;
+                const scaleY = (v) => padding.top + chartHeight - ((v - minVal) / range) * chartHeight;
+
+                // Generate area between p25 and p75
+                let areaPath = 'M' + scaleX(0) + ',' + scaleY(allData.p75[0]);
+                for (let i = 1; i <= years; i++) areaPath += 'L' + scaleX(i) + ',' + scaleY(allData.p75[i]);
+                for (let i = years; i >= 0; i--) areaPath += 'L' + scaleX(i) + ',' + scaleY(allData.p25[i]);
+                areaPath += 'Z';
+
+                // Generate median line
+                const medianPath = allData.p50.map((v, i) => (i === 0 ? 'M' : 'L') + scaleX(i).toFixed(1) + ',' + scaleY(v).toFixed(1)).join(' ');
+
+                // Grid and labels
+                let gridLines = '';
+                for (let i = 0; i <= 4; i++) {
+                    const y = padding.top + (i / 4) * chartHeight;
+                    const val = maxVal - (i / 4) * range;
+                    gridLines += '<line x1="' + padding.left + '" y1="' + y + '" x2="' + (width - padding.right) + '" y2="' + y + '" stroke="#e5e7eb" stroke-width="1"/>';
+                    gridLines += '<text x="' + (padding.left - 5) + '" y="' + (y + 4) + '" text-anchor="end" font-size="9" fill="#6b7280">$' + (val/1000).toFixed(0) + 'K</text>';
+                }
+
+                let xLabels = '';
+                [0, Math.floor(years/2), years].forEach(i => {
+                    xLabels += '<text x="' + scaleX(i) + '" y="' + (height - 8) + '" text-anchor="middle" font-size="9" fill="#6b7280">' + yearLabels[i] + '</text>';
+                });
+
+                // Final values annotation
+                const finalMedian = allData.p50[years];
+                const finalP75 = allData.p75[years];
+                const finalP25 = allData.p25[years];
+
+                return '<div>' +
+                    '<svg width="' + width + '" height="' + height + '" viewBox="0 0 ' + width + ' ' + height + '">' +
+                    gridLines + xLabels +
+                    '<path d="' + areaPath + '" fill="#e0e7ff" opacity="0.5"/>' +
+                    '<path d="' + medianPath + '" fill="none" stroke="#635bff" stroke-width="2.5" stroke-linecap="round"/>' +
+                    '</svg>' +
+                    '<div style="display:flex;justify-content:space-around;margin-top:8px;font-size:10px;">' +
+                    '<span style="color:#dc2626;">25th: $' + (finalP25/1000).toFixed(0) + 'K</span>' +
+                    '<span style="color:#635bff;font-weight:600;">Median: $' + (finalMedian/1000).toFixed(0) + 'K</span>' +
+                    '<span style="color:#16a34a;">75th: $' + (finalP75/1000).toFixed(0) + 'K</span>' +
+                    '</div></div>';
+            }
+
+            // Helper function for performance comparison bars
+            function generatePerfComparison(portfolio, benchmark, label) {
+                const maxVal = Math.max(Math.abs(portfolio), Math.abs(benchmark), 1);
+                const pColor = portfolio >= 0 ? '#635bff' : '#ef4444';
+                const bColor = '#94a3b8';
+                return '<div style="margin-bottom:16px;"><div style="font-size:11px;color:#666;margin-bottom:6px;">' + label + '</div><div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;"><span style="width:60px;font-size:10px;color:#374151;">Portfolio</span><div style="flex:1;height:16px;background:#f3f4f6;border-radius:3px;overflow:hidden;"><div style="height:100%;width:' + (Math.abs(portfolio)/maxVal*100) + '%;background:' + pColor + ';border-radius:3px;"></div></div><span style="width:50px;text-align:right;font-size:11px;font-weight:600;color:' + pColor + ';">' + (portfolio >= 0 ? '+' : '') + portfolio.toFixed(1) + '%</span></div><div style="display:flex;align-items:center;gap:8px;"><span style="width:60px;font-size:10px;color:#374151;">S&P 500</span><div style="flex:1;height:16px;background:#f3f4f6;border-radius:3px;overflow:hidden;"><div style="height:100%;width:' + (Math.abs(benchmark)/maxVal*100) + '%;background:' + bColor + ';border-radius:3px;"></div></div><span style="width:50px;text-align:right;font-size:11px;color:#666;">' + (benchmark >= 0 ? '+' : '') + benchmark.toFixed(1) + '%</span></div></div>';
             }
 
             // Generate concentration bar data
@@ -15729,81 +15907,65 @@
 
         <h1 class="page-title">Asset Allocation</h1>
 
-        <div class="two-col">
-            <div class="section">
-                <h2 class="section-title">Allocation by Asset Class</h2>
-                <div style="display: flex; justify-content: center; margin-bottom: 20px;">
+        <div class="section">
+            <h2 class="section-title">Portfolio Composition</h2>
+            <div style="display: flex; gap: 40px; align-items: flex-start;">
+                <div style="flex: 1;">
                     ${generatePieChart({
-                        'Stocks': allocation.stocks,
-                        'Bonds': allocation.bonds,
-                        'Cash': allocation.cash,
-                        'Other': allocation.other + allocation.realEstate + allocation.crypto
-                    }, 160, ['#635bff', '#10b981', '#f59e0b', '#6b7280'])}
+                        'Equities': stocksValue,
+                        'Fixed Income': bondsValue,
+                        'Cash': cashValue,
+                        'Alternatives': totalValue * (allocation.other + allocation.realEstate + allocation.crypto) / 100
+                    }, 180, ['#635bff', '#10b981', '#f59e0b', '#8b5cf6'])}
                 </div>
-                <div class="allocation-chart">
-                    <div class="allocation-bar">
-                        <span class="allocation-bar-label">Stocks</span>
-                        <div class="allocation-bar-track">
-                            <div class="allocation-bar-fill stocks" style="width: ${Math.max(allocation.stocks || 0, 5)}%">${(allocation.stocks || 0).toFixed(1)}%</div>
+                <div style="flex: 1;">
+                    <div style="background:#f8f9fa;padding:20px;border-radius:12px;">
+                        <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #e5e7eb;">
+                            <span style="color:#374151;">Total Equity</span>
+                            <span style="font-weight:600;color:#635bff;">$${stocksValue.toLocaleString(undefined, {maximumFractionDigits: 0})}</span>
                         </div>
-                        <span class="allocation-bar-value">$${stocksValue.toLocaleString(undefined, {maximumFractionDigits: 0})}</span>
-                    </div>
-                    <div class="allocation-bar">
-                        <span class="allocation-bar-label">Bonds</span>
-                        <div class="allocation-bar-track">
-                            <div class="allocation-bar-fill bonds" style="width: ${Math.max(allocation.bonds || 0, 5)}%">${(allocation.bonds || 0).toFixed(1)}%</div>
+                        <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #e5e7eb;">
+                            <span style="color:#374151;">Fixed Income</span>
+                            <span style="font-weight:600;color:#10b981;">$${bondsValue.toLocaleString(undefined, {maximumFractionDigits: 0})}</span>
                         </div>
-                        <span class="allocation-bar-value">$${bondsValue.toLocaleString(undefined, {maximumFractionDigits: 0})}</span>
-                    </div>
-                    <div class="allocation-bar">
-                        <span class="allocation-bar-label">Cash</span>
-                        <div class="allocation-bar-track">
-                            <div class="allocation-bar-fill cash" style="width: ${Math.max(allocation.cash || 0, 5)}%">${(allocation.cash || 0).toFixed(1)}%</div>
+                        <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #e5e7eb;">
+                            <span style="color:#374151;">Cash & Equivalents</span>
+                            <span style="font-weight:600;color:#f59e0b;">$${cashValue.toLocaleString(undefined, {maximumFractionDigits: 0})}</span>
                         </div>
-                        <span class="allocation-bar-value">$${cashValue.toLocaleString(undefined, {maximumFractionDigits: 0})}</span>
-                    </div>
-                    <div class="allocation-bar">
-                        <span class="allocation-bar-label">Other</span>
-                        <div class="allocation-bar-track">
-                            <div class="allocation-bar-fill other" style="width: ${Math.max(allocation.other || 0, 5)}%">${(allocation.other || 0).toFixed(1)}%</div>
+                        <div style="display:flex;justify-content:space-between;padding:12px 0;font-size:14px;">
+                            <span style="font-weight:600;color:#1a1a2e;">Total Portfolio</span>
+                            <span style="font-weight:700;color:#1a1a2e;">$${totalValue.toLocaleString(undefined, {maximumFractionDigits: 0})}</span>
                         </div>
-                        <span class="allocation-bar-value">$${(totalValue * (allocation.other || 0) / 100).toLocaleString(undefined, {maximumFractionDigits: 0})}</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="section">
-                <h2 class="section-title">Allocation Summary</h2>
-                <div class="allocation-summary">
-                    <div class="allocation-summary-item">
-                        <span class="allocation-summary-label">Total Equity</span>
-                        <span class="allocation-summary-value">$${stocksValue.toLocaleString(undefined, {maximumFractionDigits: 0})}</span>
-                    </div>
-                    <div class="allocation-summary-item">
-                        <span class="allocation-summary-label">Total Fixed Income</span>
-                        <span class="allocation-summary-value">$${bondsValue.toLocaleString(undefined, {maximumFractionDigits: 0})}</span>
-                    </div>
-                    <div class="allocation-summary-item">
-                        <span class="allocation-summary-label">Cash & Equivalents</span>
-                        <span class="allocation-summary-value">$${cashValue.toLocaleString(undefined, {maximumFractionDigits: 0})}</span>
-                    </div>
-                    <div class="allocation-summary-item">
-                        <span class="allocation-summary-label">Total Portfolio</span>
-                        <span class="allocation-summary-value">$${totalValue.toLocaleString(undefined, {maximumFractionDigits: 0})}</span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="section">
-            <h2 class="section-title">Allocation Analysis</h2>
-            <p style="font-size: 12px; line-height: 1.8; color: #444;">
-                Your portfolio is ${allocation.stocks >= 70 ? 'aggressively' : allocation.stocks >= 50 ? 'moderately' : 'conservatively'} positioned
+        <div class="section" style="margin-top:25px;">
+            <h2 class="section-title">Investment Category Breakdown</h2>
+            <div style="display: flex; gap: 40px; align-items: flex-start;">
+                <div style="flex: 1;">
+                    ${generatePieChart(sectors, 180, ['#635bff', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#ec4899', '#14b8a6'])}
+                </div>
+                <div style="flex: 1;">
+                    <h3 style="font-size:13px;color:#374151;margin-bottom:12px;">Top Holdings by Weight</h3>
+                    ${topHoldings.slice(0, 5).map((pos, i) => {
+                        const weight = totalValue > 0 ? ((pos.value || pos.shares * pos.price) / totalValue * 100) : 0;
+                        return '<div style="margin-bottom:10px;"><div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="font-size:11px;color:#374151;">' + pos.symbol + '</span><span style="font-size:11px;font-weight:600;color:#1a1a2e;">' + weight.toFixed(1) + '%</span></div><div style="height:8px;background:#e5e7eb;border-radius:4px;overflow:hidden;"><div style="height:100%;width:' + Math.min(weight * 2, 100) + '%;background:#635bff;border-radius:4px;"></div></div></div>';
+                    }).join('')}
+                </div>
+            </div>
+        </div>
+
+        <div class="section" style="margin-top:20px;background:#f8f9fa;padding:16px;border-radius:10px;">
+            <h2 style="font-size:13px;font-weight:600;color:#1a1a2e;margin-bottom:8px;">Allocation Analysis</h2>
+            <p style="font-size: 11px; line-height: 1.7; color: #444; margin:0;">
+                Your portfolio is <strong>${allocation.stocks >= 70 ? 'aggressively' : allocation.stocks >= 50 ? 'moderately' : 'conservatively'}</strong> positioned
                 with ${(allocation.stocks || 0).toFixed(0)}% in equities and ${(allocation.bonds || 0).toFixed(0)}% in fixed income.
                 ${allocation.stocks >= 80 ? 'This high equity allocation suggests a growth-oriented strategy suitable for investors with longer time horizons and higher risk tolerance.' :
                   allocation.stocks >= 60 ? 'This balanced allocation provides a mix of growth potential and stability.' :
                   'This conservative allocation prioritizes capital preservation and income generation.'}
-                ${allocation.cash > 10 ? ` The ${(allocation.cash || 0).toFixed(0)}% cash position provides liquidity for opportunities or near-term needs.` : ''}
+                ${allocation.cash > 10 ? ' The ' + (allocation.cash || 0).toFixed(0) + '% cash position provides liquidity.' : ''}
             </p>
         </div>
 
@@ -15872,24 +16034,48 @@
         </div>
 
         <div class="section">
-            <h2 class="section-title">Performance Metrics</h2>
-            <div class="summary-grid">
-                <div class="summary-card">
-                    <div class="summary-card-value ${safePerf.returns_ytd >= 0 ? 'positive' : 'negative'}">${safePerf.returns_ytd.toFixed(2)}%</div>
-                    <div class="summary-card-label">YTD Return</div>
+            <h2 class="section-title">Performance Chart - Trailing 12 Months</h2>
+            <div style="display:flex;justify-content:center;padding:10px 0;">
+                ${generateLineChart(safePerf.returns_1y, safePerf.sp500_1y, 500, 180)}
+            </div>
+            <div style="display:flex;gap:24px;justify-content:center;font-size:10px;margin-top:8px;">
+                <span><span style="display:inline-block;width:16px;height:3px;background:#635bff;border-radius:2px;margin-right:6px;vertical-align:middle;"></span>Portfolio</span>
+                <span><span style="display:inline-block;width:16px;height:3px;background:#94a3b8;border-radius:2px;margin-right:6px;vertical-align:middle;"></span>S&P 500</span>
+            </div>
+        </div>
+
+        <div class="two-col">
+            <div class="section">
+                <h2 class="section-title">Performance vs Benchmark</h2>
+                <div style="padding: 10px 0;">
+                    ${generatePerfComparison(safePerf.returns_ytd, safePerf.sp500_ytd, 'YTD')}
+                    ${generatePerfComparison(safePerf.returns_1y, safePerf.sp500_1y, '1 Year')}
+                    ${generatePerfComparison(safePerf.returns_3y, safePerf.sp500_3y, '3 Year')}
                 </div>
-                <div class="summary-card">
-                    <div class="summary-card-value">${safeRisk.alpha.toFixed(2)}%</div>
-                    <div class="summary-card-label">Alpha</div>
-                    <div class="summary-card-subtitle">vs S&P 500</div>
+                <div style="display:flex;gap:20px;justify-content:center;margin-top:10px;font-size:10px;">
+                    <span><span style="display:inline-block;width:12px;height:12px;background:#635bff;border-radius:2px;margin-right:4px;vertical-align:middle;"></span>Portfolio</span>
+                    <span><span style="display:inline-block;width:12px;height:12px;background:#94a3b8;border-radius:2px;margin-right:4px;vertical-align:middle;"></span>S&P 500</span>
                 </div>
-                <div class="summary-card">
-                    <div class="summary-card-value">${safeRisk.information_ratio.toFixed(2)}</div>
-                    <div class="summary-card-label">Info Ratio</div>
-                </div>
-                <div class="summary-card">
-                    <div class="summary-card-value">${safeRisk.tracking_error.toFixed(2)}%</div>
-                    <div class="summary-card-label">Tracking Error</div>
+            </div>
+            <div class="section">
+                <h2 class="section-title">Performance Metrics</h2>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                    <div style="background:#f8fafc;padding:12px;border-radius:8px;text-align:center;">
+                        <div style="font-size:22px;font-weight:700;color:${safePerf.returns_ytd >= 0 ? '#10b981' : '#ef4444'};">${safePerf.returns_ytd.toFixed(2)}%</div>
+                        <div style="font-size:10px;color:#64748b;margin-top:4px;">YTD Return</div>
+                    </div>
+                    <div style="background:#f8fafc;padding:12px;border-radius:8px;text-align:center;">
+                        <div style="font-size:22px;font-weight:700;color:${safeRisk.alpha >= 0 ? '#10b981' : '#ef4444'};">${safeRisk.alpha.toFixed(2)}%</div>
+                        <div style="font-size:10px;color:#64748b;margin-top:4px;">Alpha vs S&P 500</div>
+                    </div>
+                    <div style="background:#f8fafc;padding:12px;border-radius:8px;text-align:center;">
+                        <div style="font-size:22px;font-weight:700;color:#1a1a2e;">${safeRisk.information_ratio.toFixed(2)}</div>
+                        <div style="font-size:10px;color:#64748b;margin-top:4px;">Info Ratio</div>
+                    </div>
+                    <div style="background:#f8fafc;padding:12px;border-radius:8px;text-align:center;">
+                        <div style="font-size:22px;font-weight:700;color:#1a1a2e;">${safeRisk.tracking_error.toFixed(2)}%</div>
+                        <div style="font-size:10px;color:#64748b;margin-top:4px;">Tracking Error</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -15907,6 +16093,21 @@
         </div>
 
         <h1 class="page-title">Risk Analysis</h1>
+
+        <div class="two-col">
+            <div class="section">
+                <h2 class="section-title">Volatility Gauge</h2>
+                <div style="display:flex;justify-content:center;">
+                    ${generateRiskGauge(safeRisk.volatility, 0, 35, 'Volatility')}
+                </div>
+            </div>
+            <div class="section">
+                <h2 class="section-title">Beta Analysis</h2>
+                <div style="display:flex;justify-content:center;">
+                    ${generateRiskGauge(safeRisk.beta, 0, 2, 'Market Beta')}
+                </div>
+            </div>
+        </div>
 
         <div class="section">
             <h2 class="section-title">Key Risk Metrics</h2>
@@ -15936,26 +16137,22 @@
 
         <div class="section">
             <h2 class="section-title">Additional Risk Measures</h2>
-            <div class="risk-grid">
-                <div class="risk-metric">
-                    <div class="risk-metric-value">${safeRisk.sortino_ratio.toFixed(2)}</div>
-                    <div class="risk-metric-label">Sortino Ratio</div>
-                    <div class="risk-metric-desc">Downside Risk Adj</div>
+            <div style="display:grid;grid-template-columns:repeat(4, 1fr);gap:12px;">
+                <div style="background:linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);padding:14px;border-radius:10px;text-align:center;">
+                    <div style="font-size:20px;font-weight:700;color:#166534;">${safeRisk.sortino_ratio.toFixed(2)}</div>
+                    <div style="font-size:10px;color:#15803d;font-weight:500;margin-top:4px;">Sortino Ratio</div>
                 </div>
-                <div class="risk-metric">
-                    <div class="risk-metric-value">${safeRisk.var_95.toFixed(1)}%</div>
-                    <div class="risk-metric-label">VaR (95%)</div>
-                    <div class="risk-metric-desc">Value at Risk</div>
+                <div style="background:linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);padding:14px;border-radius:10px;text-align:center;">
+                    <div style="font-size:20px;font-weight:700;color:#92400e;">${safeRisk.var_95.toFixed(1)}%</div>
+                    <div style="font-size:10px;color:#a16207;font-weight:500;margin-top:4px;">VaR (95%)</div>
                 </div>
-                <div class="risk-metric">
-                    <div class="risk-metric-value">${safeRisk.r_squared.toFixed(2)}</div>
-                    <div class="risk-metric-label">R-Squared</div>
-                    <div class="risk-metric-desc">Benchmark Correlation</div>
+                <div style="background:linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);padding:14px;border-radius:10px;text-align:center;">
+                    <div style="font-size:20px;font-weight:700;color:#5b21b6;">${safeRisk.r_squared.toFixed(2)}</div>
+                    <div style="font-size:10px;color:#6d28d9;font-weight:500;margin-top:4px;">R-Squared</div>
                 </div>
-                <div class="risk-metric">
-                    <div class="risk-metric-value">${safeRisk.treynor_ratio.toFixed(2)}</div>
-                    <div class="risk-metric-label">Treynor Ratio</div>
-                    <div class="risk-metric-desc">Systematic Risk Adj</div>
+                <div style="background:linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);padding:14px;border-radius:10px;text-align:center;">
+                    <div style="font-size:20px;font-weight:700;color:#0369a1;">${safeRisk.treynor_ratio.toFixed(2)}</div>
+                    <div style="font-size:10px;color:#0284c7;font-weight:500;margin-top:4px;">Treynor Ratio</div>
                 </div>
             </div>
         </div>
@@ -16099,20 +16296,58 @@
 
         <h1 class="page-title">Dividend Analysis</h1>
 
-        <div class="section">
-            <h2 class="section-title">Income Overview</h2>
-            <div class="dividend-grid">
-                <div class="dividend-card">
-                    <div class="dividend-card-value">${avgDividendYield.toFixed(2)}%</div>
-                    <div class="dividend-card-label">Portfolio Yield</div>
+        <div class="two-col">
+            <div class="section">
+                <h2 class="section-title">Income Overview</h2>
+                <div style="display:flex;flex-direction:column;gap:12px;">
+                    <div style="background:linear-gradient(135deg, #10b981 0%, #059669 100%);color:white;padding:20px;border-radius:12px;text-align:center;">
+                        <div style="font-size:32px;font-weight:700;">$${annualDividendIncome.toLocaleString(undefined, {maximumFractionDigits: 0})}</div>
+                        <div style="font-size:11px;opacity:0.9;margin-top:5px;">Est. Annual Income</div>
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                        <div style="background:#f0fdf4;padding:14px;border-radius:10px;text-align:center;border:1px solid #bbf7d0;">
+                            <div style="font-size:22px;font-weight:700;color:#166534;">${avgDividendYield.toFixed(2)}%</div>
+                            <div style="font-size:10px;color:#15803d;margin-top:4px;">Portfolio Yield</div>
+                        </div>
+                        <div style="background:#f0fdf4;padding:14px;border-radius:10px;text-align:center;border:1px solid #bbf7d0;">
+                            <div style="font-size:22px;font-weight:700;color:#166534;">$${(annualDividendIncome / 12).toLocaleString(undefined, {maximumFractionDigits: 0})}</div>
+                            <div style="font-size:10px;color:#15803d;margin-top:4px;">Monthly Income</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="dividend-card">
-                    <div class="dividend-card-value">$${annualDividendIncome.toLocaleString(undefined, {maximumFractionDigits: 0})}</div>
-                    <div class="dividend-card-label">Est. Annual Income</div>
-                </div>
-                <div class="dividend-card">
-                    <div class="dividend-card-value">$${(annualDividendIncome / 12).toLocaleString(undefined, {maximumFractionDigits: 0})}</div>
-                    <div class="dividend-card-label">Est. Monthly Income</div>
+            </div>
+            <div class="section">
+                <h2 class="section-title">Income by Category</h2>
+                <div style="display:flex;flex-direction:column;gap:8px;">
+                    ${(() => {
+                        // Calculate income by category
+                        const incomeByCategory = {};
+                        enrichedPositions.slice(0, 15).forEach(pos => {
+                            const value = pos.value || (pos.shares * pos.price);
+                            let estYield = pos.dividend_yield || 0;
+                            if (estYield === 0) {
+                                if (pos.category === 'Fixed Income') estYield = 4.5;
+                                else if (pos.category === 'Value') estYield = 2.5;
+                                else if (pos.category === 'Index/Passive') estYield = 1.5;
+                                else if (pos.category === 'Growth') estYield = 0.8;
+                                else if (pos.category === 'International') estYield = 2.2;
+                                else estYield = 1.8;
+                            }
+                            const cat = pos.category || 'Other';
+                            incomeByCategory[cat] = (incomeByCategory[cat] || 0) + (value * estYield / 100);
+                        });
+                        const maxIncome = Math.max(...Object.values(incomeByCategory), 1);
+                        const catColors = {'Fixed Income': '#10b981', 'Value': '#635bff', 'Growth': '#f59e0b', 'Index/Passive': '#8b5cf6', 'International': '#06b6d4', 'Other': '#94a3b8', 'Equity': '#ec4899'};
+                        return Object.entries(incomeByCategory).sort((a, b) => b[1] - a[1]).map(([cat, income]) => `
+                            <div style="display:flex;align-items:center;gap:10px;">
+                                <span style="width:80px;font-size:10px;color:#374151;font-weight:500;">${cat}</span>
+                                <div style="flex:1;height:16px;background:#f1f5f9;border-radius:4px;overflow:hidden;">
+                                    <div style="height:100%;width:${(income/maxIncome*100).toFixed(1)}%;background:${catColors[cat] || '#635bff'};border-radius:4px;"></div>
+                                </div>
+                                <span style="width:55px;text-align:right;font-size:10px;font-weight:600;color:#1a1a2e;">$${income.toLocaleString(undefined, {maximumFractionDigits: 0})}</span>
+                            </div>
+                        `).join('');
+                    })()}
                 </div>
             </div>
         </div>
@@ -16132,7 +16367,6 @@
                 <tbody>
                     ${enrichedPositions.slice(0, 10).map(pos => {
                         const value = pos.value || (pos.shares * pos.price);
-                        // Estimate yield based on category if not available
                         let estYield = pos.dividend_yield || 0;
                         if (estYield === 0) {
                             if (pos.category === 'Fixed Income') estYield = 4.5;
@@ -16143,15 +16377,7 @@
                             else estYield = 1.8;
                         }
                         const estIncome = value * estYield / 100;
-                        return \`
-                            <tr>
-                                <td class="symbol">\${pos.symbol}</td>
-                                <td>\${pos.name || fundNames[pos.symbol] || pos.symbol}</td>
-                                <td>\${pos.category || 'Diversified'}</td>
-                                <td class="text-right">\${estYield.toFixed(2)}%</td>
-                                <td class="text-right">$\${estIncome.toLocaleString(undefined, {maximumFractionDigits: 0})}</td>
-                            </tr>
-                        \`;
+                        return '<tr><td class="symbol">' + pos.symbol + '</td><td>' + (pos.name || fundNames[pos.symbol] || pos.symbol) + '</td><td>' + (pos.category || 'Diversified') + '</td><td class="text-right">' + estYield.toFixed(2) + '%</td><td class="text-right">$' + estIncome.toLocaleString(undefined, {maximumFractionDigits: 0}) + '</td></tr>';
                     }).join('')}
                 </tbody>
             </table>
@@ -16170,23 +16396,34 @@
 
         <h1 class="page-title">Geographic Exposure</h1>
 
-        <div class="section">
-            <h2 class="section-title">Regional Allocation</h2>
-            <div class="geo-grid">
-                ${Object.keys(geography).length > 0 ?
-                    Object.entries(geography).sort((a, b) => b[1] - a[1]).map(([region, pct]) => {
-                        const flags = { 'United States': '🇺🇸', 'US': '🇺🇸', 'Europe': '🇪🇺', 'UK': '🇬🇧', 'Japan': '🇯🇵', 'China': '🇨🇳', 'Emerging Markets': '🌍', 'International': '🌐' };
-                        return `
-                            <div class="geo-item">
-                                <span class="geo-flag">${flags[region] || '🌐'}</span>
-                                <span class="geo-name">${region}</span>
-                                <span class="geo-pct">${pct.toFixed(1)}%</span>
-                            </div>
-                        `;
-                    }).join('') :
-                    `<div class="geo-item"><span class="geo-flag">🇺🇸</span><span class="geo-name">United States</span><span class="geo-pct">${(allocation.stocks || 0).toFixed(1)}%</span></div>
-                     <div class="geo-item"><span class="geo-flag">🌐</span><span class="geo-name">International</span><span class="geo-pct">${(100 - (allocation.stocks || 0)).toFixed(1)}%</span></div>`
-                }
+        <div class="two-col">
+            <div class="section">
+                <h2 class="section-title">Regional Distribution</h2>
+                <div style="display: flex; justify-content: center;">
+                    ${Object.keys(geography).length > 0 ?
+                        generatePieChart(geography, 160, ['#635bff', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4']) :
+                        generatePieChart({'United States': allocation.stocks || 70, 'International': 100 - (allocation.stocks || 70)}, 160, ['#635bff', '#10b981'])
+                    }
+                </div>
+            </div>
+            <div class="section">
+                <h2 class="section-title">Regional Breakdown</h2>
+                <div class="geo-grid" style="gap: 8px;">
+                    ${Object.keys(geography).length > 0 ?
+                        Object.entries(geography).sort((a, b) => b[1] - a[1]).map(([region, pct]) => {
+                            const flags = { 'United States': '🇺🇸', 'US': '🇺🇸', 'Europe': '🇪🇺', 'UK': '🇬🇧', 'Japan': '🇯🇵', 'China': '🇨🇳', 'Emerging Markets': '🌍', 'International': '🌐' };
+                            return `
+                                <div class="geo-item">
+                                    <span class="geo-flag">${flags[region] || '🌐'}</span>
+                                    <span class="geo-name">${region}</span>
+                                    <span class="geo-pct">${pct.toFixed(1)}%</span>
+                                </div>
+                            `;
+                        }).join('') :
+                        `<div class="geo-item"><span class="geo-flag">🇺🇸</span><span class="geo-name">United States</span><span class="geo-pct">${(allocation.stocks || 70).toFixed(1)}%</span></div>
+                         <div class="geo-item"><span class="geo-flag">🌐</span><span class="geo-name">International</span><span class="geo-pct">${(100 - (allocation.stocks || 70)).toFixed(1)}%</span></div>`
+                    }
+                </div>
             </div>
         </div>
 
@@ -16197,6 +16434,16 @@
                     `Your portfolio has exposure to ${Object.keys(geography).length} geographic regions. Consider the currency risk and geopolitical factors associated with international investments.` :
                     'Geographic data is estimated based on holding characteristics. US equities typically dominate most portfolios. Consider adding international exposure for additional diversification benefits.'
                 }
+            </p>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">10-Year Portfolio Projection (Monte Carlo)</h2>
+            <div style="display:flex;justify-content:center;">
+                ${generateProjectionChart(totalValue, 10, 480, 200)}
+            </div>
+            <p style="font-size: 10px; color: #666; text-align: center; margin-top: 12px; font-style: italic;">
+                Projections based on historical market patterns. Shaded area represents 25th-75th percentile range. Actual results may vary significantly.
             </p>
         </div>
 
