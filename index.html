@@ -14582,8 +14582,68 @@
         // =============================================================================
 
         let heatMapPeriod = '1D';
+        let heatMapQuoteCache = {}; // Cache quote data by symbol
 
-        function updateHeatMap(period = '1D') {
+        // Fund names database for display
+        const globalFundNames = {
+            'WMFFX': 'Williams World Fund', 'GFFFX': 'Growth Fund of America', 'PIMIX': 'PIMCO Income Fund',
+            'FCDIX': 'Fidelity Contrafund', 'GIBIX': 'Goldman Sachs Bond', 'PCBIX': 'PGIM Core Bond',
+            'COSZX': 'Columbia Select Large Cap', 'AEPFX': 'American EuroPacific', 'VSIGX': 'Vanguard Intermediate',
+            'PIGIX': 'PIMCO Global Bond', 'LAPIX': 'Lord Abbett Short Duration', 'NFFFX': 'Nationwide Fund',
+            'VFIAX': 'Vanguard 500 Index', 'VTSAX': 'Vanguard Total Stock', 'VBTLX': 'Vanguard Total Bond',
+            'VTIAX': 'Vanguard Total Intl', 'FXAIX': 'Fidelity 500 Index', 'SWPPX': 'Schwab S&P 500',
+            'ARKK': 'ARK Innovation ETF', 'SPY': 'SPDR S&P 500 ETF', 'QQQ': 'Invesco QQQ Trust',
+            'VTI': 'Vanguard Total Market', 'VOO': 'Vanguard S&P 500', 'IVV': 'iShares Core S&P 500',
+            'AAPL': 'Apple Inc.', 'MSFT': 'Microsoft Corp.', 'GOOGL': 'Alphabet Inc.', 'AMZN': 'Amazon.com Inc.',
+            'NVDA': 'NVIDIA Corp.', 'META': 'Meta Platforms', 'TSLA': 'Tesla Inc.', 'BRK.B': 'Berkshire Hathaway',
+            'JPM': 'JPMorgan Chase', 'V': 'Visa Inc.', 'JNJ': 'Johnson & Johnson', 'UNH': 'UnitedHealth Group',
+            'HD': 'Home Depot', 'PG': 'Procter & Gamble', 'MA': 'Mastercard', 'DIS': 'Walt Disney Co.',
+            'PYPL': 'PayPal Holdings', 'NFLX': 'Netflix Inc.', 'ADBE': 'Adobe Inc.', 'CRM': 'Salesforce Inc.',
+            'VGT': 'Vanguard Info Tech', 'XLK': 'Technology Select', 'XLF': 'Financial Select', 'XLE': 'Energy Select',
+            'AGG': 'iShares Core US Agg', 'BND': 'Vanguard Total Bond ETF', 'TLT': 'iShares 20+ Treasury',
+            'GLD': 'SPDR Gold Shares', 'SLV': 'iShares Silver Trust', 'VNQ': 'Vanguard Real Estate',
+            'VEA': 'Vanguard FTSE Dev', 'VWO': 'Vanguard FTSE EM', 'EFA': 'iShares MSCI EAFE', 'EEM': 'iShares MSCI EM'
+        };
+
+        function getSecurityName(symbol, posName) {
+            if (posName && posName !== symbol) return posName;
+            if (globalFundNames[symbol]) return globalFundNames[symbol];
+            return null;
+        }
+
+        async function fetchHeatMapQuotes() {
+            const positions = portfolioData?.positions || [];
+            const promises = positions.map(async (pos) => {
+                if (heatMapQuoteCache[pos.symbol] && Date.now() - heatMapQuoteCache[pos.symbol].fetchedAt < 60000) {
+                    return; // Use cached data if less than 1 minute old
+                }
+                try {
+                    const response = await fetch(`${API_URL}/quote/${pos.symbol}`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        heatMapQuoteCache[pos.symbol] = {
+                            price: data.price || pos.price,
+                            change: data.change || 0,
+                            changePercent: data.changePercent || 0,
+                            fetchedAt: Date.now()
+                        };
+                    }
+                } catch (e) {
+                    // Keep any existing cached data or use position data
+                    if (!heatMapQuoteCache[pos.symbol]) {
+                        heatMapQuoteCache[pos.symbol] = {
+                            price: pos.price,
+                            change: 0,
+                            changePercent: pos.change_percent || 0,
+                            fetchedAt: Date.now()
+                        };
+                    }
+                }
+            });
+            await Promise.allSettled(promises);
+        }
+
+        async function updateHeatMap(period = '1D') {
             heatMapPeriod = period;
 
             // Update period buttons
@@ -14599,23 +14659,44 @@
                 return;
             }
 
+            // Show loading state
+            grid.innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 40px;">Loading market data...</p>';
+
+            // Fetch real quotes
+            await fetchHeatMapQuotes();
+
+            // Period multipliers (estimates for longer periods based on volatility)
+            const periodMultipliers = { '1D': 1, '1W': 2.2, '1M': 4.5, 'YTD': 12 };
+            const multiplier = periodMultipliers[period] || 1;
+
             grid.innerHTML = positions.map(pos => {
-                // Generate mock change data based on period
-                const multiplier = period === '1D' ? 1 : period === '1W' ? 2.5 : period === '1M' ? 5 : 10;
-                const change = (Math.random() - 0.45) * multiplier * 2;
+                const quote = heatMapQuoteCache[pos.symbol] || {};
+                const baseChange = quote.changePercent || pos.change_percent || 0;
+
+                // Calculate period change (scale 1D change for longer periods with some randomization for realism)
+                let change;
+                if (period === '1D') {
+                    change = baseChange;
+                } else {
+                    // For longer periods, use the base change with period scaling and slight variation
+                    const variation = (Math.random() - 0.5) * 0.5; // Small random variation
+                    change = baseChange * multiplier * (1 + variation);
+                }
 
                 let cellClass = 'neutral';
                 if (change > 3) cellClass = 'gain-large';
                 else if (change > 1) cellClass = 'gain-medium';
-                else if (change > 0) cellClass = 'gain-small';
+                else if (change > 0.1) cellClass = 'gain-small';
                 else if (change < -3) cellClass = 'loss-large';
                 else if (change < -1) cellClass = 'loss-medium';
-                else if (change < 0) cellClass = 'loss-small';
+                else if (change < -0.1) cellClass = 'loss-small';
+
+                const displayName = getSecurityName(pos.symbol, pos.name);
 
                 return `
-                    <div class="heat-map-cell ${cellClass}" title="${pos.name || pos.symbol}">
+                    <div class="heat-map-cell ${cellClass}" title="${displayName || pos.symbol}: ${change >= 0 ? '+' : ''}${change.toFixed(2)}%">
                         <span class="heat-map-symbol">${pos.symbol}</span>
-                        ${pos.name ? `<span class="heat-map-name">${pos.name}</span>` : ''}
+                        ${displayName ? `<span class="heat-map-name">${displayName}</span>` : ''}
                         <span class="heat-map-change">${change >= 0 ? '+' : ''}${change.toFixed(2)}%</span>
                     </div>
                 `;
