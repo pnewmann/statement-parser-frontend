@@ -1,5 +1,5 @@
 // Statement Scan Service Worker
-const CACHE_NAME = 'statement-scan-v19';
+const CACHE_NAME = 'statement-scan-v20';
 const ASSETS_TO_CACHE = [
     '/',
     '/index.html',

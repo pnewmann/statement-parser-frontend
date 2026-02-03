@@ -7080,11 +7080,11 @@
                 <div class="heat-map-container" style="margin-top: 24px;">
                     <div class="heat-map-header">
                         <h3 style="font-size: 1.125rem;">Performance Heat Map</h3>
-                        <div class="heat-map-period-selector">
-                            <button class="period-tab active" data-period="1D" onclick="updateHeatMap('1D')">1D</button>
-                            <button class="period-tab" data-period="1W" onclick="updateHeatMap('1W')">1W</button>
-                            <button class="period-tab" data-period="1M" onclick="updateHeatMap('1M')">1M</button>
-                            <button class="period-tab" data-period="YTD" onclick="updateHeatMap('YTD')">YTD</button>
+                        <div class="heat-map-period-selector" id="heatMapPeriodSelector">
+                            <button class="period-tab active" data-period="1D">1D</button>
+                            <button class="period-tab" data-period="1W">1W</button>
+                            <button class="period-tab" data-period="1M">1M</button>
+                            <button class="period-tab" data-period="YTD">YTD</button>
                         </div>
                     </div>
                     <div class="heat-map-grid" id="heatMapGrid">
@@ -14702,6 +14702,19 @@
                 `;
             }).join('');
         }
+
+        // Initialize heat map period selector event delegation
+        document.addEventListener('DOMContentLoaded', () => {
+            const selector = document.getElementById('heatMapPeriodSelector');
+            if (selector) {
+                selector.addEventListener('click', (e) => {
+                    const btn = e.target.closest('.period-tab');
+                    if (btn && btn.dataset.period) {
+                        updateHeatMap(btn.dataset.period);
+                    }
+                });
+            }
+        });
 
         // =============================================================================
         // ALLOCATION SUGGESTIONS
