@@ -6343,20 +6343,21 @@
 
         .heat-map-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
             gap: 8px;
         }
 
         .heat-map-cell {
-            aspect-ratio: 1.5;
+            aspect-ratio: 1.2;
             border-radius: var(--radius-sm);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 8px;
+            padding: 8px 6px;
             cursor: pointer;
             transition: transform 0.2s;
+            gap: 2px;
         }
 
         .heat-map-cell:hover {
@@ -6376,6 +6377,19 @@
             color: white;
             opacity: 0.9;
             text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .heat-map-name {
+            font-size: 0.625rem;
+            color: white;
+            opacity: 0.75;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            text-align: center;
+            line-height: 1.2;
         }
 
         .heat-map-cell.gain-large { background: #1B5E20; }
@@ -14579,6 +14593,7 @@
                 return `
                     <div class="heat-map-cell ${cellClass}" title="${pos.name || pos.symbol}">
                         <span class="heat-map-symbol">${pos.symbol}</span>
+                        ${pos.name ? `<span class="heat-map-name">${pos.name}</span>` : ''}
                         <span class="heat-map-change">${change >= 0 ? '+' : ''}${change.toFixed(2)}%</span>
                     </div>
                 `;
