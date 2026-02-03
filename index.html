@@ -8473,6 +8473,8 @@
         let charts = {};
         let currentUser = null;
         let authToken = localStorage.getItem('authToken');
+        let fullChartData = null;
+        let currentPeriod = '5Y';
 
         // =============================================================================
         // ENTERPRISE ENHANCEMENTS - SETTINGS & PREFERENCES
@@ -11886,9 +11888,6 @@
                 }
             });
         }
-
-        let fullChartData = null;
-        let currentPeriod = '5Y';
 
         function renderPerformance() {
             const perf = portfolioData.historical_performance || {};
