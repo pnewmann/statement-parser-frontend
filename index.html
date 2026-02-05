@@ -10035,12 +10035,25 @@
             // Calculate dividends (simulated - in production would use real dividend data)
             // Known dividend yields for common stocks/ETFs
             const knownDividendYields = {
+                // Large cap stocks
                 'AAPL': 0.005, 'MSFT': 0.008, 'JNJ': 0.03, 'KO': 0.03, 'PG': 0.025,
                 'PEP': 0.027, 'VZ': 0.065, 'T': 0.065, 'XOM': 0.035, 'CVX': 0.04,
+                'JPM': 0.022, 'BAC': 0.025, 'WFC': 0.027, 'C': 0.035, 'GS': 0.023,
+                'HD': 0.022, 'MCD': 0.021, 'WMT': 0.013, 'COST': 0.006, 'DIS': 0.008,
+                // Dividend ETFs
                 'VYM': 0.03, 'SCHD': 0.035, 'VIG': 0.02, 'DVY': 0.035, 'HDV': 0.04,
                 'SPYD': 0.045, 'VNQ': 0.04, 'O': 0.055, 'JEPI': 0.08, 'JEPQ': 0.09,
+                // Index ETFs
                 'SPY': 0.013, 'VOO': 0.013, 'VTI': 0.014, 'QQQ': 0.006, 'IVV': 0.013,
-                'BND': 0.035, 'AGG': 0.035, 'TLT': 0.04, 'VXUS': 0.03, 'VEA': 0.03
+                'DIA': 0.016, 'RSP': 0.015, 'SPLG': 0.013, 'SPTM': 0.014,
+                // Bond ETFs - Treasury
+                'SGOV': 0.05, 'SHV': 0.05, 'BIL': 0.05, 'SCHO': 0.045, 'VGSH': 0.045,
+                'SHY': 0.04, 'IEF': 0.038, 'TLT': 0.04, 'GOVT': 0.04, 'VGIT': 0.04,
+                // Bond ETFs - Corporate/Aggregate
+                'BND': 0.04, 'AGG': 0.04, 'BNDX': 0.035, 'LQD': 0.045, 'VCIT': 0.04,
+                'HYG': 0.055, 'JNK': 0.06, 'VCSH': 0.04, 'BSV': 0.035, 'MUB': 0.03,
+                // International
+                'VXUS': 0.03, 'VEA': 0.03, 'VWO': 0.035, 'IEMG': 0.025, 'EFA': 0.025
             };
 
             positions.forEach(p => {
