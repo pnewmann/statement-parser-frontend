@@ -10033,18 +10033,40 @@
             const monthlyDividends = Array(12).fill(0);
 
             // Calculate dividends (simulated - in production would use real dividend data)
+            // Known dividend yields for common stocks/ETFs
+            const knownDividendYields = {
+                'AAPL': 0.005, 'MSFT': 0.008, 'JNJ': 0.03, 'KO': 0.03, 'PG': 0.025,
+                'PEP': 0.027, 'VZ': 0.065, 'T': 0.065, 'XOM': 0.035, 'CVX': 0.04,
+                'VYM': 0.03, 'SCHD': 0.035, 'VIG': 0.02, 'DVY': 0.035, 'HDV': 0.04,
+                'SPYD': 0.045, 'VNQ': 0.04, 'O': 0.055, 'JEPI': 0.08, 'JEPQ': 0.09,
+                'SPY': 0.013, 'VOO': 0.013, 'VTI': 0.014, 'QQQ': 0.006, 'IVV': 0.013,
+                'BND': 0.035, 'AGG': 0.035, 'TLT': 0.04, 'VXUS': 0.03, 'VEA': 0.03
+            };
+
             positions.forEach(p => {
-                // Estimate dividend yield based on sector (simplified)
+                // Use actual dividend_yield if available, then known yields, then estimate
                 let estimatedYield = 0;
-                if (p.asset_class === 'Equity') {
+                const symbol = (p.symbol || '').toUpperCase();
+
+                // First check if position has dividend_yield from API
+                if (p.dividend_yield && p.dividend_yield > 0) {
+                    estimatedYield = p.dividend_yield / 100; // Convert from percentage
+                }
+                // Check known dividend yields
+                else if (knownDividendYields[symbol]) {
+                    estimatedYield = knownDividendYields[symbol];
+                }
+                // Fall back to asset class/sector estimation
+                else if (p.asset_class === 'Fixed Income' || symbol.includes('BND') || symbol.includes('AGG')) {
+                    estimatedYield = 0.04;
+                } else if (p.asset_class === 'Equity' || !p.asset_class) {
+                    // Default: treat as equity if no asset_class (common for manual entries)
                     if (p.sector === 'Utilities') estimatedYield = 0.035;
                     else if (p.sector === 'Real Estate') estimatedYield = 0.04;
                     else if (p.sector === 'Consumer Staples') estimatedYield = 0.025;
                     else if (p.sector === 'Financial Services') estimatedYield = 0.03;
                     else if (p.sector === 'Energy') estimatedYield = 0.035;
-                    else estimatedYield = 0.015;
-                } else if (p.asset_class === 'Fixed Income') {
-                    estimatedYield = 0.045;
+                    else estimatedYield = 0.015; // Default equity yield
                 }
 
                 if (estimatedYield > 0) {
