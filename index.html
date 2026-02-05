@@ -12300,13 +12300,8 @@
                 }
             }
 
-            // Only hide progress if we're not about to analyze
-            if (successful === 0) {
-                hideProgress();
-            } else {
-                // Keep progress visible - will be used by analyzePortfolio
-                progressManager.setProgress(60); // Parse complete
-            }
+            // Hide progress after parsing is complete
+            hideProgress();
 
             hideError();
             renderAccounts();
