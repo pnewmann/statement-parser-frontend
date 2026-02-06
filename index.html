@@ -267,6 +267,88 @@
             display: none;
         }
 
+        /* PII Redaction Option */
+        .redact-pii-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 20px;
+            padding: 12px 16px;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+        }
+
+        .redact-pii-label {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+
+        .redact-pii-title {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .redact-pii-hint {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        /* Toggle Switch */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+            flex-shrink: 0;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--bg-tertiary);
+            transition: 0.3s;
+            border-radius: 24px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.3s;
+            border-radius: 50%;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .toggle-switch input:checked + .toggle-slider {
+            background-color: var(--primary);
+        }
+
+        .toggle-switch input:checked + .toggle-slider:before {
+            transform: translateX(20px);
+        }
+
+        .toggle-switch input:focus + .toggle-slider {
+            box-shadow: 0 0 0 2px rgba(99, 91, 255, 0.2);
+        }
+
         /* Multi-file Upload Queue */
         .upload-queue {
             margin-top: 24px;
@@ -7014,6 +7096,18 @@
                     </button>
                     <input type="file" id="fileInput" accept=".pdf,.csv" multiple aria-label="File input for brokerage statements">
 
+                    <!-- PII Redaction Toggle -->
+                    <div class="redact-pii-option">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="redactPiiToggle" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <div class="redact-pii-label">
+                            <span class="redact-pii-title">Redact sensitive information</span>
+                            <span class="redact-pii-hint">Automatically mask account numbers, SSN, addresses</span>
+                        </div>
+                    </div>
+
                     <!-- Upload Queue (shown during batch upload) -->
                     <div class="upload-queue" id="uploadQueue" style="display: none;">
                         <div class="upload-queue-header">
@@ -7180,6 +7274,14 @@
                     <button class="btn btn-primary" id="analyzeBtn" disabled aria-label="Analyze portfolio">
                         Analyze Portfolio
                         <span class="kbd" style="margin-left: 8px;">Ctrl+Enter</span>
+                    </button>
+                    <button class="btn btn-secondary" id="downloadRedactedBtn" onclick="downloadRedactedPdf()" style="display: none;" aria-label="Download redacted PDF">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 6px;">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7 10 12 15 17 10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                        Download Redacted
                     </button>
                     <button class="btn btn-secondary" id="clearAllBtn" aria-label="Clear all accounts">Clear All</button>
                 </div>
@@ -12272,7 +12374,13 @@
         });
 
         analyzeBtn.addEventListener('click', analyzePortfolio);
-        clearAllBtn.addEventListener('click', () => { accounts = []; renderAccounts(); });
+        clearAllBtn.addEventListener('click', () => {
+            accounts = [];
+            uploadedFiles = [];
+            const downloadBtn = document.getElementById('downloadRedactedBtn');
+            if (downloadBtn) downloadBtn.style.display = 'none';
+            renderAccounts();
+        });
         document.getElementById('newAnalysisBtn')?.addEventListener('click', resetUI);
         document.getElementById('downloadPdfBtn')?.addEventListener('click', downloadPDF);
         document.getElementById('downloadCsvBtn')?.addEventListener('click', downloadCSV);
@@ -12488,11 +12596,79 @@
             return count > 1 ? `${base} ${count}` : base;
         }
 
+        // Store uploaded files for redacted download
+        let uploadedFiles = [];
+
         async function parseFile(file) {
             const formData = new FormData();
             formData.append('file', file);
+
+            // Include PII redaction flag
+            const redactPii = document.getElementById('redactPiiToggle')?.checked ?? true;
+            formData.append('redact_pii', redactPii);
+
             const res = await fetch(`${API_URL}/parse`, { method: 'POST', body: formData });
-            return res.json();
+            const result = await res.json();
+
+            // Store file info for redacted download
+            if (redactPii && !result.error) {
+                uploadedFiles.push({
+                    name: file.name,
+                    id: result.file_id || Date.now(),
+                    type: file.name.split('.').pop().toLowerCase()
+                });
+
+                // Show download button if we have PDF files
+                const hasPdfs = uploadedFiles.some(f => f.type === 'pdf');
+                const downloadBtn = document.getElementById('downloadRedactedBtn');
+                if (downloadBtn && hasPdfs) {
+                    downloadBtn.style.display = 'inline-flex';
+                }
+            }
+
+            return result;
+        }
+
+        async function downloadRedactedPdf() {
+            const pdfFiles = uploadedFiles.filter(f => f.type === 'pdf');
+
+            if (pdfFiles.length === 0) {
+                showToast('No PDF files to download', 'error');
+                return;
+            }
+
+            showToast('Preparing redacted PDF...', 'info', { duration: 2000 });
+
+            try {
+                // Request redacted PDF from backend
+                const fileIds = pdfFiles.map(f => f.id);
+                const res = await fetch(`${API_URL}/download-redacted`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ file_ids: fileIds })
+                });
+
+                if (!res.ok) {
+                    throw new Error('Failed to generate redacted PDF');
+                }
+
+                // Download the file
+                const blob = await res.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = pdfFiles.length === 1
+                    ? `redacted_${pdfFiles[0].name}`
+                    : 'redacted_statements.pdf';
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                a.remove();
+
+                showToast('Redacted PDF downloaded', 'success');
+            } catch (err) {
+                showToast('Failed to download redacted PDF: ' + err.message, 'error');
+            }
         }
 
         function renderAccounts() {
