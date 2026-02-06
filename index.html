@@ -12637,16 +12637,23 @@
                 return;
             }
 
-            showToast('Preparing redacted PDF...', 'info', { duration: 2000 });
-
+            // Check if backend supports redacted downloads
             try {
-                // Request redacted PDF from backend
                 const fileIds = pdfFiles.map(f => f.id);
                 const res = await fetch(`${API_URL}/download-redacted`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ file_ids: fileIds })
                 });
+
+                if (res.status === 404) {
+                    // Endpoint not implemented yet
+                    showToast('Redacted PDF download coming soon! Your data is still being parsed with PII masked.', 'info', {
+                        title: 'Coming Soon',
+                        duration: 5000
+                    });
+                    return;
+                }
 
                 if (!res.ok) {
                     throw new Error('Failed to generate redacted PDF');
@@ -12667,7 +12674,15 @@
 
                 showToast('Redacted PDF downloaded', 'success');
             } catch (err) {
-                showToast('Failed to download redacted PDF: ' + err.message, 'error');
+                // Network error or endpoint doesn't exist
+                if (err.message.includes('Failed to fetch') || err.name === 'TypeError') {
+                    showToast('Redacted PDF download coming soon! Your data is still being parsed with PII masked.', 'info', {
+                        title: 'Coming Soon',
+                        duration: 5000
+                    });
+                } else {
+                    showToast('Failed to download: ' + err.message, 'error');
+                }
             }
         }
 
