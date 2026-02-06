@@ -3632,6 +3632,45 @@
             to { width: 0%; }
         }
 
+        /* Toast Action Button */
+        .toast.has-action {
+            padding-right: 48px;
+        }
+
+        .toast-action-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            margin-left: 8px;
+        }
+
+        .toast-action-btn:hover {
+            background: rgba(255, 255, 255, 0.35);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-1px);
+        }
+
+        .toast-action-btn:active {
+            transform: translateY(0);
+        }
+
+        .toast.info .toast-action-btn {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .toast.info .toast-action-btn:hover {
+            background: var(--primary-dark);
+            border-color: var(--primary-dark);
+        }
+
         /* ========== LOADING STATES & SKELETON LOADERS ========== */
         .loading-overlay {
             position: fixed;
@@ -9380,12 +9419,16 @@
 
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
+            toast.className = `toast ${type}${action ? ' has-action' : ''}`;
             toast.setAttribute('role', 'alert');
 
             let actionHtml = '';
             if (action) {
-                actionHtml = `<button class="btn-undo" onclick="${action.handler}">${action.label}</button>`;
+                const actionId = 'toast-action-' + Date.now();
+                actionHtml = `<button class="toast-action-btn" id="${actionId}">${action.label}</button>`;
+                // Store callback to attach after DOM insertion
+                toast._actionCallback = action.callback || (action.handler ? new Function(action.handler) : null);
+                toast._actionId = actionId;
             }
 
             toast.innerHTML = `
@@ -9410,6 +9453,14 @@
             }
 
             container.appendChild(toast);
+
+            // Attach action callback after DOM insertion
+            if (toast._actionCallback && toast._actionId) {
+                const actionBtn = document.getElementById(toast._actionId);
+                if (actionBtn) {
+                    actionBtn.addEventListener('click', toast._actionCallback);
+                }
+            }
 
             // Trigger animation
             requestAnimationFrame(() => {
