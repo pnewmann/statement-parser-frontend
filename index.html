@@ -18,6 +18,8 @@
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://d3js.org/topojson.v3.min.js"></script>
     <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <style>
         :root {
             --primary: #635bff;
@@ -12599,90 +12601,181 @@
         // Store uploaded files for redacted download
         let uploadedFiles = [];
 
+        // PII patterns to redact
+        const PII_PATTERNS = [
+            // Account numbers (various formats)
+            { regex: /\b\d{4}[-\s]?\d{4}[-\s]?\d{4}[-\s]?\d{4}\b/g, name: 'account' },
+            { regex: /\b[A-Z]{0,2}\d{6,12}\b/g, name: 'account' },
+            { regex: /Account\s*#?\s*:?\s*[\w\d-]{6,}/gi, name: 'account' },
+            // SSN
+            { regex: /\b\d{3}[-\s]?\d{2}[-\s]?\d{4}\b/g, name: 'ssn' },
+            // Phone numbers
+            { regex: /\b\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}\b/g, name: 'phone' },
+            // Email addresses
+            { regex: /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g, name: 'email' },
+            // Addresses (simplified - street numbers and zip codes)
+            { regex: /\b\d{1,5}\s+[\w\s]{5,30}(Street|St|Avenue|Ave|Road|Rd|Boulevard|Blvd|Drive|Dr|Lane|Ln|Way|Court|Ct)\b/gi, name: 'address' },
+            { regex: /\b\d{5}(-\d{4})?\b/g, name: 'zip' },
+        ];
+
+        // Initialize PDF.js worker
+        if (typeof pdfjsLib !== 'undefined') {
+            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        }
+
+        async function redactPdfClient(fileBytes, fileName) {
+            try {
+                const { PDFDocument, rgb, StandardFonts } = PDFLib;
+
+                // Load the PDF
+                const pdfDoc = await PDFDocument.load(fileBytes, { ignoreEncryption: true });
+                const pages = pdfDoc.getPages();
+
+                // Also use pdf.js to extract text positions
+                const loadingTask = pdfjsLib.getDocument({ data: fileBytes });
+                const pdfJs = await loadingTask.promise;
+
+                for (let pageIndex = 0; pageIndex < pages.length; pageIndex++) {
+                    const page = pages[pageIndex];
+                    const { width, height } = page.getSize();
+
+                    // Get text content with positions from pdf.js
+                    const pdfJsPage = await pdfJs.getPage(pageIndex + 1);
+                    const textContent = await pdfJsPage.getTextContent();
+
+                    // Find PII in text items and draw black boxes
+                    for (const item of textContent.items) {
+                        const text = item.str;
+                        const transform = item.transform;
+
+                        for (const pattern of PII_PATTERNS) {
+                            if (pattern.regex.test(text)) {
+                                // Reset regex
+                                pattern.regex.lastIndex = 0;
+
+                                // Calculate position (pdf.js uses bottom-left origin like PDF)
+                                const x = transform[4];
+                                const y = transform[5];
+                                const itemWidth = item.width || text.length * 6;
+                                const itemHeight = item.height || 12;
+
+                                // Draw black rectangle over PII
+                                page.drawRectangle({
+                                    x: x - 2,
+                                    y: y - 2,
+                                    width: itemWidth + 4,
+                                    height: itemHeight + 4,
+                                    color: rgb(0, 0, 0),
+                                });
+                            }
+                        }
+                    }
+                }
+
+                // Save the redacted PDF
+                const redactedBytes = await pdfDoc.save();
+                return {
+                    bytes: redactedBytes,
+                    name: `redacted_${fileName}`
+                };
+            } catch (err) {
+                console.error('PDF redaction error:', err);
+                return null;
+            }
+        }
+
         async function parseFile(file) {
             const formData = new FormData();
-            formData.append('file', file);
-
-            // Include PII redaction flag
             const redactPii = document.getElementById('redactPiiToggle')?.checked ?? true;
-            formData.append('redact_pii', redactPii);
+            const isPdf = file.name.toLowerCase().endsWith('.pdf');
 
-            const res = await fetch(`${API_URL}/parse`, { method: 'POST', body: formData });
-            const result = await res.json();
-
-            // Store file info for redacted download
-            if (redactPii && !result.error) {
+            // Store original file for redaction
+            if (isPdf && redactPii) {
+                const fileBytes = await file.arrayBuffer();
                 uploadedFiles.push({
                     name: file.name,
-                    id: result.file_id || Date.now(),
-                    type: file.name.split('.').pop().toLowerCase()
+                    id: Date.now() + Math.random(),
+                    type: 'pdf',
+                    bytes: new Uint8Array(fileBytes)
                 });
 
-                // Show download button if we have PDF files
-                const hasPdfs = uploadedFiles.some(f => f.type === 'pdf');
+                // Show download button
                 const downloadBtn = document.getElementById('downloadRedactedBtn');
-                if (downloadBtn && hasPdfs) {
+                if (downloadBtn) {
                     downloadBtn.style.display = 'inline-flex';
                 }
             }
 
-            return result;
+            formData.append('file', file);
+            formData.append('redact_pii', redactPii);
+
+            const res = await fetch(`${API_URL}/parse`, { method: 'POST', body: formData });
+            return res.json();
         }
 
         async function downloadRedactedPdf() {
-            const pdfFiles = uploadedFiles.filter(f => f.type === 'pdf');
+            const pdfFiles = uploadedFiles.filter(f => f.type === 'pdf' && f.bytes);
 
             if (pdfFiles.length === 0) {
                 showToast('No PDF files to download', 'error');
                 return;
             }
 
-            // Check if backend supports redacted downloads
-            try {
-                const fileIds = pdfFiles.map(f => f.id);
-                const res = await fetch(`${API_URL}/download-redacted`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ file_ids: fileIds })
-                });
+            showToast('Redacting sensitive information...', 'info', { duration: 3000 });
 
-                if (res.status === 404) {
-                    // Endpoint not implemented yet
-                    showToast('Redacted PDF download coming soon! Your data is still being parsed with PII masked.', 'info', {
-                        title: 'Coming Soon',
-                        duration: 5000
-                    });
+            try {
+                // Process each PDF
+                const redactedPdfs = [];
+                for (const pdfFile of pdfFiles) {
+                    const result = await redactPdfClient(pdfFile.bytes, pdfFile.name);
+                    if (result) {
+                        redactedPdfs.push(result);
+                    }
+                }
+
+                if (redactedPdfs.length === 0) {
+                    showToast('Failed to redact PDFs', 'error');
                     return;
                 }
 
-                if (!res.ok) {
-                    throw new Error('Failed to generate redacted PDF');
-                }
-
-                // Download the file
-                const blob = await res.blob();
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = pdfFiles.length === 1
-                    ? `redacted_${pdfFiles[0].name}`
-                    : 'redacted_statements.pdf';
-                document.body.appendChild(a);
-                a.click();
-                window.URL.revokeObjectURL(url);
-                a.remove();
-
-                showToast('Redacted PDF downloaded', 'success');
-            } catch (err) {
-                // Network error or endpoint doesn't exist
-                if (err.message.includes('Failed to fetch') || err.name === 'TypeError') {
-                    showToast('Redacted PDF download coming soon! Your data is still being parsed with PII masked.', 'info', {
-                        title: 'Coming Soon',
-                        duration: 5000
-                    });
+                // If single file, download directly
+                if (redactedPdfs.length === 1) {
+                    const blob = new Blob([redactedPdfs[0].bytes], { type: 'application/pdf' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = redactedPdfs[0].name;
+                    document.body.appendChild(a);
+                    a.click();
+                    URL.revokeObjectURL(url);
+                    a.remove();
                 } else {
-                    showToast('Failed to download: ' + err.message, 'error');
+                    // Multiple files - merge them
+                    const { PDFDocument } = PDFLib;
+                    const mergedPdf = await PDFDocument.create();
+
+                    for (const pdf of redactedPdfs) {
+                        const srcDoc = await PDFDocument.load(pdf.bytes);
+                        const pages = await mergedPdf.copyPages(srcDoc, srcDoc.getPageIndices());
+                        pages.forEach(page => mergedPdf.addPage(page));
+                    }
+
+                    const mergedBytes = await mergedPdf.save();
+                    const blob = new Blob([mergedBytes], { type: 'application/pdf' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'redacted_statements.pdf';
+                    document.body.appendChild(a);
+                    a.click();
+                    URL.revokeObjectURL(url);
+                    a.remove();
                 }
+
+                showToast('Redacted PDF downloaded successfully', 'success');
+            } catch (err) {
+                console.error('Download error:', err);
+                showToast('Failed to create redacted PDF: ' + err.message, 'error');
             }
         }
 
