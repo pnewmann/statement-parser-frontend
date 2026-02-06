@@ -205,6 +205,64 @@
             margin-bottom: 24px;
         }
 
+        /* Coming Soon Card Styles */
+        .coming-soon-card {
+            position: relative;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+        }
+
+        .coming-soon-badge {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .coming-soon-icon {
+            background: linear-gradient(135deg, rgba(99, 91, 255, 0.1) 0%, rgba(99, 91, 255, 0.05) 100%);
+        }
+
+        .coming-soon-features {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 24px 0;
+            text-align: left;
+            max-width: 280px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .feature-item svg {
+            color: var(--success);
+            flex-shrink: 0;
+        }
+
+        .coming-soon-note {
+            margin-top: 16px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            max-width: 320px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.5;
+        }
+
         #fileInput {
             display: none;
         }
@@ -7029,18 +7087,47 @@
 
             <!-- Connect Account Panel -->
             <div class="entry-panel" id="connectPanel">
-                <div class="card upload-card">
-                    <div class="upload-icon">
+                <div class="card upload-card coming-soon-card">
+                    <div class="coming-soon-badge">Coming Soon</div>
+                    <div class="upload-icon coming-soon-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <rect x="2" y="4" width="20" height="16" rx="2"/>
                             <path d="M7 15h0M2 9h20"/>
                         </svg>
                     </div>
                     <div class="upload-title">Connect your brokerage</div>
-                    <p class="upload-hint">Securely link your account to automatically import holdings</p>
-                    <button class="btn btn-primary" onclick="connectPlaidAccount()">
-                        Connect with Plaid
+                    <p class="upload-hint">Securely link your account to automatically import holdings from Schwab, Fidelity, Vanguard, and more.</p>
+                    <div class="coming-soon-features">
+                        <div class="feature-item">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                                <polyline points="22 4 12 14.01 9 11.01"/>
+                            </svg>
+                            <span>Automatic portfolio sync</span>
+                        </div>
+                        <div class="feature-item">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                                <polyline points="22 4 12 14.01 9 11.01"/>
+                            </svg>
+                            <span>Real-time price updates</span>
+                        </div>
+                        <div class="feature-item">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                                <polyline points="22 4 12 14.01 9 11.01"/>
+                            </svg>
+                            <span>Bank-level security with Plaid</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-secondary" disabled style="opacity: 0.6; cursor: not-allowed;">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                        Available Soon
                     </button>
+                    <p class="coming-soon-note">We're working hard to bring you seamless brokerage integration. In the meantime, upload your statements or enter holdings manually.</p>
                 </div>
             </div>
 
