@@ -12481,7 +12481,33 @@
 
         function renderInsights() {
             const container = document.getElementById('insightsList');
-            const insights = portfolioData.insights || [];
+            let insights = portfolioData.insights || [];
+
+            // Fix concentration insight if it shows 0% (backend calculation bug)
+            const positions = portfolioData.positions || [];
+            const totalValue = portfolioData.total_value || 0;
+            if (positions.length > 0 && totalValue > 0) {
+                const sortedPositions = [...positions].sort((a, b) => (b.value || 0) - (a.value || 0));
+                const top10Value = sortedPositions.slice(0, 10).reduce((sum, p) => sum + (p.value || 0), 0);
+                const top10Pct = (top10Value / totalValue * 100).toFixed(1);
+
+                insights = insights.map(insight => {
+                    if (insight.title === 'Well Diversified' && insight.text.includes('0%')) {
+                        const isConcentrated = parseFloat(top10Pct) > 80;
+                        return {
+                            ...insight,
+                            type: isConcentrated ? 'warning' : 'positive',
+                            title: isConcentrated ? 'High Concentration' : 'Well Diversified',
+                            text: `Your top 10 holdings represent ${top10Pct}% of your portfolio. ${
+                                isConcentrated
+                                    ? 'Consider spreading investments across more holdings to reduce concentration risk.'
+                                    : 'This diversification helps protect against individual stock volatility.'
+                            }`
+                        };
+                    }
+                    return insight;
+                });
+            }
 
             if (!insights.length) {
                 container.innerHTML = `
