@@ -11626,7 +11626,7 @@
             const labels = Object.keys(allocation).filter(k => allocation[k] > 0);
             const values = labels.map(k => allocation[k]);
             const colors = {
-                Stocks: '#635bff', Bonds: '#30d158', Cash: '#ffd60a',
+                Stocks: '#30d158', Bonds: '#635bff', Cash: '#ffd60a',
                 'Real Estate': '#bf5af2', Crypto: '#ff9f0a', Commodities: '#64d2ff'
             };
             const bgColors = labels.map(l => colors[l] || '#8898aa');
@@ -11928,7 +11928,7 @@
             const labels = Object.keys(allocation).filter(k => parseFloat(allocation[k]) > 0);
             const values = labels.map(k => parseFloat(allocation[k]));
             const colors = {
-                Stocks: '#635bff', Bonds: '#30d158', Cash: '#ffd60a',
+                Stocks: '#30d158', Bonds: '#635bff', Cash: '#ffd60a',
                 'Real Estate': '#bf5af2', Crypto: '#ff9f0a', Commodities: '#64d2ff'
             };
             const bgColors = labels.map(l => colors[l] || '#8898aa');
@@ -12883,7 +12883,7 @@
             document.getElementById('altsVal').textContent = formatCurrency((vals['Real Estate'] || 0) + (vals.Crypto || 0) + (vals.Commodities || 0));
 
             renderDoughnut('allocationChart', alloc, {
-                Stocks: '#635bff', Bonds: '#30d158', Cash: '#ffd60a',
+                Stocks: '#30d158', Bonds: '#635bff', Cash: '#ffd60a',
                 'Real Estate': '#bf5af2', Crypto: '#ff9f0a', Commodities: '#64d2ff'
             });
 
@@ -12992,7 +12992,7 @@
             if (charts[id]) charts[id].destroy();
 
             const assetColors = {
-                Stocks: '#635bff', Bonds: '#30d158', Cash: '#ffd60a',
+                Stocks: '#30d158', Bonds: '#635bff', Cash: '#ffd60a',
                 'Real Estate': '#bf5af2', Crypto: '#ff9f0a', Commodities: '#64d2ff'
             };
 
