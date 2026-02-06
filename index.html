@@ -5050,6 +5050,27 @@
             text-align: center;
         }
 
+        .export-divider {
+            height: 1px;
+            background: var(--border);
+            margin: 16px 0;
+        }
+
+        .export-section-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .export-option.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
         /* ========== IMPORT TEMPLATES ========== */
         .import-templates {
             display: grid;
@@ -8964,6 +8985,24 @@
                         <div class="export-option-desc">Raw data format</div>
                     </div>
                 </div>
+                <div id="exportRedactedSection">
+                    <div class="export-divider"></div>
+                    <div class="export-section-label">Source Document</div>
+                    <div class="export-options">
+                        <div class="export-option" id="exportRedactedOption" onclick="downloadRedactedPdf(); hideExportModal();">
+                        <div class="export-option-icon" style="color: #ff453a;">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                                <rect x="8" y="12" width="8" height="3" rx="1"/>
+                                <rect x="8" y="16" width="5" height="2" rx="0.5"/>
+                            </svg>
+                        </div>
+                        <div class="export-option-label">Redacted Statement</div>
+                        <div class="export-option-desc">PII masked PDF</div>
+                    </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -10626,6 +10665,13 @@
 
         function showExportModal() {
             document.getElementById('exportModal').classList.add('active');
+
+            // Show/hide redacted statement section based on available PDFs
+            const redactedSection = document.getElementById('exportRedactedSection');
+            if (redactedSection) {
+                const hasPdfFiles = uploadedFiles.some(f => f.type === 'pdf' && f.bytes);
+                redactedSection.style.display = hasPdfFiles ? '' : 'none';
+            }
         }
 
         function hideExportModal() {
