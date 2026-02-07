@@ -2820,40 +2820,6 @@
         .bar-mockup-item:nth-child(4) { height: 60%; background: var(--primary-light); }
         .bar-mockup-item:nth-child(5) { height: 40%; }
 
-        /* Gauge Mockup */
-        .gauge-mockup {
-            width: 100px;
-            height: 50px;
-            border-radius: 100px 100px 0 0;
-            background: linear-gradient(90deg, var(--success) 0%, var(--warning) 50%, var(--danger) 100%);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .gauge-mockup::before {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 70px;
-            height: 35px;
-            background: var(--bg-secondary);
-            border-radius: 100px 100px 0 0;
-        }
-
-        .gauge-needle {
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            width: 4px;
-            height: 40px;
-            background: var(--text-primary);
-            transform-origin: bottom center;
-            transform: translateX(-50%) rotate(-30deg);
-            border-radius: 2px;
-        }
-
         /* Line Chart Mockup */
         .line-mockup {
             width: 100%;
