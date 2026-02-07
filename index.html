@@ -1955,6 +1955,681 @@
             font-size: 0.875rem;
         }
 
+        /* ========== LANDING PAGE SECTIONS ========== */
+
+        /* Hero Subheadline */
+        .hero-subheadline {
+            color: var(--primary);
+            font-size: 1.125rem;
+            font-weight: 500;
+            text-align: center;
+            margin-top: 12px;
+            opacity: 0.9;
+        }
+
+        /* Landing Sections Container */
+        .landing-sections {
+            margin-top: 80px;
+        }
+
+        .landing-section {
+            padding: 80px 0;
+        }
+
+        .landing-section:first-child {
+            padding-top: 40px;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+            margin-bottom: 12px;
+        }
+
+        .section-subtitle {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* How It Works Section */
+        .how-it-works-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+            max-width: 960px;
+            margin: 0 auto;
+        }
+
+        .how-it-works-step {
+            text-align: center;
+            padding: 32px 24px;
+            position: relative;
+        }
+
+        .step-number {
+            width: 48px;
+            height: 48px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin: 0 auto 20px;
+            box-shadow: 0 4px 12px rgba(99, 91, 255, 0.3);
+        }
+
+        .step-icon {
+            width: 64px;
+            height: 64px;
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+
+        .step-icon svg {
+            width: 32px;
+            height: 32px;
+            color: var(--primary);
+        }
+
+        .step-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .step-description {
+            font-size: 0.9375rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .step-connector {
+            position: absolute;
+            top: 80px;
+            right: -16px;
+            width: 32px;
+            height: 2px;
+            background: var(--border);
+        }
+
+        .step-connector::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: -4px;
+            border: 5px solid transparent;
+            border-left-color: var(--border);
+        }
+
+        .how-it-works-step:last-child .step-connector {
+            display: none;
+        }
+
+        /* Sample Report Preview Section */
+        .report-preview-container {
+            background: var(--bg-primary);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border);
+            padding: 32px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .report-preview-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .report-preview-logo {
+            width: 32px;
+            height: 32px;
+            background: var(--primary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .report-preview-logo svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .report-preview-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .report-preview-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .preview-card {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .preview-card-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 12px;
+        }
+
+        .preview-chart-placeholder {
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* Donut Chart Mockup */
+        .donut-mockup {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: conic-gradient(
+                var(--primary) 0deg 180deg,
+                var(--success) 180deg 270deg,
+                var(--warning) 270deg 320deg,
+                var(--text-muted) 320deg 360deg
+            );
+            position: relative;
+        }
+
+        .donut-mockup::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            background: var(--bg-secondary);
+            border-radius: 50%;
+        }
+
+        /* Bar Chart Mockup */
+        .bar-mockup {
+            display: flex;
+            align-items: flex-end;
+            gap: 8px;
+            height: 100%;
+            padding: 10px 0;
+        }
+
+        .bar-mockup-item {
+            flex: 1;
+            background: var(--primary);
+            border-radius: 4px 4px 0 0;
+            opacity: 0.8;
+        }
+
+        .bar-mockup-item:nth-child(1) { height: 70%; }
+        .bar-mockup-item:nth-child(2) { height: 45%; background: var(--primary-light); }
+        .bar-mockup-item:nth-child(3) { height: 85%; }
+        .bar-mockup-item:nth-child(4) { height: 60%; background: var(--primary-light); }
+        .bar-mockup-item:nth-child(5) { height: 40%; }
+
+        /* Gauge Mockup */
+        .gauge-mockup {
+            width: 100px;
+            height: 50px;
+            border-radius: 100px 100px 0 0;
+            background: linear-gradient(90deg, var(--success) 0%, var(--warning) 50%, var(--danger) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .gauge-mockup::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 70px;
+            height: 35px;
+            background: var(--bg-secondary);
+            border-radius: 100px 100px 0 0;
+        }
+
+        .gauge-needle {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 4px;
+            height: 40px;
+            background: var(--text-primary);
+            transform-origin: bottom center;
+            transform: translateX(-50%) rotate(-30deg);
+            border-radius: 2px;
+        }
+
+        /* Line Chart Mockup */
+        .line-mockup {
+            width: 100%;
+            height: 80px;
+            position: relative;
+        }
+
+        .line-mockup svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Fee Display Mockup */
+        .fee-mockup {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .fee-mockup-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: var(--bg-primary);
+            border-radius: var(--radius-sm);
+            font-size: 0.8125rem;
+        }
+
+        .fee-mockup-label {
+            color: var(--text-secondary);
+        }
+
+        .fee-mockup-value {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .fee-mockup-value.highlight {
+            color: var(--danger);
+        }
+
+        /* Benchmark Mockup */
+        .benchmark-mockup {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+        }
+
+        .benchmark-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .benchmark-label {
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+            width: 80px;
+            flex-shrink: 0;
+        }
+
+        .benchmark-bar-container {
+            flex: 1;
+            height: 24px;
+            background: var(--bg-primary);
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .benchmark-bar {
+            height: 100%;
+            border-radius: var(--radius-sm);
+        }
+
+        .benchmark-bar.portfolio {
+            background: var(--primary);
+            width: 75%;
+        }
+
+        .benchmark-bar.sp500 {
+            background: var(--text-muted);
+            width: 68%;
+        }
+
+        .benchmark-value {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* Value Props Section */
+        .value-props-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .value-prop-card {
+            background: var(--bg-primary);
+            border-radius: var(--radius-lg);
+            padding: 28px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .value-prop-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .value-prop-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(99, 91, 255, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+
+        .value-prop-icon svg {
+            width: 24px;
+            height: 24px;
+            color: var(--primary);
+        }
+
+        .value-prop-title {
+            font-size: 1.0625rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .value-prop-description {
+            font-size: 0.9375rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Social Proof / Trust Section */
+        .trust-section {
+            background: var(--bg-primary);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .trust-content {
+            text-align: center;
+        }
+
+        .trust-title {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 32px;
+        }
+
+        .brokerage-logos {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 48px;
+            flex-wrap: wrap;
+        }
+
+        .brokerage-logo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            opacity: 0.6;
+            transition: opacity 0.2s;
+        }
+
+        .brokerage-logo:hover {
+            opacity: 1;
+        }
+
+        .brokerage-logo-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+
+        .brokerage-logo-name {
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+        }
+
+        .cta-content {
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .cta-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .cta-subtitle {
+            font-size: 1.125rem;
+            opacity: 0.9;
+            margin-bottom: 28px;
+        }
+
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            color: var(--primary);
+            font-size: 1rem;
+            font-weight: 600;
+            padding: 16px 32px;
+            border-radius: var(--radius-md);
+            border: none;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+        }
+
+        .cta-button svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Site Footer */
+        .site-footer {
+            background: var(--bg-primary);
+            border-top: 1px solid var(--border);
+            padding: 48px 0 32px;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .footer-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+            gap: 32px;
+        }
+
+        .footer-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 32px;
+            flex-wrap: wrap;
+        }
+
+        .footer-link {
+            font-size: 0.9375rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-link:hover {
+            color: var(--primary);
+        }
+
+        .footer-bottom {
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .footer-copyright {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        .footer-legal {
+            display: flex;
+            gap: 24px;
+        }
+
+        .footer-legal a {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-legal a:hover {
+            color: var(--text-secondary);
+        }
+
+        /* Landing Page Responsive */
+        @media (max-width: 1024px) {
+            .value-props-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .landing-section {
+                padding: 48px 0;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+            }
+
+            .how-it-works-grid {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+
+            .step-connector {
+                display: none;
+            }
+
+            .report-preview-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .value-props-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .brokerage-logos {
+                gap: 24px;
+            }
+
+            .cta-title {
+                font-size: 1.5rem;
+            }
+
+            .footer-top {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+
+            .footer-links {
+                justify-content: center;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .container {
@@ -7067,6 +7742,7 @@
                 </div>
             </nav>
             <p class="subtitle">Upload your brokerage statements and get instant portfolio analytics, benchmarking, and projections.</p>
+            <p class="hero-subheadline">Your statement is full of insights — you're just not seeing them yet.</p>
         </header>
 
         <main id="main-content">
@@ -8597,8 +9273,306 @@
 
         </main><!-- End main content -->
 
-        <footer>
-            <p>Supports Schwab, Fidelity, Vanguard, and most major brokerage statements</p>
+        <!-- Landing Page Sections -->
+        <div class="landing-sections" id="landingSections">
+
+            <!-- How It Works Section -->
+            <section class="landing-section how-it-works">
+                <div class="container">
+                    <h2 class="section-heading">How It Works</h2>
+                    <p class="section-subheading">Get professional portfolio analytics in three simple steps</p>
+                    <div class="how-it-works-grid">
+                        <div class="step-card">
+                            <div class="step-number">1</div>
+                            <div class="step-icon">
+                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                    <polyline points="17 8 12 3 7 8"/>
+                                    <line x1="12" y1="3" x2="12" y2="15"/>
+                                </svg>
+                            </div>
+                            <h3 class="step-title">Upload Your Statement</h3>
+                            <p class="step-description">Drag and drop your brokerage PDF or CSV. We support Schwab, Fidelity, Vanguard, and 50+ other brokerages.</p>
+                        </div>
+                        <div class="step-card">
+                            <div class="step-number">2</div>
+                            <div class="step-icon">
+                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+                                </svg>
+                            </div>
+                            <h3 class="step-title">AI Analyzes Holdings</h3>
+                            <p class="step-description">Our engine extracts positions, fetches live prices, and runs sophisticated portfolio analytics in seconds.</p>
+                        </div>
+                        <div class="step-card">
+                            <div class="step-number">3</div>
+                            <div class="step-icon">
+                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <path d="M21.21 15.89A10 10 0 1 1 8 2.83"/>
+                                    <path d="M22 12A10 10 0 0 0 12 2v10z"/>
+                                </svg>
+                            </div>
+                            <h3 class="step-title">Get Actionable Insights</h3>
+                            <p class="step-description">View allocation breakdowns, risk metrics, fee analysis, and personalized recommendations.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sample Report Preview Section -->
+            <section class="landing-section preview-section">
+                <div class="container">
+                    <h2 class="section-heading">See What's In Your Report</h2>
+                    <p class="section-subheading">Professional-grade analytics that would cost $500+ from a financial advisor</p>
+                    <div class="preview-grid">
+                        <div class="preview-card">
+                            <div class="preview-card-header">
+                                <h3>Asset Allocation</h3>
+                            </div>
+                            <div class="preview-card-body">
+                                <div class="donut-mockup">
+                                    <div class="donut-ring"></div>
+                                    <div class="donut-center">
+                                        <span class="donut-value">$847K</span>
+                                        <span class="donut-label">Total Value</span>
+                                    </div>
+                                </div>
+                                <div class="donut-legend">
+                                    <div class="legend-item"><span class="legend-dot stocks"></span>Stocks 62%</div>
+                                    <div class="legend-item"><span class="legend-dot bonds"></span>Bonds 24%</div>
+                                    <div class="legend-item"><span class="legend-dot cash"></span>Cash 14%</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="preview-card">
+                            <div class="preview-card-header">
+                                <h3>Risk Score</h3>
+                            </div>
+                            <div class="preview-card-body">
+                                <div class="gauge-mockup">
+                                    <div class="gauge-arc"></div>
+                                    <div class="gauge-needle"></div>
+                                    <div class="gauge-center">
+                                        <span class="gauge-value">67</span>
+                                        <span class="gauge-label">Moderate</span>
+                                    </div>
+                                </div>
+                                <div class="gauge-scale">
+                                    <span>Conservative</span>
+                                    <span>Aggressive</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="preview-card">
+                            <div class="preview-card-header">
+                                <h3>Sector Exposure</h3>
+                            </div>
+                            <div class="preview-card-body">
+                                <div class="bar-mockup">
+                                    <div class="bar-item">
+                                        <span class="bar-label">Technology</span>
+                                        <div class="bar-track"><div class="bar-fill" style="width: 32%;"></div></div>
+                                        <span class="bar-value">32%</span>
+                                    </div>
+                                    <div class="bar-item">
+                                        <span class="bar-label">Healthcare</span>
+                                        <div class="bar-track"><div class="bar-fill" style="width: 18%;"></div></div>
+                                        <span class="bar-value">18%</span>
+                                    </div>
+                                    <div class="bar-item">
+                                        <span class="bar-label">Financials</span>
+                                        <div class="bar-track"><div class="bar-fill" style="width: 15%;"></div></div>
+                                        <span class="bar-value">15%</span>
+                                    </div>
+                                    <div class="bar-item">
+                                        <span class="bar-label">Consumer</span>
+                                        <div class="bar-track"><div class="bar-fill" style="width: 12%;"></div></div>
+                                        <span class="bar-value">12%</span>
+                                    </div>
+                                    <div class="bar-item">
+                                        <span class="bar-label">Other</span>
+                                        <div class="bar-track"><div class="bar-fill" style="width: 23%;"></div></div>
+                                        <span class="bar-value">23%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="preview-card">
+                            <div class="preview-card-header">
+                                <h3>Fee Analysis</h3>
+                            </div>
+                            <div class="preview-card-body">
+                                <div class="fee-mockup">
+                                    <div class="fee-stat">
+                                        <span class="fee-amount">$2,847</span>
+                                        <span class="fee-label">Annual Fees</span>
+                                    </div>
+                                    <div class="fee-breakdown">
+                                        <div class="fee-item warning">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                                                <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+                                            </svg>
+                                            <span>ARKK: 0.75% expense ratio</span>
+                                        </div>
+                                        <div class="fee-item">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                                                <polyline points="22 4 12 14.01 9 11.01"/>
+                                            </svg>
+                                            <span>VOO: 0.03% expense ratio</span>
+                                        </div>
+                                    </div>
+                                    <div class="fee-savings">
+                                        <span>Potential Savings: <strong>$1,200/yr</strong></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Value Props Section -->
+            <section class="landing-section value-props">
+                <div class="container">
+                    <h2 class="section-heading">Why Statement Scan?</h2>
+                    <p class="section-subheading">Built for investors who want clarity, not complexity</p>
+                    <div class="value-props-grid">
+                        <div class="value-card">
+                            <div class="value-icon">
+                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <circle cx="11" cy="11" r="8"/>
+                                    <path d="M21 21l-4.35-4.35"/>
+                                    <path d="M11 8v6M8 11h6"/>
+                                </svg>
+                            </div>
+                            <h3 class="value-title">Hidden Fee Detection</h3>
+                            <p class="value-description">Instantly spot high-cost funds eating into your returns. We analyze expense ratios across all your holdings.</p>
+                        </div>
+                        <div class="value-card">
+                            <div class="value-icon">
+                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <path d="M3 3v18h18"/>
+                                    <path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/>
+                                </svg>
+                            </div>
+                            <h3 class="value-title">Benchmark Comparison</h3>
+                            <p class="value-description">See how your portfolio stacks up against the S&P 500, target-date funds, and custom benchmarks.</p>
+                        </div>
+                        <div class="value-card">
+                            <div class="value-icon">
+                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                                    <path d="M9 12l2 2 4-4"/>
+                                </svg>
+                            </div>
+                            <h3 class="value-title">Risk Analysis</h3>
+                            <p class="value-description">Understand your true risk exposure with volatility metrics, concentration warnings, and scenario analysis.</p>
+                        </div>
+                        <div class="value-card">
+                            <div class="value-icon">
+                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                                    <circle cx="12" cy="16" r="1"/>
+                                </svg>
+                            </div>
+                            <h3 class="value-title">Privacy First</h3>
+                            <p class="value-description">Your data stays yours. We never store your statements or sell your information. Analyze locally or delete anytime.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Trust Section -->
+            <section class="landing-section trust-section">
+                <div class="container">
+                    <p class="trust-label">Works with statements from</p>
+                    <div class="brokerage-logos">
+                        <div class="brokerage-logo">
+                            <span class="brokerage-name">Schwab</span>
+                        </div>
+                        <div class="brokerage-logo">
+                            <span class="brokerage-name">Fidelity</span>
+                        </div>
+                        <div class="brokerage-logo">
+                            <span class="brokerage-name">Vanguard</span>
+                        </div>
+                        <div class="brokerage-logo">
+                            <span class="brokerage-name">E*TRADE</span>
+                        </div>
+                        <div class="brokerage-logo">
+                            <span class="brokerage-name">TD Ameritrade</span>
+                        </div>
+                        <div class="brokerage-logo">
+                            <span class="brokerage-name">Robinhood</span>
+                        </div>
+                        <div class="brokerage-logo">
+                            <span class="brokerage-name">Merrill</span>
+                        </div>
+                        <div class="brokerage-logo">
+                            <span class="brokerage-name">Interactive Brokers</span>
+                        </div>
+                    </div>
+                    <p class="trust-note">+ 50 more brokerages supported</p>
+                </div>
+            </section>
+
+            <!-- CTA Section -->
+            <section class="landing-section cta-section">
+                <div class="container">
+                    <h2 class="cta-heading">Ready to see what's hiding in your portfolio?</h2>
+                    <p class="cta-subheading">Free analysis. No account required. Results in 30 seconds.</p>
+                    <button class="btn btn-primary btn-lg cta-button" onclick="scrollToUpload()">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="17 8 12 3 7 8"/>
+                            <line x1="12" y1="3" x2="12" y2="15"/>
+                        </svg>
+                        Upload Your Statement
+                    </button>
+                </div>
+            </section>
+
+        </div><!-- End landing sections -->
+
+        <!-- Enhanced Footer -->
+        <footer class="site-footer">
+            <div class="container">
+                <div class="footer-grid">
+                    <div class="footer-brand">
+                        <div class="footer-logo">
+                            <div class="footer-logo-icon">SS</div>
+                            <span>Statement Scan</span>
+                        </div>
+                        <p class="footer-tagline">Professional portfolio intelligence for everyone.</p>
+                    </div>
+                    <div class="footer-links">
+                        <div class="footer-column">
+                            <h4>Product</h4>
+                            <a href="#" onclick="scrollToUpload(); return false;">Analyze Portfolio</a>
+                            <a href="#landingSections">How It Works</a>
+                            <a href="#" onclick="showAuthModal(); return false;">Sign In</a>
+                        </div>
+                        <div class="footer-column">
+                            <h4>Resources</h4>
+                            <a href="#">Help Center</a>
+                            <a href="#">Supported Brokerages</a>
+                            <a href="#">API Documentation</a>
+                        </div>
+                        <div class="footer-column">
+                            <h4>Legal</h4>
+                            <a href="#">Privacy Policy</a>
+                            <a href="#">Terms of Service</a>
+                            <a href="#">Disclaimer</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2025 Statement Scan. Not financial advice. For informational purposes only.</p>
+                </div>
+            </div>
         </footer>
     </div>
 
@@ -10951,6 +11925,37 @@
         });
 
         // =============================================================================
+        // LANDING PAGE FUNCTIONS
+        // =============================================================================
+
+        function scrollToUpload() {
+            const uploadSection = document.getElementById('uploadSection');
+            if (uploadSection) {
+                uploadSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                // Add a subtle highlight effect
+                uploadSection.style.transition = 'box-shadow 0.3s ease';
+                uploadSection.style.boxShadow = '0 0 0 4px rgba(99, 91, 255, 0.3)';
+                setTimeout(() => {
+                    uploadSection.style.boxShadow = '';
+                }, 1500);
+            }
+        }
+
+        function hideLandingSections() {
+            const landingSections = document.getElementById('landingSections');
+            if (landingSections) {
+                landingSections.style.display = 'none';
+            }
+        }
+
+        function showLandingSections() {
+            const landingSections = document.getElementById('landingSections');
+            if (landingSections) {
+                landingSections.style.display = 'block';
+            }
+        }
+
+        // =============================================================================
         // AUTHENTICATION
         // =============================================================================
 
@@ -12911,6 +13916,7 @@
         async function showDashboard() {
             uploadSection.style.display = 'none';
             dashboard.style.display = 'block';
+            hideLandingSections(); // Hide landing page when showing results
             document.getElementById('totalBadge').textContent = formatCurrency(portfolioData.total_value);
 
             // Chunked rendering for better perceived performance
@@ -13896,6 +14902,7 @@
         function resetUI() {
             dashboard.style.display = 'none';
             uploadSection.style.display = 'block';
+            showLandingSections(); // Show landing page again
             portfolioData = null;
             Object.values(charts).forEach(c => c.destroy());
             charts = {};
