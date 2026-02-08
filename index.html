@@ -41,7 +41,28 @@
             --radius-sm: 6px;
             --radius-md: 10px;
             --radius-lg: 16px;
+
+            /* Stripe-inspired Design System */
+            --accent-teal: #00D4AA;
+            --accent-purple: #A259FF;
+            --dark-section-bg: #0A2540;
+            --dark-card-bg: #112840;
+            --dark-border: #1E3A5F;
+            --gradient-primary: linear-gradient(90deg, #635BFF, #A259FF);
         }
+
+        /* Gradient Text Utility */
+        .gradient-text {
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Dark Section Text Colors */
+        .text-white { color: #ffffff; }
+        .text-light { color: rgba(255, 255, 255, 0.9); }
+        .text-muted-light { color: rgba(255, 255, 255, 0.6); }
 
         * {
             box-sizing: border-box;
@@ -73,6 +94,446 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 28px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            padding: 16px 24px;
+            margin: -40px -24px 28px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            transition: background 0.3s ease, backdrop-filter 0.3s ease, box-shadow 0.3s ease;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        }
+
+        :root[data-theme="dark"] .top-nav {
+            background: rgba(30, 41, 59, 0.95);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .top-nav.navbar-scrolled {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 1px 0 var(--border);
+        }
+
+        :root[data-theme="dark"] .top-nav.navbar-scrolled {
+            background: rgba(30, 41, 59, 0.95);
+        }
+
+        /* Navbar Layout - Three Sections */
+        .nav-left {
+            flex: 0 0 auto;
+        }
+
+        .nav-center {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* Nav Links */
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 16px;
+            font-size: 15px;
+            font-weight: 500;
+            color: #425466;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: color 0.2s ease, background 0.2s ease;
+            cursor: pointer;
+            position: relative;
+            background: transparent;
+            border: none;
+        }
+
+        :root[data-theme="dark"] .nav-link {
+            color: #C1C9D2;
+        }
+
+        .nav-link:hover {
+            color: #0A2540;
+            background: rgba(0, 0, 0, 0.04);
+        }
+
+        :root[data-theme="dark"] .nav-link:hover {
+            color: #FFFFFF;
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        /* Nav Link Chevron */
+        .nav-link-chevron {
+            width: 10px;
+            height: 10px;
+            transition: transform 0.2s ease;
+            opacity: 0.6;
+        }
+
+        .nav-item:hover .nav-link-chevron,
+        .nav-item.active .nav-link-chevron {
+            transform: rotate(180deg);
+        }
+
+        /* Nav Item Container */
+        .nav-item {
+            position: relative;
+        }
+
+        /* Dropdown Mega Menu */
+        .nav-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%) translateY(-8px);
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(10, 37, 64, 0.15);
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            padding: 24px 32px;
+            min-width: 280px;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+            z-index: 1001;
+        }
+
+        .nav-dropdown.dropdown-wide {
+            min-width: 520px;
+        }
+
+        :root[data-theme="dark"] .nav-dropdown {
+            background: #112840;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* Hover bridge - invisible connector between nav link and dropdown */
+        .nav-item::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            height: 20px;
+            background: transparent;
+            display: none;
+        }
+
+        .nav-item:hover::after {
+            display: block;
+        }
+
+        .nav-item:hover .nav-dropdown,
+        .nav-item.active .nav-dropdown {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* Dropdown Columns */
+        .dropdown-columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+        }
+
+        .dropdown-column-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: #8898AA;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 16px;
+        }
+
+        :root[data-theme="dark"] .dropdown-column-title {
+            color: #8898AA;
+        }
+
+        /* Dropdown Items */
+        .dropdown-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px;
+            margin: 0 -12px;
+            border-radius: 8px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background 0.15s ease;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(99, 91, 255, 0.04);
+        }
+
+        :root[data-theme="dark"] .dropdown-item:hover {
+            background: rgba(99, 91, 255, 0.1);
+        }
+
+        .dropdown-item-icon {
+            font-size: 20px;
+            line-height: 1;
+            flex-shrink: 0;
+            width: 24px;
+            text-align: center;
+        }
+
+        .dropdown-item-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .dropdown-item-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #0A2540;
+            margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        :root[data-theme="dark"] .dropdown-item-title {
+            color: #FFFFFF;
+        }
+
+        .dropdown-item-desc {
+            font-size: 13px;
+            color: #425466;
+            line-height: 1.4;
+        }
+
+        :root[data-theme="dark"] .dropdown-item-desc {
+            color: #8898AA;
+        }
+
+        /* Coming Soon Tag */
+        .tag-coming-soon {
+            display: inline-block;
+            background: #E3E8EE;
+            color: #425466;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+        }
+
+        :root[data-theme="dark"] .tag-coming-soon {
+            background: rgba(255, 255, 255, 0.1);
+            color: #8898AA;
+        }
+
+        /* Get Started Button */
+        .btn-get-started {
+            background: #635BFF;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 20px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .btn-get-started:hover {
+            background: #4B45C6;
+        }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: transparent;
+            border: none;
+            padding: 8px;
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+
+        .mobile-menu-btn svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        /* Mobile Menu Overlay */
+        .mobile-menu-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: white;
+            z-index: 2000;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+        }
+
+        :root[data-theme="dark"] .mobile-menu-overlay {
+            background: #0A2540;
+        }
+
+        .mobile-menu-overlay.open {
+            transform: translateX(0);
+        }
+
+        .mobile-menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        }
+
+        :root[data-theme="dark"] .mobile-menu-header {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .mobile-menu-close {
+            background: transparent;
+            border: none;
+            padding: 8px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            font-size: 24px;
+            line-height: 1;
+        }
+
+        .mobile-menu-content {
+            padding: 16px 24px;
+        }
+
+        /* Mobile Accordion */
+        .mobile-accordion {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        :root[data-theme="dark"] .mobile-accordion {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .mobile-accordion-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            padding: 16px 0;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            text-align: left;
+        }
+
+        .mobile-accordion-header svg {
+            width: 20px;
+            height: 20px;
+            transition: transform 0.2s ease;
+            color: var(--text-muted);
+        }
+
+        .mobile-accordion.open .mobile-accordion-header svg {
+            transform: rotate(180deg);
+        }
+
+        .mobile-accordion-content {
+            display: none;
+            padding-bottom: 16px;
+        }
+
+        .mobile-accordion.open .mobile-accordion-content {
+            display: block;
+        }
+
+        .mobile-dropdown-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 0;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .mobile-menu-actions {
+            padding: 24px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            border-top: 1px solid rgba(0, 0, 0, 0.08);
+            margin-top: 16px;
+        }
+
+        :root[data-theme="dark"] .mobile-menu-actions {
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .mobile-menu-actions .btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .mobile-menu-actions .btn-get-started {
+            width: 100%;
+            padding: 14px 20px;
+        }
+
+        /* Mobile Nav Link (no dropdown) */
+        .mobile-nav-link {
+            display: block;
+            padding: 16px 0;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            text-decoration: none;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        :root[data-theme="dark"] .mobile-nav-link {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        /* Navbar Mobile Responsive */
+        @media (max-width: 768px) {
+            .nav-center {
+                display: none;
+            }
+
+            .btn-get-started {
+                display: none;
+            }
+
+            .mobile-menu-btn {
+                display: flex;
+            }
+
+            .mobile-menu-overlay {
+                display: block;
+            }
+
+            .top-nav {
+                padding: 12px 16px;
+                margin: -24px -16px 20px;
+            }
         }
 
         .logo {
@@ -121,10 +582,66 @@
         }
 
         h1 {
-            font-size: 2.5rem;
+            font-size: 3.5rem;
             font-weight: 700;
             color: var(--text-primary);
             letter-spacing: -0.02em;
+            line-height: 1.1;
+        }
+
+        /* Hero Typography */
+        .hero-headline {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            h1, .hero-headline {
+                font-size: 2.25rem;
+            }
+        }
+
+        /* Section Headings */
+        .section-title {
+            font-size: 2.75rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+        }
+
+        /* ========== SCROLL ANIMATIONS ========== */
+        [data-animate] {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+
+        [data-animate].animated {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Staggered children animations */
+        [data-animate-child] > *:nth-child(1) { transition-delay: 0ms; }
+        [data-animate-child] > *:nth-child(2) { transition-delay: 100ms; }
+        [data-animate-child] > *:nth-child(3) { transition-delay: 200ms; }
+        [data-animate-child] > *:nth-child(4) { transition-delay: 300ms; }
+        [data-animate-child] > *:nth-child(5) { transition-delay: 400ms; }
+        [data-animate-child] > *:nth-child(6) { transition-delay: 500ms; }
+
+        /* Accessibility: Reduce motion for users who prefer it */
+        @media (prefers-reduced-motion: reduce) {
+            [data-animate] {
+                opacity: 1;
+                transform: none;
+                transition: none;
+            }
+            [data-animate-child] > * {
+                transition-delay: 0ms !important;
+            }
         }
 
         .subtitle {
@@ -2016,30 +2533,273 @@
             text-align: center;
         }
 
-        /* How It Works Section */
-        .how-it-works {
+        /* ========== HERO SECTION - STRIPE-INSPIRED ========== */
+        .hero-section {
+            padding: 60px 0 80px;
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 60px;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .hero-content {
+            max-width: 560px;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(99, 91, 255, 0.1);
+            color: var(--primary);
+            font-size: 0.8125rem;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 50px;
+            margin-bottom: 24px;
+        }
+
+        .hero-badge svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+            margin-bottom: 24px;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 36px;
+            max-width: 480px;
+        }
+
+        .hero-ctas {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .hero-cta-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--primary);
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            padding: 16px 28px;
+            border-radius: var(--radius-md);
+            border: none;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+            box-shadow: 0 4px 14px rgba(99, 91, 255, 0.35);
+        }
+
+        .hero-cta-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99, 91, 255, 0.4);
+        }
+
+        .hero-cta-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-secondary);
+            font-size: 0.9375rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .hero-cta-link:hover {
+            color: var(--primary);
+        }
+
+        .hero-cta-link svg {
+            width: 16px;
+            height: 16px;
+            transition: transform 0.2s;
+        }
+
+        .hero-cta-link:hover svg {
+            transform: translateX(3px);
+        }
+
+        /* Hero Upload Widget */
+        .hero-upload-wrapper {
+            position: relative;
+        }
+
+        .hero-upload-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 120%;
+            height: 120%;
+            background: radial-gradient(circle, rgba(99, 91, 255, 0.15) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .hero-upload-card {
+            position: relative;
+            z-index: 1;
+            background: var(--bg-primary);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            padding: 40px;
+            box-shadow: 0 30px 60px rgba(10, 37, 64, 0.12);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .hero-upload-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 40px 80px rgba(10, 37, 64, 0.15);
+        }
+
+        @media (max-width: 900px) {
+            .hero-grid {
+                grid-template-columns: 1fr;
+                gap: 48px;
+                text-align: center;
+            }
+
+            .hero-content {
+                max-width: 100%;
+            }
+
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .hero-subtitle {
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .hero-ctas {
+                justify-content: center;
+            }
+
+            .hero-badge {
+                margin-left: auto;
+                margin-right: auto;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1.0625rem;
+            }
+
+            .hero-ctas {
+                flex-direction: column;
+                gap: 16px;
+            }
+        }
+
+        /* Upload Drop Area (inside hero) */
+        .upload-drop-area {
+            text-align: center;
+            padding: 32px 24px;
+        }
+
+        .upload-drop-area.dragover {
+            border: 2px dashed var(--primary);
+            background: rgba(99, 91, 255, 0.04);
+            border-radius: var(--radius-md);
+        }
+
+        .hero-upload-card .entry-methods {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
             background: var(--bg-secondary);
+            padding: 6px;
+            border-radius: var(--radius-md);
+        }
+
+        .hero-upload-card .entry-method-btn {
+            font-size: 0.8125rem;
+            padding: 8px 14px;
+        }
+
+        /* How It Works Section - Dark Bento Cards */
+        .how-it-works {
+            background: var(--dark-section-bg);
+            padding: 80px 0;
+        }
+
+        .how-it-works .section-heading {
+            color: #ffffff;
+        }
+
+        .how-it-works .section-subheading {
+            color: rgba(255, 255, 255, 0.7);
         }
 
         .how-it-works-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 32px;
-            max-width: 960px;
+            gap: 24px;
+            max-width: 1000px;
             margin: 0 auto;
         }
 
-        .how-it-works-step {
+        .how-it-works-step,
+        .step-card {
             text-align: center;
-            padding: 32px 24px;
+            padding: 32px 28px;
             position: relative;
+            background: var(--dark-card-bg);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--dark-border);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            overflow: hidden;
+        }
+
+        .how-it-works-step::before,
+        .step-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-primary);
+        }
+
+        .how-it-works-step:hover,
+        .step-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
         }
 
         .step-number {
             width: 48px;
             height: 48px;
-            background: var(--primary);
-            color: white;
+            background: var(--accent-teal);
+            color: var(--dark-section-bg);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -2047,13 +2807,13 @@
             font-size: 1.25rem;
             font-weight: 700;
             margin: 0 auto 20px;
-            box-shadow: 0 4px 12px rgba(99, 91, 255, 0.3);
+            box-shadow: 0 4px 12px rgba(0, 212, 170, 0.3);
         }
 
         .step-icon {
             width: 64px;
             height: 64px;
-            background: var(--bg-secondary);
+            background: rgba(0, 212, 170, 0.1);
             border-radius: 16px;
             display: flex;
             align-items: center;
@@ -2061,32 +2821,30 @@
             margin: 0 auto 20px;
         }
 
-        .step-icon svg {
+        .how-it-works .step-icon svg,
+        .step-card .step-icon svg {
             width: 32px;
             height: 32px;
-            color: var(--primary);
+            color: var(--accent-teal);
         }
 
-        .step-title {
+        .how-it-works .step-title,
+        .step-card .step-title {
             font-size: 1.125rem;
             font-weight: 600;
-            color: var(--text-primary);
+            color: #ffffff;
             margin-bottom: 8px;
         }
 
-        .step-description {
+        .how-it-works .step-description,
+        .step-card .step-description {
             font-size: 0.9375rem;
-            color: var(--text-secondary);
+            color: rgba(255, 255, 255, 0.65);
             line-height: 1.5;
         }
 
         .step-connector {
-            position: absolute;
-            top: 80px;
-            right: -16px;
-            width: 32px;
-            height: 2px;
-            background: var(--border);
+            display: none;
         }
 
         .step-connector::after {
@@ -2131,8 +2889,90 @@
             color: var(--primary);
         }
 
-        /* Preview Grid - 2x2 layout */
+        /* Preview Grid - 2x2 layout with Browser Frame */
         .preview-section {
+            background: var(--bg-secondary);
+            padding: 100px 0;
+        }
+
+        .preview-section .section-heading {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .preview-section .section-subheading {
+            font-size: 1.25rem;
+            margin-bottom: 56px;
+        }
+
+        /* Browser Frame */
+        .browser-frame {
+            background: var(--bg-primary);
+            border-radius: 16px;
+            box-shadow:
+                0 25px 50px -12px rgba(10, 37, 64, 0.25),
+                0 0 0 1px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            max-width: 1000px;
+            margin: 0 auto;
+            transform: perspective(1500px) rotateX(2deg);
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        .browser-frame:hover {
+            transform: perspective(1500px) rotateX(0deg);
+            box-shadow:
+                0 30px 60px -15px rgba(10, 37, 64, 0.3),
+                0 0 0 1px rgba(0, 0, 0, 0.05);
+        }
+
+        .browser-header {
+            background: linear-gradient(180deg, var(--bg-tertiary) 0%, var(--bg-secondary) 100%);
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .browser-dots {
+            display: flex;
+            gap: 8px;
+        }
+
+        .browser-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            box-shadow: inset 0 -1px 2px rgba(0,0,0,0.2);
+        }
+
+        .browser-dot.red { background: linear-gradient(180deg, #FF6B5B 0%, #FF5F56 100%); }
+        .browser-dot.yellow { background: linear-gradient(180deg, #FFC83D 0%, #FFBD2E 100%); }
+        .browser-dot.green { background: linear-gradient(180deg, #32D74B 0%, #27CA40 100%); }
+
+        .browser-url-bar {
+            flex: 1;
+            background: var(--bg-primary);
+            border-radius: 8px;
+            padding: 8px 14px;
+            font-size: 0.8125rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid var(--border);
+        }
+
+        .browser-url-bar svg {
+            width: 14px;
+            height: 14px;
+            color: var(--success);
+        }
+
+        .browser-content {
+            padding: 28px;
             background: var(--bg-secondary);
         }
 
@@ -2140,23 +2980,38 @@
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 24px;
-            max-width: 900px;
-            margin: 0 auto;
         }
 
         .preview-card {
             background: var(--bg-primary);
-            border-radius: var(--radius-lg);
-            padding: 24px;
+            border-radius: 12px;
+            padding: 28px;
             border: 1px solid var(--border);
-            box-shadow: var(--shadow-sm);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        .preview-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
         }
 
         .preview-card-header h3 {
             font-size: 1rem;
             font-weight: 600;
             color: var(--text-primary);
-            margin-bottom: 16px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .preview-card-header h3::before {
+            content: '';
+            width: 4px;
+            height: 16px;
+            background: var(--primary);
+            border-radius: 2px;
         }
 
         .preview-card-body {
@@ -2167,6 +3022,236 @@
             justify-content: center;
         }
 
+        @media (max-width: 768px) {
+            .browser-frame {
+                transform: none;
+                margin: 0 16px;
+            }
+            .preview-grid {
+                grid-template-columns: 1fr;
+            }
+            .preview-section .section-heading {
+                font-size: 1.75rem;
+            }
+        }
+
+        /* ========== PREVIEW SECTION CHARTS (unique pv- prefix) ========== */
+
+        /* Preview Donut Chart */
+        .pv-donut {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            width: 100%;
+        }
+
+        .pv-donut-ring {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            background: conic-gradient(
+                #635BFF 0deg 223deg,
+                #00D4AA 223deg 310deg,
+                #F7B955 310deg 360deg
+            );
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .pv-donut-ring::before {
+            content: '';
+            position: absolute;
+            width: 75px;
+            height: 75px;
+            background: var(--bg-primary);
+            border-radius: 50%;
+        }
+
+        .pv-donut-value {
+            position: relative;
+            z-index: 1;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1;
+        }
+
+        .pv-donut-label {
+            position: relative;
+            z-index: 1;
+            font-size: 0.625rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .pv-donut-legend {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            gap: 14px;
+            width: 100%;
+        }
+
+        .pv-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .pv-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        .pv-dot-stocks { background: #635BFF; }
+        .pv-dot-bonds { background: #00D4AA; }
+        .pv-dot-cash { background: #F7B955; }
+
+        /* Preview Gauge Chart */
+        .pv-gauge {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        .pv-gauge-arc {
+            width: 130px;
+            height: 65px;
+            background: conic-gradient(
+                from 180deg,
+                #00D4AA 0deg 60deg,
+                #F7B955 60deg 120deg,
+                #FF6B6B 120deg 180deg
+            );
+            border-radius: 130px 130px 0 0;
+            position: relative;
+        }
+
+        .pv-gauge-arc::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 40px;
+            background: var(--bg-primary);
+            border-radius: 80px 80px 0 0;
+        }
+
+        .pv-gauge-needle {
+            width: 3px;
+            height: 32px;
+            background: var(--text-primary);
+            border-radius: 2px;
+            transform: rotate(24deg);
+            transform-origin: bottom center;
+            margin-top: -32px;
+            margin-bottom: 0;
+            position: relative;
+            z-index: 2;
+        }
+
+        .pv-gauge-needle::after {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 7px;
+            height: 7px;
+            background: var(--text-primary);
+            border-radius: 50%;
+        }
+
+        .pv-gauge-info {
+            text-align: center;
+            margin-top: 12px;
+        }
+
+        .pv-gauge-value {
+            display: block;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1;
+        }
+
+        .pv-gauge-label {
+            display: inline-block;
+            font-size: 0.625rem;
+            font-weight: 600;
+            color: #F7B955;
+            background: rgba(247, 185, 85, 0.15);
+            padding: 3px 8px;
+            border-radius: 10px;
+            margin-top: 6px;
+        }
+
+        .pv-gauge-scale {
+            display: flex;
+            justify-content: space-between;
+            width: 130px;
+            font-size: 0.5625rem;
+            color: var(--text-muted);
+            margin-top: 8px;
+        }
+
+        /* Preview Bar Chart */
+        .pv-bars {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .pv-bar-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pv-bar-label {
+            width: 75px;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .pv-bar-track {
+            flex: 1;
+            height: 8px;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .pv-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #635BFF, #818CF8);
+            border-radius: 4px;
+        }
+
+        .pv-bar-value {
+            width: 36px;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        /* ========== OLD DONUT (kept for compatibility) ========== */
         /* Donut Chart Mockup */
         .donut-mockup {
             display: flex;
@@ -2181,21 +3266,22 @@
             height: 140px;
             border-radius: 50%;
             background: conic-gradient(
-                var(--primary) 0deg 223deg,
-                var(--success) 223deg 310deg,
-                var(--warning) 310deg 360deg
+                #635BFF 0deg 223deg,
+                #00D4AA 223deg 310deg,
+                #F7B955 310deg 360deg
             );
             position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-shrink: 0;
         }
 
         .donut-ring::before {
             content: '';
             position: absolute;
-            width: 85px;
-            height: 85px;
+            width: 80px;
+            height: 80px;
             background: var(--bg-primary);
             border-radius: 50%;
         }
@@ -2208,7 +3294,7 @@
 
         .donut-value {
             display: block;
-            font-size: 1.5rem;
+            font-size: 1.375rem;
             font-weight: 700;
             color: var(--text-primary);
             line-height: 1.2;
@@ -2222,83 +3308,197 @@
         }
 
         .donut-legend {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
+            display: flex !important;
+            flex-direction: row !important;
+            justify-content: center !important;
+            align-items: center !important;
+            gap: 16px !important;
             font-size: 0.8125rem;
+            width: 100%;
+            margin-top: 0;
         }
 
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: var(--text-secondary);
+        .donut-legend .legend-item {
+            display: flex !important;
+            align-items: center !important;
+            gap: 6px !important;
+            color: var(--text-secondary) !important;
+            font-weight: 500;
+            white-space: nowrap;
+            position: static !important;
         }
 
-        .legend-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
+        .donut-legend .legend-dot {
+            width: 10px !important;
+            height: 10px !important;
+            border-radius: 3px !important;
+            flex-shrink: 0;
         }
 
-        .legend-dot.stocks { background: var(--primary); }
-        .legend-dot.bonds { background: var(--success); }
-        .legend-dot.cash { background: var(--warning); }
+        .donut-legend .legend-dot.stocks { background: #635BFF !important; }
+        .donut-legend .legend-dot.bonds { background: #00D4AA !important; }
+        .donut-legend .legend-dot.cash { background: #F7B955 !important; }
 
-        /* Gauge Mockup */
-        .gauge-mockup {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            position: relative;
-            padding-top: 20px;
+        /* Preview Section Gauge Mockup */
+        .preview-card .gauge-mockup {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            width: 100% !important;
         }
 
-        .gauge-arc {
-            width: 160px;
-            height: 80px;
+        .preview-card .gauge-arc {
+            width: 140px !important;
+            height: 70px !important;
             background: conic-gradient(
                 from 180deg,
-                var(--success) 0deg 60deg,
-                var(--warning) 60deg 120deg,
-                var(--danger) 120deg 180deg
-            );
-            border-radius: 160px 160px 0 0;
-            position: relative;
+                #00D4AA 0deg 60deg,
+                #F7B955 60deg 120deg,
+                #FF6B6B 120deg 180deg
+            ) !important;
+            border-radius: 140px 140px 0 0 !important;
+            position: relative !important;
+            overflow: visible !important;
         }
 
-        .gauge-arc::before {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100px;
-            height: 50px;
-            background: var(--bg-primary);
-            border-radius: 100px 100px 0 0;
+        .preview-card .gauge-arc::before {
+            content: '' !important;
+            position: absolute !important;
+            bottom: 0 !important;
+            left: 50% !important;
+            transform: translateX(-50%) !important;
+            width: 90px !important;
+            height: 45px !important;
+            background: var(--bg-primary) !important;
+            border-radius: 90px 90px 0 0 !important;
         }
 
-        .gauge-needle {
-            width: 3px;
-            height: 45px;
-            background: var(--text-primary);
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform-origin: bottom center;
-            transform: translateX(-50%) rotate(20deg);
-            border-radius: 2px;
-            z-index: 2;
+        .preview-card .gauge-needle {
+            width: 3px !important;
+            height: 35px !important;
+            background: var(--text-primary) !important;
+            position: absolute !important;
+            bottom: 0 !important;
+            left: 50% !important;
+            transform-origin: bottom center !important;
+            transform: translateX(-50%) rotate(24deg) !important;
+            border-radius: 2px !important;
+            z-index: 2 !important;
         }
 
-        .gauge-center {
+        .preview-card .gauge-needle::after {
+            content: '' !important;
+            position: absolute !important;
+            bottom: -4px !important;
+            left: 50% !important;
+            transform: translateX(-50%) !important;
+            width: 8px !important;
+            height: 8px !important;
+            background: var(--text-primary) !important;
+            border-radius: 50% !important;
+        }
+
+        .preview-card .gauge-center {
+            text-align: center !important;
+            margin-top: 20px !important;
+        }
+
+        .preview-card .gauge-value {
+            display: block !important;
+            font-size: 2.25rem !important;
+            font-weight: 700 !important;
+            color: var(--text-primary) !important;
+            line-height: 1 !important;
+        }
+
+        .preview-card .gauge-label {
+            display: inline-block !important;
+            font-size: 0.6875rem !important;
+            color: #F7B955 !important;
+            font-weight: 600 !important;
+            margin-top: 8px !important;
+            background: rgba(247, 185, 85, 0.15) !important;
+            padding: 3px 10px !important;
+            border-radius: 12px !important;
+        }
+
+        .preview-card .gauge-scale {
+            display: flex !important;
+            justify-content: space-between !important;
+            width: 140px !important;
+            font-size: 0.625rem !important;
+            color: var(--text-muted) !important;
+            margin-top: 12px !important;
+        }
+
+        /* Preview Section Bar Chart */
+        .preview-card .bar-mockup {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: stretch !important;
+            gap: 12px !important;
+            width: 100% !important;
+            height: auto !important;
+            padding: 0 !important;
+        }
+
+        .preview-card .bar-item {
+            display: flex !important;
+            flex-direction: row !important;
+            align-items: center !important;
+            gap: 12px !important;
+            width: 100% !important;
+        }
+
+        .preview-card .bar-label {
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+            width: 80px;
+            min-width: 80px;
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .preview-card .bar-track {
+            flex: 1 !important;
+            height: 8px !important;
+            background: var(--bg-tertiary) !important;
+            border-radius: 4px !important;
+            overflow: hidden !important;
+            min-width: 80px !important;
+        }
+
+        .preview-card .bar-fill {
+            height: 100% !important;
+            background: linear-gradient(90deg, #635BFF 0%, #818CF8 100%) !important;
+            border-radius: 4px !important;
+        }
+
+        .preview-card .bar-value {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            width: 40px;
+            min-width: 40px;
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        /* Fee Analysis Mockup */
+        .fee-mockup {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 100%;
+        }
+
+        .fee-stat {
             text-align: center;
-            margin-top: 8px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
         }
 
-        .gauge-value {
+        .fee-amount {
             display: block;
             font-size: 2.5rem;
             font-weight: 700;
@@ -2306,187 +3506,186 @@
             line-height: 1;
         }
 
-        .gauge-label {
-            display: block;
-            font-size: 1rem;
-            color: var(--warning);
-            font-weight: 600;
-            margin-top: 4px;
-        }
-
-        .gauge-scale {
-            display: flex;
-            justify-content: space-between;
-            width: 160px;
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            margin-top: 8px;
-        }
-
-        /* Bar Chart Mockup */
-        .bar-mockup {
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-            width: 100%;
-        }
-
-        .bar-item {
-            display: grid;
-            grid-template-columns: 85px 1fr 45px;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .bar-label {
-            font-size: 0.8125rem;
-            color: var(--text-secondary);
-            text-align: right;
-        }
-
-        .bar-track {
-            height: 10px;
-            background: var(--bg-tertiary);
-            border-radius: 5px;
-            overflow: hidden;
-        }
-
-        .bar-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary), var(--primary-light));
-            border-radius: 5px;
-            min-width: 4px;
-        }
-
-        .bar-value {
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            text-align: left;
-        }
-
-        .bar-value {
-            font-size: 0.8125rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            text-align: right;
-        }
-
-        /* Fee Analysis Mockup */
-        .fee-mockup {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .fee-stat {
-            text-align: center;
-            padding-bottom: 16px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .fee-amount {
-            display: block;
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-
         .fee-label {
             display: block;
-            font-size: 0.875rem;
+            font-size: 0.9375rem;
             color: var(--text-muted);
+            margin-top: 6px;
         }
 
         .fee-breakdown {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
         }
 
         .fee-item {
             display: flex;
             align-items: center;
-            gap: 8px;
-            font-size: 0.875rem;
+            gap: 10px;
+            font-size: 0.9375rem;
             color: var(--text-secondary);
+            padding: 10px 14px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
         }
 
         .fee-item svg {
             flex-shrink: 0;
+            width: 18px;
+            height: 18px;
+        }
+
+        .fee-item.warning {
+            background: rgba(247, 185, 85, 0.1);
+            border: 1px solid rgba(247, 185, 85, 0.2);
         }
 
         .fee-item.warning svg {
-            color: var(--warning);
+            color: #F7B955;
         }
 
         .fee-item:not(.warning) svg {
-            color: var(--success);
+            color: #00D4AA;
         }
 
         .fee-savings {
-            background: rgba(48, 209, 88, 0.1);
-            padding: 12px;
-            border-radius: var(--radius-sm);
+            background: linear-gradient(135deg, rgba(0, 212, 170, 0.12) 0%, rgba(0, 212, 170, 0.06) 100%);
+            padding: 14px 18px;
+            border-radius: 10px;
             text-align: center;
-            font-size: 0.875rem;
-            color: var(--success);
+            font-size: 1rem;
+            color: #00D4AA;
+            border: 1px solid rgba(0, 212, 170, 0.2);
         }
 
         .fee-savings strong {
-            font-weight: 600;
+            font-weight: 700;
         }
 
-        /* Value Props Section */
+        /* Value Props Section - Dark 2x2 Grid */
         .value-props {
-            background: var(--bg-primary);
+            background: var(--dark-section-bg);
+            padding: 80px 0;
+        }
+
+        .value-props .section-heading {
+            color: #ffffff;
+        }
+
+        .value-props .section-subheading {
+            color: rgba(255, 255, 255, 0.7);
         }
 
         .value-props-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 32px;
-            max-width: 1100px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            max-width: 900px;
             margin: 0 auto;
         }
 
         .value-card {
             text-align: left;
+            background: var(--dark-card-bg);
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            border: 1px solid var(--dark-border);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .value-card:hover {
+            border-color: var(--accent-teal);
+            box-shadow: 0 0 30px rgba(0, 212, 170, 0.15);
         }
 
         .value-icon {
-            width: 48px;
-            height: 48px;
-            background: rgba(99, 91, 255, 0.1);
-            border-radius: var(--radius-md);
+            width: 56px;
+            height: 56px;
+            background: rgba(0, 212, 170, 0.15);
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 16px;
+            margin-bottom: 20px;
         }
 
         .value-icon svg {
-            color: var(--primary);
+            color: var(--accent-teal);
         }
 
-        .value-title {
-            font-size: 1.125rem;
+        .value-props .value-title {
+            font-size: 1.25rem;
             font-weight: 600;
-            color: var(--text-primary);
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+
+        .value-props .value-description {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.65);
+            line-height: 1.6;
+        }
+
+        /* Social Proof Numbers Bar */
+        .social-proof-bar {
+            background: var(--dark-section-bg);
+            padding: 60px 24px;
+            border-bottom: 1px solid var(--dark-border);
+        }
+
+        .social-proof-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 32px;
+            max-width: 1000px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .social-proof-stat {
+            padding: 20px;
+        }
+
+        .social-proof-number {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #ffffff;
+            line-height: 1;
             margin-bottom: 8px;
         }
 
-        .value-description {
-            font-size: 0.9375rem;
-            color: var(--text-secondary);
-            line-height: 1.5;
+        .social-proof-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #8898AA;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
-        /* Trust Section */
+        @media (max-width: 768px) {
+            .social-proof-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 24px;
+            }
+
+            .social-proof-number {
+                font-size: 2.25rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .social-proof-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Trust Section - Marquee */
         .trust-section {
             background: var(--bg-primary);
             text-align: center;
             padding: 60px 0;
+            overflow: hidden;
         }
 
         .trust-label {
@@ -2494,66 +3693,144 @@
             color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            margin-bottom: 24px;
+            margin-bottom: 32px;
+        }
+
+        .marquee-container {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .marquee-container::before,
+        .marquee-container::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100px;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .marquee-container::before {
+            left: 0;
+            background: linear-gradient(to right, var(--bg-primary), transparent);
+        }
+
+        .marquee-container::after {
+            right: 0;
+            background: linear-gradient(to left, var(--bg-primary), transparent);
+        }
+
+        .marquee-track {
+            display: flex;
+            animation: marquee 30s linear infinite;
+            width: max-content;
+        }
+
+        .marquee-track:hover {
+            animation-play-state: paused;
+        }
+
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
         }
 
         .brokerage-logos {
             display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 16px;
-            margin-bottom: 16px;
+            align-items: center;
+            gap: 0;
+            padding: 0;
         }
 
         .brokerage-logo {
-            background: var(--bg-secondary);
-            padding: 12px 20px;
-            border-radius: var(--radius-md);
-            border: 1px solid var(--border);
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 0 48px;
+            transition: opacity 0.3s ease;
+        }
+
+        .brokerage-logo:hover {
+            opacity: 1;
+        }
+
+        .brokerage-logo-img {
+            height: 28px;
+            width: auto;
+            filter: grayscale(100%) opacity(0.7);
+            transition: filter 0.3s ease;
+        }
+
+        .brokerage-logo:hover .brokerage-logo-img {
+            filter: grayscale(0%) opacity(1);
         }
 
         .brokerage-name {
-            font-size: 0.9375rem;
-            font-weight: 500;
-            color: var(--text-secondary);
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            white-space: nowrap;
+            transition: color 0.3s ease;
+        }
+
+        .brokerage-logo:hover .brokerage-name {
+            color: var(--text-primary);
+        }
+
+        .brokerage-name.fallback-only {
+            display: none;
         }
 
         .trust-note {
             font-size: 0.875rem;
             color: var(--text-muted);
+            margin-top: 32px;
         }
 
-        /* CTA Section */
+        /* CTA Section - Animated Gradient */
         .cta-section {
-            background: var(--primary);
-            padding: 80px 24px;
+            background: linear-gradient(135deg, #635BFF 0%, #A259FF 50%, #635BFF 100%);
+            background-size: 200% 200%;
+            animation: gradientShift 8s ease infinite;
+            padding: 96px 24px;
             text-align: center;
             border-radius: var(--radius-lg);
             margin: 0 24px 60px;
         }
 
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
         .cta-heading {
-            font-size: 2rem;
+            font-size: 2.5rem;
             font-weight: 700;
             color: white;
-            margin-bottom: 12px;
+            margin-bottom: 16px;
+            letter-spacing: -0.02em;
         }
 
         .cta-subheading {
-            font-size: 1.125rem;
-            color: rgba(255, 255, 255, 0.85);
-            margin-bottom: 32px;
+            font-size: 1.25rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 40px;
         }
 
         .cta-button {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             background: white;
-            color: var(--primary);
-            font-size: 1rem;
+            color: var(--dark-section-bg);
+            font-size: 1.0625rem;
             font-weight: 600;
-            padding: 16px 32px;
+            padding: 18px 36px;
             border-radius: var(--radius-md);
             border: none;
             cursor: pointer;
@@ -2566,11 +3843,11 @@
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
         }
 
-        /* Enhanced Footer */
+        /* Enhanced Footer - Dark Theme */
         .site-footer {
-            background: var(--bg-primary);
-            border-top: 1px solid var(--border);
-            padding: 48px 24px 32px;
+            background: var(--dark-section-bg);
+            border-top: 1px solid var(--dark-border);
+            padding: 64px 24px 40px;
         }
 
         .footer-grid {
@@ -2578,7 +3855,7 @@
             grid-template-columns: 1fr 2fr;
             gap: 48px;
             max-width: 1100px;
-            margin: 0 auto 32px;
+            margin: 0 auto 40px;
         }
 
         .footer-brand {
@@ -2593,7 +3870,7 @@
             gap: 10px;
             font-size: 1.125rem;
             font-weight: 600;
-            color: var(--text-primary);
+            color: #ffffff;
         }
 
         .footer-logo-icon {
@@ -2611,7 +3888,7 @@
 
         .footer-tagline {
             font-size: 0.9375rem;
-            color: var(--text-secondary);
+            color: rgba(255, 255, 255, 0.6);
         }
 
         .footer-links {
@@ -2623,7 +3900,7 @@
         .footer-column h4 {
             font-size: 0.875rem;
             font-weight: 600;
-            color: var(--text-primary);
+            color: #ffffff;
             margin-bottom: 16px;
             text-transform: uppercase;
             letter-spacing: 0.03em;
@@ -2632,33 +3909,43 @@
         .footer-column a {
             display: block;
             font-size: 0.9375rem;
-            color: var(--text-secondary);
+            color: rgba(255, 255, 255, 0.6);
             text-decoration: none;
             margin-bottom: 10px;
             transition: color 0.2s;
         }
 
         .footer-column a:hover {
-            color: var(--primary);
+            color: #ffffff;
         }
 
         .footer-bottom {
             max-width: 1100px;
             margin: 0 auto;
             padding-top: 24px;
-            border-top: 1px solid var(--border);
+            border-top: 1px solid var(--dark-border);
             text-align: center;
         }
 
         .footer-bottom p {
             font-size: 0.875rem;
-            color: var(--text-muted);
+            color: rgba(255, 255, 255, 0.5);
         }
 
         /* Landing Page Responsive */
         @media (max-width: 900px) {
+            .how-it-works-grid {
+                grid-template-columns: 1fr;
+                max-width: 400px;
+            }
+
             .preview-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .value-props-grid {
+                grid-template-columns: 1fr;
+                max-width: 500px;
             }
 
             .footer-grid {
@@ -2991,46 +4278,6 @@
             margin-bottom: 32px;
         }
 
-        .brokerage-logos {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 48px;
-            flex-wrap: wrap;
-        }
-
-        .brokerage-logo {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            opacity: 0.6;
-            transition: opacity 0.2s;
-        }
-
-        .brokerage-logo:hover {
-            opacity: 1;
-        }
-
-        .brokerage-logo-icon {
-            width: 48px;
-            height: 48px;
-            background: var(--bg-secondary);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--text-secondary);
-        }
-
-        .brokerage-logo-name {
-            font-size: 0.8125rem;
-            color: var(--text-secondary);
-            font-weight: 500;
-        }
-
         /* CTA Section */
         .cta-section {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
@@ -3188,10 +4435,6 @@
 
             .value-props-grid {
                 grid-template-columns: 1fr;
-            }
-
-            .brokerage-logos {
-                gap: 24px;
             }
 
             .cta-title {
@@ -4844,6 +6087,71 @@
 
         :root[data-theme="dark"] .upload-file-icon.error {
             background: rgba(248, 113, 113, 0.2);
+        }
+
+        /* Dark Mode Compatibility for Stripe-Inspired Sections */
+        /* Dark sections should stay dark in both modes */
+        :root[data-theme="dark"] .how-it-works,
+        :root[data-theme="dark"] .value-props,
+        :root[data-theme="dark"] .social-proof-bar,
+        :root[data-theme="dark"] .site-footer {
+            background: var(--dark-section-bg);
+        }
+
+        :root[data-theme="dark"] .how-it-works-step,
+        :root[data-theme="dark"] .step-card,
+        :root[data-theme="dark"] .value-card {
+            background: var(--dark-card-bg);
+            border-color: var(--dark-border);
+        }
+
+        /* Light sections in dark mode */
+        :root[data-theme="dark"] .preview-section,
+        :root[data-theme="dark"] .trust-section {
+            background: var(--bg-primary);
+        }
+
+        :root[data-theme="dark"] .browser-frame {
+            background: var(--bg-secondary);
+        }
+
+        :root[data-theme="dark"] .browser-header {
+            background: var(--bg-tertiary);
+        }
+
+        :root[data-theme="dark"] .browser-content {
+            background: var(--bg-secondary);
+        }
+
+        :root[data-theme="dark"] .preview-card {
+            background: var(--bg-primary);
+        }
+
+        /* Marquee gradients for dark mode */
+        :root[data-theme="dark"] .marquee-container::before {
+            background: linear-gradient(to right, var(--bg-primary), transparent);
+        }
+
+        :root[data-theme="dark"] .marquee-container::after {
+            background: linear-gradient(to left, var(--bg-primary), transparent);
+        }
+
+        :root[data-theme="dark"] .brokerage-logo-img {
+            filter: grayscale(100%) brightness(0) invert(1) opacity(0.5);
+        }
+
+        :root[data-theme="dark"] .brokerage-logo:hover .brokerage-logo-img {
+            filter: grayscale(0%) brightness(1) invert(0) opacity(1);
+        }
+
+        /* Hero upload card in dark mode */
+        :root[data-theme="dark"] .hero-upload-card {
+            background: var(--bg-primary);
+            border-color: var(--border);
+        }
+
+        :root[data-theme="dark"] .hero-badge {
+            background: rgba(122, 115, 255, 0.15);
         }
 
         /* Theme toggle button */
@@ -8281,26 +9589,180 @@
 
     <div class="container">
         <header>
-            <nav class="top-nav">
-                <div class="logo">
-                    <div class="logo-icon">
-                        <!-- Paul Rand-inspired logo: Bold geometric "S" with scan line -->
-                        <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <!-- Abstract S formed by two offset squares with negative space -->
-                            <rect x="0" y="0" width="24" height="24" rx="4" fill="white"/>
-                            <rect x="20" y="20" width="24" height="24" rx="4" fill="white"/>
-                            <!-- Scan line cutting through - the key action element -->
-                            <rect x="0" y="19" width="44" height="6" fill="white" opacity="0.4"/>
-                            <!-- Central diamond connector -->
-                            <rect x="16" y="16" width="12" height="12" rx="2" fill="white" transform="rotate(0 22 22)"/>
-                        </svg>
-                    </div>
-                    <div class="brand-text">
-                        <span class="brand-name">Statement Scan</span>
-                        <span class="brand-tagline">Portfolio Intelligence</span>
+            <nav class="top-nav" role="navigation" aria-label="Main navigation">
+                <!-- Left: Logo -->
+                <div class="nav-left">
+                    <div class="logo">
+                        <div class="logo-icon">
+                            <!-- Paul Rand-inspired logo: Bold geometric "S" with scan line -->
+                            <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <!-- Abstract S formed by two offset squares with negative space -->
+                                <rect x="0" y="0" width="24" height="24" rx="4" fill="white"/>
+                                <rect x="20" y="20" width="24" height="24" rx="4" fill="white"/>
+                                <!-- Scan line cutting through - the key action element -->
+                                <rect x="0" y="19" width="44" height="6" fill="white" opacity="0.4"/>
+                                <!-- Central diamond connector -->
+                                <rect x="16" y="16" width="12" height="12" rx="2" fill="white" transform="rotate(0 22 22)"/>
+                            </svg>
+                        </div>
+                        <div class="brand-text">
+                            <span class="brand-name">Statement Scan</span>
+                            <span class="brand-tagline">Portfolio Intelligence</span>
+                        </div>
                     </div>
                 </div>
-                <div style="display: flex; align-items: center; gap: 12px;">
+
+                <!-- Center: Navigation Links -->
+                <div class="nav-center">
+                    <!-- Products Dropdown -->
+                    <div class="nav-item" data-dropdown="products">
+                        <button class="nav-link" aria-haspopup="true" aria-expanded="false">
+                            Products
+                            <svg class="nav-link-chevron" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M2 3.5L5 6.5L8 3.5"/>
+                            </svg>
+                        </button>
+                        <div class="nav-dropdown dropdown-wide" role="menu">
+                            <div class="dropdown-columns">
+                                <div class="dropdown-column">
+                                    <div class="dropdown-column-title">Analyze</div>
+                                    <a class="dropdown-item" role="menuitem" onclick="navScrollToUpload('upload'); closeAllDropdowns();">
+                                        <span class="dropdown-item-icon">📄</span>
+                                        <div class="dropdown-item-content">
+                                            <div class="dropdown-item-title">Statement Upload</div>
+                                            <div class="dropdown-item-desc">Upload PDF or CSV brokerage statements for instant analysis</div>
+                                        </div>
+                                    </a>
+                                    <a class="dropdown-item" role="menuitem" onclick="navScrollToUpload('manual'); closeAllDropdowns();">
+                                        <span class="dropdown-item-icon">✏️</span>
+                                        <div class="dropdown-item-content">
+                                            <div class="dropdown-item-title">Manual Entry</div>
+                                            <div class="dropdown-item-desc">Enter holdings by ticker and quantity or allocation percentage</div>
+                                        </div>
+                                    </a>
+                                    <a class="dropdown-item" role="menuitem" onclick="navScrollToUpload('connect'); closeAllDropdowns();">
+                                        <span class="dropdown-item-icon">🔗</span>
+                                        <div class="dropdown-item-content">
+                                            <div class="dropdown-item-title">Brokerage Connect <span class="tag-coming-soon">Coming Soon</span></div>
+                                            <div class="dropdown-item-desc">Link your Schwab, Fidelity, or Vanguard account directly</div>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="dropdown-column">
+                                    <div class="dropdown-column-title">Insights</div>
+                                    <a class="dropdown-item" role="menuitem" onclick="navScrollToSection('previewSection'); closeAllDropdowns();">
+                                        <span class="dropdown-item-icon">📊</span>
+                                        <div class="dropdown-item-content">
+                                            <div class="dropdown-item-title">Portfolio Report</div>
+                                            <div class="dropdown-item-desc">Allocation, sector exposure, and risk analysis in one view</div>
+                                        </div>
+                                    </a>
+                                    <a class="dropdown-item" role="menuitem" onclick="navScrollToSection('previewSection'); closeAllDropdowns();">
+                                        <span class="dropdown-item-icon">💰</span>
+                                        <div class="dropdown-item-content">
+                                            <div class="dropdown-item-title">Fee Analysis</div>
+                                            <div class="dropdown-item-desc">Find hidden expense ratios and see potential savings</div>
+                                        </div>
+                                    </a>
+                                    <a class="dropdown-item" role="menuitem" onclick="navScrollToSection('previewSection'); closeAllDropdowns();">
+                                        <span class="dropdown-item-icon">📈</span>
+                                        <div class="dropdown-item-content">
+                                            <div class="dropdown-item-title">Benchmark Comparison</div>
+                                            <div class="dropdown-item-desc">Compare your performance against the S&P 500 and target-date funds</div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Solutions Dropdown -->
+                    <div class="nav-item" data-dropdown="solutions">
+                        <button class="nav-link" aria-haspopup="true" aria-expanded="false">
+                            Solutions
+                            <svg class="nav-link-chevron" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M2 3.5L5 6.5L8 3.5"/>
+                            </svg>
+                        </button>
+                        <div class="nav-dropdown" role="menu">
+                            <a class="dropdown-item" role="menuitem" onclick="navScrollToSection('heroSection'); closeAllDropdowns();">
+                                <span class="dropdown-item-icon">🧑‍💼</span>
+                                <div class="dropdown-item-content">
+                                    <div class="dropdown-item-title">For Self-Directed Investors</div>
+                                    <div class="dropdown-item-desc">Understand your portfolio like the pros do</div>
+                                </div>
+                            </a>
+                            <a class="dropdown-item" role="menuitem" onclick="navScrollToSection('heroSection'); closeAllDropdowns();">
+                                <span class="dropdown-item-icon">👨‍👩‍👧‍👦</span>
+                                <div class="dropdown-item-content">
+                                    <div class="dropdown-item-title">For Families</div>
+                                    <div class="dropdown-item-desc">Get clarity across multiple accounts and beneficiaries</div>
+                                </div>
+                            </a>
+                            <a class="dropdown-item" role="menuitem" onclick="navScrollToSection('heroSection'); closeAllDropdowns();">
+                                <span class="dropdown-item-icon">📋</span>
+                                <div class="dropdown-item-content">
+                                    <div class="dropdown-item-title">For Financial Advisors <span class="tag-coming-soon">Coming Soon</span></div>
+                                    <div class="dropdown-item-desc">Quick portfolio diagnostics for client onboarding</div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Resources Dropdown -->
+                    <div class="nav-item" data-dropdown="resources">
+                        <button class="nav-link" aria-haspopup="true" aria-expanded="false">
+                            Resources
+                            <svg class="nav-link-chevron" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M2 3.5L5 6.5L8 3.5"/>
+                            </svg>
+                        </button>
+                        <div class="nav-dropdown" role="menu">
+                            <a class="dropdown-item" role="menuitem" onclick="navScrollToSection('howItWorksSection'); closeAllDropdowns();">
+                                <span class="dropdown-item-icon">📖</span>
+                                <div class="dropdown-item-content">
+                                    <div class="dropdown-item-title">How It Works</div>
+                                    <div class="dropdown-item-desc">Learn how Statement Scan analyzes your portfolio</div>
+                                </div>
+                            </a>
+                            <a class="dropdown-item" role="menuitem" onclick="navScrollToSection('trustSection'); closeAllDropdowns();">
+                                <span class="dropdown-item-icon">🏦</span>
+                                <div class="dropdown-item-content">
+                                    <div class="dropdown-item-title">Supported Brokerages</div>
+                                    <div class="dropdown-item-desc">See the full list of supported statement formats</div>
+                                </div>
+                            </a>
+                            <a class="dropdown-item" role="menuitem" onclick="navScrollToSection('valuePropsSection'); closeAllDropdowns();">
+                                <span class="dropdown-item-icon">🔒</span>
+                                <div class="dropdown-item-content">
+                                    <div class="dropdown-item-title">Privacy & Security</div>
+                                    <div class="dropdown-item-desc">How we protect your data</div>
+                                </div>
+                            </a>
+                            <a class="dropdown-item" role="menuitem" href="mailto:support@statementscan.app" onclick="closeAllDropdowns();">
+                                <span class="dropdown-item-icon">📬</span>
+                                <div class="dropdown-item-content">
+                                    <div class="dropdown-item-title">Contact Us</div>
+                                    <div class="dropdown-item-desc">Get in touch with our team</div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Pricing (no dropdown) -->
+                    <a class="nav-link" onclick="navScrollToSection('ctaSection');">Pricing</a>
+                </div>
+
+                <!-- Right: Actions -->
+                <div class="nav-right">
+                    <!-- Mobile Menu Button -->
+                    <button class="mobile-menu-btn" onclick="openMobileMenu()" aria-label="Open menu">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="3" y1="6" x2="21" y2="6"/>
+                            <line x1="3" y1="12" x2="21" y2="12"/>
+                            <line x1="3" y1="18" x2="21" y2="18"/>
+                        </svg>
+                    </button>
                     <!-- Theme Toggle -->
                     <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Toggle dark mode" title="Toggle theme (Ctrl+D)">
                         <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -8323,84 +9785,262 @@
                             Sign In
                         </button>
                     </div>
+                    <button class="btn-get-started" onclick="scrollToUpload()">Get Started</button>
                 </div>
             </nav>
-            <p class="subtitle">Upload your brokerage statements and get instant portfolio analytics, benchmarking, and projections.</p>
-            <p class="hero-subheadline">Your statement is full of insights — you're just not seeing them yet.</p>
-        </header>
 
-        <main id="main-content">
-        <!-- Error message container is now replaced by toast system -->
-        <div class="error-message" id="errorMessage" role="alert" aria-live="polite"></div>
-
-        <!-- Upload Section -->
-        <div id="uploadSection">
-            <!-- Entry Method Selector -->
-            <div class="entry-methods">
-                <button class="entry-method-btn active" data-method="upload" onclick="switchEntryMethod('upload')">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                        <polyline points="17 8 12 3 7 8"/>
-                        <line x1="12" y1="3" x2="12" y2="15"/>
-                    </svg>
-                    Upload Files
-                </button>
-                <button class="entry-method-btn" data-method="manual" onclick="switchEntryMethod('manual')">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-                    </svg>
-                    Enter Manually
-                </button>
-                <button class="entry-method-btn" data-method="connect" onclick="switchEntryMethod('connect')">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="2" y="4" width="20" height="16" rx="2"/>
-                        <path d="M7 15h0M2 9h20"/>
-                    </svg>
-                    Connect Account
-                </button>
-            </div>
-
-            <!-- Upload Panel -->
-            <div class="entry-panel active" id="uploadPanel">
-                <div class="card upload-card" id="dropZone">
-                    <div class="upload-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                            <polyline points="17 8 12 3 7 8"/>
-                            <line x1="12" y1="3" x2="12" y2="15"/>
-                        </svg>
+            <!-- Mobile Menu Overlay -->
+            <div class="mobile-menu-overlay" id="mobileMenuOverlay">
+                <div class="mobile-menu-header">
+                    <div class="logo">
+                        <div class="logo-icon">
+                            <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="0" y="0" width="24" height="24" rx="4" fill="white"/>
+                                <rect x="20" y="20" width="24" height="24" rx="4" fill="white"/>
+                                <rect x="0" y="19" width="44" height="6" fill="white" opacity="0.4"/>
+                                <rect x="16" y="16" width="12" height="12" rx="2" fill="white"/>
+                            </svg>
+                        </div>
+                        <div class="brand-text">
+                            <span class="brand-name">Statement Scan</span>
+                        </div>
                     </div>
-                    <div class="upload-title">Upload brokerage statements</div>
-                    <p class="upload-hint">Drag and drop multiple PDF or CSV files at once, or click to browse</p>
-                    <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()" aria-label="Select files to upload">
-                        Select Files
-                        <span class="kbd" style="margin-left: 8px;">Ctrl+U</span>
-                    </button>
-                    <input type="file" id="fileInput" accept=".pdf,.csv" multiple aria-label="File input for brokerage statements">
-
-                    <!-- PII Redaction Toggle -->
-                    <div class="redact-pii-option">
-                        <label class="toggle-switch">
-                            <input type="checkbox" id="redactPiiToggle" checked>
-                            <span class="toggle-slider"></span>
-                        </label>
-                        <div class="redact-pii-label">
-                            <span class="redact-pii-title">Redact sensitive information</span>
-                            <span class="redact-pii-hint">Automatically mask account numbers, SSN, addresses</span>
+                    <button class="mobile-menu-close" onclick="closeMobileMenu()" aria-label="Close menu">✕</button>
+                </div>
+                <div class="mobile-menu-content">
+                    <!-- Products Accordion -->
+                    <div class="mobile-accordion" data-accordion="products">
+                        <button class="mobile-accordion-header" onclick="toggleMobileAccordion('products')">
+                            Products
+                            <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M2 3.5L5 6.5L8 3.5"/>
+                            </svg>
+                        </button>
+                        <div class="mobile-accordion-content">
+                            <a class="mobile-dropdown-item" onclick="navScrollToUpload('upload'); closeMobileMenu();">
+                                <span class="dropdown-item-icon">📄</span>
+                                <div class="dropdown-item-content">
+                                    <div class="dropdown-item-title">Statement Upload</div>
+                                    <div class="dropdown-item-desc">Upload PDF or CSV brokerage statements</div>
+                                </div>
+                            </a>
+                            <a class="mobile-dropdown-item" onclick="navScrollToUpload('manual'); closeMobileMenu();">
+                                <span class="dropdown-item-icon">✏️</span>
+                                <div class="dropdown-item-content">
+                                    <div class="dropdown-item-title">Manual Entry</div>
+                                    <div class="dropdown-item-desc">Enter holdings by ticker and quantity</div>
+                                </div>
+                            </a>
+                            <a class="mobile-dropdown-item" onclick="navScrollToUpload('connect'); closeMobileMenu();">
+                                <span class="dropdown-item-icon">🔗</span>
+                                <div class="dropdown-item-content">
+                                    <div class="dropdown-item-title">Brokerage Connect <span class="tag-coming-soon">Coming Soon</span></div>
+                                    <div class="dropdown-item-desc">Link your account directly</div>
+                                </div>
+                            </a>
+                            <a class="mobile-dropdown-item" onclick="navScrollToSection('previewSection'); closeMobileMenu();">
+                                <span class="dropdown-item-icon">📊</span>
+                                <div class="dropdown-item-content">
+                                    <div class="dropdown-item-title">Portfolio Report</div>
+                                    <div class="dropdown-item-desc">Allocation and risk analysis</div>
+                                </div>
+                            </a>
                         </div>
                     </div>
 
-                    <!-- Upload Queue (shown during batch upload) -->
-                    <div class="upload-queue" id="uploadQueue" style="display: none;">
-                        <div class="upload-queue-header">
-                            <span id="uploadQueueTitle">Uploading files...</span>
-                            <span id="uploadQueueCount"></span>
+                    <!-- Solutions Accordion -->
+                    <div class="mobile-accordion" data-accordion="solutions">
+                        <button class="mobile-accordion-header" onclick="toggleMobileAccordion('solutions')">
+                            Solutions
+                            <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M2 3.5L5 6.5L8 3.5"/>
+                            </svg>
+                        </button>
+                        <div class="mobile-accordion-content">
+                            <a class="mobile-dropdown-item" onclick="navScrollToSection('heroSection'); closeMobileMenu();">
+                                <span class="dropdown-item-icon">🧑‍💼</span>
+                                <div class="dropdown-item-content">
+                                    <div class="dropdown-item-title">For Self-Directed Investors</div>
+                                    <div class="dropdown-item-desc">Understand your portfolio like the pros</div>
+                                </div>
+                            </a>
+                            <a class="mobile-dropdown-item" onclick="navScrollToSection('heroSection'); closeMobileMenu();">
+                                <span class="dropdown-item-icon">👨‍👩‍👧‍👦</span>
+                                <div class="dropdown-item-content">
+                                    <div class="dropdown-item-title">For Families</div>
+                                    <div class="dropdown-item-desc">Clarity across multiple accounts</div>
+                                </div>
+                            </a>
+                            <a class="mobile-dropdown-item" onclick="navScrollToSection('heroSection'); closeMobileMenu();">
+                                <span class="dropdown-item-icon">📋</span>
+                                <div class="dropdown-item-content">
+                                    <div class="dropdown-item-title">For Financial Advisors <span class="tag-coming-soon">Coming Soon</span></div>
+                                    <div class="dropdown-item-desc">Client onboarding diagnostics</div>
+                                </div>
+                            </a>
                         </div>
-                        <div id="uploadQueueList"></div>
+                    </div>
+
+                    <!-- Resources Accordion -->
+                    <div class="mobile-accordion" data-accordion="resources">
+                        <button class="mobile-accordion-header" onclick="toggleMobileAccordion('resources')">
+                            Resources
+                            <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M2 3.5L5 6.5L8 3.5"/>
+                            </svg>
+                        </button>
+                        <div class="mobile-accordion-content">
+                            <a class="mobile-dropdown-item" onclick="navScrollToSection('howItWorksSection'); closeMobileMenu();">
+                                <span class="dropdown-item-icon">📖</span>
+                                <div class="dropdown-item-content">
+                                    <div class="dropdown-item-title">How It Works</div>
+                                    <div class="dropdown-item-desc">Learn about the analysis process</div>
+                                </div>
+                            </a>
+                            <a class="mobile-dropdown-item" onclick="navScrollToSection('trustSection'); closeMobileMenu();">
+                                <span class="dropdown-item-icon">🏦</span>
+                                <div class="dropdown-item-content">
+                                    <div class="dropdown-item-title">Supported Brokerages</div>
+                                    <div class="dropdown-item-desc">Supported statement formats</div>
+                                </div>
+                            </a>
+                            <a class="mobile-dropdown-item" onclick="navScrollToSection('valuePropsSection'); closeMobileMenu();">
+                                <span class="dropdown-item-icon">🔒</span>
+                                <div class="dropdown-item-content">
+                                    <div class="dropdown-item-title">Privacy & Security</div>
+                                    <div class="dropdown-item-desc">How we protect your data</div>
+                                </div>
+                            </a>
+                            <a class="mobile-dropdown-item" href="mailto:support@statementscan.app" onclick="closeMobileMenu();">
+                                <span class="dropdown-item-icon">📬</span>
+                                <div class="dropdown-item-content">
+                                    <div class="dropdown-item-title">Contact Us</div>
+                                    <div class="dropdown-item-desc">Get in touch</div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Pricing Link -->
+                    <a class="mobile-nav-link" onclick="navScrollToSection('ctaSection'); closeMobileMenu();">Pricing</a>
+
+                    <!-- Actions -->
+                    <div class="mobile-menu-actions">
+                        <button class="btn btn-secondary" onclick="showAuthModal(); closeMobileMenu();">Sign In</button>
+                        <button class="btn-get-started" onclick="scrollToUpload(); closeMobileMenu();">Get Started</button>
                     </div>
                 </div>
             </div>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="hero-grid">
+                <!-- Left Column: Content -->
+                <div class="hero-content">
+                    <div class="hero-badge">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+                        </svg>
+                        AI-Powered Portfolio Intelligence
+                    </div>
+                    <h1 class="hero-title">Your brokerage statement, <span class="gradient-text">decoded</span></h1>
+                    <p class="hero-subtitle">Upload any statement and get instant portfolio analytics, fee analysis, and actionable insights — all processed locally on your device.</p>
+                    <div class="hero-ctas">
+                        <button class="hero-cta-primary" onclick="scrollToUpload()">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="17 8 12 3 7 8"/>
+                                <line x1="12" y1="3" x2="12" y2="15"/>
+                            </svg>
+                            Analyze Your Portfolio
+                        </button>
+                        <a href="#landingSections" class="hero-cta-link">
+                            See how it works
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                                <polyline points="12 5 19 12 12 19"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Right Column: Upload Widget -->
+                <div class="hero-upload-wrapper">
+                    <div class="hero-upload-glow"></div>
+                    <div class="hero-upload-card">
+                        <!-- Entry Method Selector -->
+                        <div class="entry-methods" style="margin-bottom: 20px;">
+                            <button class="entry-method-btn active" data-method="upload" onclick="switchEntryMethod('upload')">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                    <polyline points="17 8 12 3 7 8"/>
+                                    <line x1="12" y1="3" x2="12" y2="15"/>
+                                </svg>
+                                Upload Files
+                            </button>
+                            <button class="entry-method-btn" data-method="manual" onclick="switchEntryMethod('manual')">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                </svg>
+                                Manual
+                            </button>
+                            <button class="entry-method-btn" data-method="connect" onclick="switchEntryMethod('connect')">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="2" y="4" width="20" height="16" rx="2"/>
+                                    <path d="M7 15h0M2 9h20"/>
+                                </svg>
+                                Connect
+                            </button>
+                        </div>
+
+                        <main id="main-content">
+                        <!-- Error message container is now replaced by toast system -->
+                        <div class="error-message" id="errorMessage" role="alert" aria-live="polite"></div>
+
+                        <!-- Upload Section -->
+                        <div id="uploadSection">
+
+                            <!-- Upload Panel -->
+                            <div class="entry-panel active" id="uploadPanel">
+                                <div class="upload-drop-area" id="dropZone">
+                                    <div class="upload-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                            <polyline points="17 8 12 3 7 8"/>
+                                            <line x1="12" y1="3" x2="12" y2="15"/>
+                                        </svg>
+                                    </div>
+                                    <div class="upload-title">Drop your statement here</div>
+                                    <p class="upload-hint">PDF or CSV files from any brokerage</p>
+                                    <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()" aria-label="Select files to upload">
+                                        Select Files
+                                    </button>
+                                    <input type="file" id="fileInput" accept=".pdf,.csv" multiple aria-label="File input for brokerage statements">
+
+                                    <!-- PII Redaction Toggle -->
+                                    <div class="redact-pii-option">
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" id="redactPiiToggle" checked>
+                                            <span class="toggle-slider"></span>
+                                        </label>
+                                        <div class="redact-pii-label">
+                                            <span class="redact-pii-title">Redact sensitive info</span>
+                                            <span class="redact-pii-hint">Mask account numbers, SSN</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Upload Queue (shown during batch upload) -->
+                                    <div class="upload-queue" id="uploadQueue" style="display: none;">
+                                        <div class="upload-queue-header">
+                                            <span id="uploadQueueTitle">Uploading files...</span>
+                                            <span id="uploadQueueCount"></span>
+                                        </div>
+                                        <div id="uploadQueueList"></div>
+                                    </div>
+                                </div>
+                            </div>
 
             <!-- Manual Entry Panel -->
             <div class="entry-panel" id="manualPanel">
@@ -8593,7 +10233,11 @@
                     <!-- Populated dynamically -->
                 </div>
             </div>
-        </div>
+        </div><!-- End uploadSection -->
+                    </div><!-- End hero-upload-card -->
+                </div><!-- End hero-upload-wrapper -->
+            </div><!-- End hero-grid -->
+        </section><!-- End hero-section -->
 
         <!-- Progress -->
         <div class="progress-section" id="progressSection">
@@ -9857,15 +11501,37 @@
 
         </main><!-- End main content -->
 
+        <!-- Social Proof Numbers Bar -->
+        <section class="social-proof-bar" data-animate>
+            <div class="social-proof-grid" data-animate-child>
+                <div class="social-proof-stat">
+                    <div class="social-proof-number">50K+</div>
+                    <div class="social-proof-label">Statements Analyzed</div>
+                </div>
+                <div class="social-proof-stat">
+                    <div class="social-proof-number">30s</div>
+                    <div class="social-proof-label">Average Analysis Time</div>
+                </div>
+                <div class="social-proof-stat">
+                    <div class="social-proof-number">$2.8M</div>
+                    <div class="social-proof-label">Hidden Fees Found</div>
+                </div>
+                <div class="social-proof-stat">
+                    <div class="social-proof-number">100%</div>
+                    <div class="social-proof-label">Client-Side Processing</div>
+                </div>
+            </div>
+        </section>
+
         <!-- Landing Page Sections -->
         <div class="landing-sections" id="landingSections">
 
             <!-- How It Works Section -->
-            <section class="landing-section how-it-works">
+            <section class="landing-section how-it-works" data-animate>
                 <div class="container">
                     <h2 class="section-heading">How It Works</h2>
                     <p class="section-subheading">Get professional portfolio analytics in three simple steps</p>
-                    <div class="how-it-works-grid">
+                    <div class="how-it-works-grid" data-animate-child>
                         <div class="step-card">
                             <div class="step-number">1</div>
                             <div class="step-icon">
@@ -9904,27 +11570,42 @@
             </section>
 
             <!-- Sample Report Preview Section -->
-            <section class="landing-section preview-section">
+            <section class="landing-section preview-section" data-animate>
                 <div class="container">
                     <h2 class="section-heading">See What's In Your Report</h2>
                     <p class="section-subheading">Professional-grade analytics that would cost $500+ from a financial advisor</p>
-                    <div class="preview-grid">
+                    <div class="browser-frame">
+                        <div class="browser-header">
+                            <div class="browser-dots">
+                                <span class="browser-dot red"></span>
+                                <span class="browser-dot yellow"></span>
+                                <span class="browser-dot green"></span>
+                            </div>
+                            <div class="browser-url-bar">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                                    <path d="M9 12l2 2 4-4"/>
+                                </svg>
+                                statementscan.app/report
+                            </div>
+                        </div>
+                        <div class="browser-content">
+                            <div class="preview-grid">
                         <div class="preview-card">
                             <div class="preview-card-header">
                                 <h3>Asset Allocation</h3>
                             </div>
                             <div class="preview-card-body">
-                                <div class="donut-mockup">
-                                    <div class="donut-ring"></div>
-                                    <div class="donut-center">
-                                        <span class="donut-value">$847K</span>
-                                        <span class="donut-label">Total Value</span>
+                                <div class="pv-donut">
+                                    <div class="pv-donut-ring">
+                                        <span class="pv-donut-value">$847K</span>
+                                        <span class="pv-donut-label">Total Value</span>
                                     </div>
-                                </div>
-                                <div class="donut-legend">
-                                    <div class="legend-item"><span class="legend-dot stocks"></span>Stocks 62%</div>
-                                    <div class="legend-item"><span class="legend-dot bonds"></span>Bonds 24%</div>
-                                    <div class="legend-item"><span class="legend-dot cash"></span>Cash 14%</div>
+                                    <div class="pv-donut-legend">
+                                        <span class="pv-legend-item"><span class="pv-dot pv-dot-stocks"></span>Stocks 62%</span>
+                                        <span class="pv-legend-item"><span class="pv-dot pv-dot-bonds"></span>Bonds 24%</span>
+                                        <span class="pv-legend-item"><span class="pv-dot pv-dot-cash"></span>Cash 14%</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -9933,17 +11614,17 @@
                                 <h3>Risk Score</h3>
                             </div>
                             <div class="preview-card-body">
-                                <div class="gauge-mockup">
-                                    <div class="gauge-arc"></div>
-                                    <div class="gauge-needle"></div>
-                                    <div class="gauge-center">
-                                        <span class="gauge-value">67</span>
-                                        <span class="gauge-label">Moderate</span>
+                                <div class="pv-gauge">
+                                    <div class="pv-gauge-arc"></div>
+                                    <div class="pv-gauge-needle"></div>
+                                    <div class="pv-gauge-info">
+                                        <span class="pv-gauge-value">67</span>
+                                        <span class="pv-gauge-label">Moderate</span>
                                     </div>
-                                </div>
-                                <div class="gauge-scale">
-                                    <span>Conservative</span>
-                                    <span>Aggressive</span>
+                                    <div class="pv-gauge-scale">
+                                        <span>Conservative</span>
+                                        <span>Aggressive</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -9952,31 +11633,31 @@
                                 <h3>Sector Exposure</h3>
                             </div>
                             <div class="preview-card-body">
-                                <div class="bar-mockup">
-                                    <div class="bar-item">
-                                        <span class="bar-label">Technology</span>
-                                        <div class="bar-track"><div class="bar-fill" style="width: 32%;"></div></div>
-                                        <span class="bar-value">32%</span>
+                                <div class="pv-bars">
+                                    <div class="pv-bar-row">
+                                        <span class="pv-bar-label">Technology</span>
+                                        <div class="pv-bar-track"><div class="pv-bar-fill" style="width: 100%;"></div></div>
+                                        <span class="pv-bar-value">32%</span>
                                     </div>
-                                    <div class="bar-item">
-                                        <span class="bar-label">Healthcare</span>
-                                        <div class="bar-track"><div class="bar-fill" style="width: 18%;"></div></div>
-                                        <span class="bar-value">18%</span>
+                                    <div class="pv-bar-row">
+                                        <span class="pv-bar-label">Healthcare</span>
+                                        <div class="pv-bar-track"><div class="pv-bar-fill" style="width: 56%;"></div></div>
+                                        <span class="pv-bar-value">18%</span>
                                     </div>
-                                    <div class="bar-item">
-                                        <span class="bar-label">Financials</span>
-                                        <div class="bar-track"><div class="bar-fill" style="width: 15%;"></div></div>
-                                        <span class="bar-value">15%</span>
+                                    <div class="pv-bar-row">
+                                        <span class="pv-bar-label">Financials</span>
+                                        <div class="pv-bar-track"><div class="pv-bar-fill" style="width: 47%;"></div></div>
+                                        <span class="pv-bar-value">15%</span>
                                     </div>
-                                    <div class="bar-item">
-                                        <span class="bar-label">Consumer</span>
-                                        <div class="bar-track"><div class="bar-fill" style="width: 12%;"></div></div>
-                                        <span class="bar-value">12%</span>
+                                    <div class="pv-bar-row">
+                                        <span class="pv-bar-label">Consumer</span>
+                                        <div class="pv-bar-track"><div class="pv-bar-fill" style="width: 38%;"></div></div>
+                                        <span class="pv-bar-value">12%</span>
                                     </div>
-                                    <div class="bar-item">
-                                        <span class="bar-label">Other</span>
-                                        <div class="bar-track"><div class="bar-fill" style="width: 23%;"></div></div>
-                                        <span class="bar-value">23%</span>
+                                    <div class="pv-bar-row">
+                                        <span class="pv-bar-label">Other</span>
+                                        <div class="pv-bar-track"><div class="pv-bar-fill" style="width: 72%;"></div></div>
+                                        <span class="pv-bar-value">23%</span>
                                     </div>
                                 </div>
                             </div>
@@ -10013,16 +11694,18 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div><!-- End preview-grid -->
+                        </div><!-- End browser-content -->
+                    </div><!-- End browser-frame -->
                 </div>
             </section>
 
             <!-- Value Props Section -->
-            <section class="landing-section value-props">
+            <section class="landing-section value-props" data-animate>
                 <div class="container">
                     <h2 class="section-heading">Why Statement Scan?</h2>
                     <p class="section-subheading">Built for investors who want clarity, not complexity</p>
-                    <div class="value-props-grid">
+                    <div class="value-props-grid" data-animate-child>
                         <div class="value-card">
                             <div class="value-icon">
                                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -10069,36 +11752,46 @@
                 </div>
             </section>
 
-            <!-- Trust Section -->
+            <!-- Trust Section - Marquee -->
             <section class="landing-section trust-section">
                 <div class="container">
                     <p class="trust-label">Works with statements from</p>
-                    <div class="brokerage-logos">
-                        <div class="brokerage-logo">
-                            <span class="brokerage-name">Schwab</span>
+                </div>
+                <div class="marquee-container">
+                    <div class="marquee-track">
+                        <!-- First set of logos -->
+                        <div class="brokerage-logos">
+                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/schwab.com" alt="Schwab" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=schwab.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Schwab</span></div>
+                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/fidelity.com" alt="Fidelity" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=fidelity.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Fidelity</span></div>
+                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/vanguard.com" alt="Vanguard" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=vanguard.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Vanguard</span></div>
+                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/etrade.com" alt="E*TRADE" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=etrade.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">E*TRADE</span></div>
+                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/tdameritrade.com" alt="TD Ameritrade" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=tdameritrade.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">TD Ameritrade</span></div>
+                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/robinhood.com" alt="Robinhood" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=robinhood.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Robinhood</span></div>
+                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/ml.com" alt="Merrill" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=ml.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Merrill</span></div>
+                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/interactivebrokers.com" alt="Interactive Brokers" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=interactivebrokers.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Interactive Brokers</span></div>
+                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/ally.com" alt="Ally Invest" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=ally.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Ally Invest</span></div>
+                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/webull.com" alt="Webull" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=webull.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Webull</span></div>
+                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/sofi.com" alt="SoFi" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=sofi.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">SoFi</span></div>
+                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/betterment.com" alt="Betterment" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=betterment.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Betterment</span></div>
                         </div>
-                        <div class="brokerage-logo">
-                            <span class="brokerage-name">Fidelity</span>
-                        </div>
-                        <div class="brokerage-logo">
-                            <span class="brokerage-name">Vanguard</span>
-                        </div>
-                        <div class="brokerage-logo">
-                            <span class="brokerage-name">E*TRADE</span>
-                        </div>
-                        <div class="brokerage-logo">
-                            <span class="brokerage-name">TD Ameritrade</span>
-                        </div>
-                        <div class="brokerage-logo">
-                            <span class="brokerage-name">Robinhood</span>
-                        </div>
-                        <div class="brokerage-logo">
-                            <span class="brokerage-name">Merrill</span>
-                        </div>
-                        <div class="brokerage-logo">
-                            <span class="brokerage-name">Interactive Brokers</span>
+                        <!-- Duplicate for seamless loop -->
+                        <div class="brokerage-logos">
+                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/schwab.com" alt="Schwab" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=schwab.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Schwab</span></div>
+                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/fidelity.com" alt="Fidelity" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=fidelity.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Fidelity</span></div>
+                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/vanguard.com" alt="Vanguard" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=vanguard.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Vanguard</span></div>
+                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/etrade.com" alt="E*TRADE" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=etrade.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">E*TRADE</span></div>
+                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/tdameritrade.com" alt="TD Ameritrade" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=tdameritrade.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">TD Ameritrade</span></div>
+                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/robinhood.com" alt="Robinhood" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=robinhood.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Robinhood</span></div>
+                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/ml.com" alt="Merrill" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=ml.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Merrill</span></div>
+                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/interactivebrokers.com" alt="Interactive Brokers" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=interactivebrokers.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Interactive Brokers</span></div>
+                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/ally.com" alt="Ally Invest" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=ally.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Ally Invest</span></div>
+                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/webull.com" alt="Webull" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=webull.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Webull</span></div>
+                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/sofi.com" alt="SoFi" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=sofi.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">SoFi</span></div>
+                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/betterment.com" alt="Betterment" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=betterment.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Betterment</span></div>
                         </div>
                     </div>
+                </div>
+                <div class="container">
                     <p class="trust-note">+ 50 more brokerages supported</p>
                 </div>
             </section>
@@ -11082,6 +12775,191 @@
                 applyTheme('system');
             }
         });
+
+        // =============================================================================
+        // SCROLL ANIMATIONS (Intersection Observer)
+        // =============================================================================
+
+        function initScrollAnimations() {
+            const animatedElements = document.querySelectorAll('[data-animate]');
+
+            if ('IntersectionObserver' in window) {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('animated');
+                            observer.unobserve(entry.target); // Only trigger once
+                        }
+                    });
+                }, {
+                    threshold: 0.1,
+                    rootMargin: '0px 0px -50px 0px'
+                });
+
+                animatedElements.forEach(el => observer.observe(el));
+            } else {
+                // Fallback for older browsers
+                animatedElements.forEach(el => el.classList.add('animated'));
+            }
+        }
+
+        // Initialize scroll animations on DOM ready
+        document.addEventListener('DOMContentLoaded', initScrollAnimations);
+
+        // =============================================================================
+        // STICKY NAVBAR
+        // =============================================================================
+
+        function initStickyNavbar() {
+            const navbar = document.querySelector('.top-nav');
+            if (!navbar) return;
+
+            let lastScrollY = window.scrollY;
+
+            window.addEventListener('scroll', () => {
+                const scrollY = window.scrollY;
+
+                if (scrollY > 50) {
+                    navbar.classList.add('navbar-scrolled');
+                } else {
+                    navbar.classList.remove('navbar-scrolled');
+                }
+
+                lastScrollY = scrollY;
+            }, { passive: true });
+        }
+
+        // Initialize sticky navbar on DOM ready
+        document.addEventListener('DOMContentLoaded', initStickyNavbar);
+
+        // =============================================================================
+        // NAVBAR DROPDOWN & MOBILE MENU
+        // =============================================================================
+
+        // Close all dropdown menus
+        function closeAllDropdowns() {
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+                const btn = item.querySelector('.nav-link');
+                if (btn) btn.setAttribute('aria-expanded', 'false');
+            });
+        }
+
+        // Initialize dropdown behavior
+        function initNavDropdowns() {
+            const navItems = document.querySelectorAll('.nav-item[data-dropdown]');
+
+            navItems.forEach(item => {
+                const btn = item.querySelector('.nav-link');
+                const dropdown = item.querySelector('.nav-dropdown');
+
+                // Mouse enter - show dropdown
+                item.addEventListener('mouseenter', () => {
+                    closeAllDropdowns();
+                    item.classList.add('active');
+                    if (btn) btn.setAttribute('aria-expanded', 'true');
+                });
+
+                // Mouse leave - hide dropdown
+                item.addEventListener('mouseleave', () => {
+                    item.classList.remove('active');
+                    if (btn) btn.setAttribute('aria-expanded', 'false');
+                });
+
+                // Click toggle for touch devices
+                if (btn) {
+                    btn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const isActive = item.classList.contains('active');
+                        closeAllDropdowns();
+                        if (!isActive) {
+                            item.classList.add('active');
+                            btn.setAttribute('aria-expanded', 'true');
+                        }
+                    });
+                }
+            });
+
+            // Close dropdowns when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.nav-item')) {
+                    closeAllDropdowns();
+                }
+            });
+
+            // Close dropdowns on Escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    closeAllDropdowns();
+                    closeMobileMenu();
+                }
+            });
+        }
+
+        // Mobile menu functions
+        function openMobileMenu() {
+            const overlay = document.getElementById('mobileMenuOverlay');
+            if (overlay) {
+                overlay.classList.add('open');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function closeMobileMenu() {
+            const overlay = document.getElementById('mobileMenuOverlay');
+            if (overlay) {
+                overlay.classList.remove('open');
+                document.body.style.overflow = '';
+            }
+        }
+
+        function toggleMobileAccordion(name) {
+            const accordion = document.querySelector(`.mobile-accordion[data-accordion="${name}"]`);
+            if (accordion) {
+                accordion.classList.toggle('open');
+            }
+        }
+
+        // Navigation scroll functions
+        function navScrollToSection(sectionId) {
+            const sectionMap = {
+                'heroSection': '.hero-section',
+                'howItWorksSection': '.how-it-works',
+                'previewSection': '.preview-section',
+                'valuePropsSection': '.value-props',
+                'trustSection': '.trust-section',
+                'ctaSection': '.cta-section'
+            };
+
+            const selector = sectionMap[sectionId] || `#${sectionId}`;
+            const section = document.querySelector(selector);
+
+            if (section) {
+                section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
+        function navScrollToUpload(tabName) {
+            // First scroll to the upload widget area
+            const uploadCard = document.querySelector('.upload-card');
+            if (uploadCard) {
+                uploadCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+
+            // Then switch to the appropriate tab after a short delay
+            setTimeout(() => {
+                if (tabName === 'upload') {
+                    switchTab('upload');
+                } else if (tabName === 'manual') {
+                    switchTab('manual');
+                } else if (tabName === 'connect') {
+                    switchTab('connect');
+                }
+            }, 300);
+        }
+
+        // Initialize navbar dropdowns on DOM ready
+        document.addEventListener('DOMContentLoaded', initNavDropdowns);
 
         // =============================================================================
         // ENHANCED TOAST NOTIFICATION SYSTEM
