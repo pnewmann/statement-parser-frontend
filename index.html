@@ -3843,93 +3843,389 @@
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
         }
 
-        /* Enhanced Footer - Dark Theme */
+        /* ========== STRIPE-STYLE FOOTER ========== */
+
         .site-footer {
-            background: var(--dark-section-bg);
-            border-top: 1px solid var(--dark-border);
-            padding: 64px 24px 40px;
+            background: #0A2540;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Zone 1: CTA Bar */
+        .footer-cta-bar {
+            background: #112840;
+            border-bottom: 1px solid #1A3A5C;
+            padding: 20px 24px;
+        }
+
+        .footer-cta-inner {
+            max-width: 1280px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .footer-cta-text {
+            font-size: 16px;
+            font-weight: 500;
+            color: #ffffff;
+        }
+
+        .footer-cta-btn {
+            background: #635BFF;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .footer-cta-btn:hover {
+            background: #7A73FF;
+        }
+
+        /* Zone 2: Main Footer Content */
+        .footer-main {
+            padding: 64px 24px 48px;
+            max-width: 1280px;
+            margin: 0 auto;
         }
 
         .footer-grid {
             display: grid;
-            grid-template-columns: 1fr 2fr;
+            grid-template-columns: 280px repeat(5, 1fr);
             gap: 48px;
-            max-width: 1100px;
-            margin: 0 auto 40px;
         }
 
         .footer-brand {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 16px;
         }
 
         .footer-logo {
             display: flex;
             align-items: center;
             gap: 10px;
-            font-size: 1.125rem;
-            font-weight: 600;
-            color: #ffffff;
         }
 
         .footer-logo-icon {
-            width: 32px;
-            height: 32px;
-            background: var(--primary);
-            color: white;
+            width: 36px;
+            height: 36px;
+            background: #635BFF;
             border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.75rem;
+        }
+
+        .footer-logo-icon svg {
+            width: 22px;
+            height: 22px;
+        }
+
+        .footer-logo-text {
+            font-size: 1.125rem;
             font-weight: 700;
+            color: #ffffff;
         }
 
         .footer-tagline {
-            font-size: 0.9375rem;
+            font-size: 14px;
             color: rgba(255, 255, 255, 0.6);
+            line-height: 1.6;
         }
 
-        .footer-links {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 32px;
+        .footer-social {
+            display: flex;
+            gap: 16px;
+            margin-top: 8px;
         }
 
-        .footer-column h4 {
-            font-size: 0.875rem;
+        .footer-social-link {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.6);
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+
+        .footer-social-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+        }
+
+        .footer-social-link svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .footer-column {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .footer-column-title {
+            font-size: 13px;
             font-weight: 600;
             color: #ffffff;
             margin-bottom: 16px;
             text-transform: uppercase;
-            letter-spacing: 0.03em;
+            letter-spacing: 0.1em;
         }
 
         .footer-column a {
-            display: block;
-            font-size: 0.9375rem;
-            color: rgba(255, 255, 255, 0.6);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            color: #8898AA;
             text-decoration: none;
-            margin-bottom: 10px;
-            transition: color 0.2s;
+            line-height: 2.2;
+            transition: color 0.2s ease;
         }
 
         .footer-column a:hover {
             color: #ffffff;
         }
 
-        .footer-bottom {
-            max-width: 1100px;
+        .footer-coming-soon {
+            font-size: 12px;
+            font-style: italic;
+            color: #556B7E;
+        }
+
+        .footer-country-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: #8898AA;
+            margin-top: 16px;
+        }
+
+        /* Zone 3: Trust Strip */
+        .footer-trust-strip {
+            border-top: 1px solid #1A3A5C;
+            border-bottom: 1px solid #1A3A5C;
+            padding: 32px 24px;
+            background: #0A2540;
+        }
+
+        .footer-trust-inner {
+            max-width: 1280px;
             margin: 0 auto;
-            padding-top: 24px;
-            border-top: 1px solid var(--dark-border);
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 32px;
+        }
+
+        .footer-trust-badge {
             text-align: center;
         }
 
-        .footer-bottom p {
-            font-size: 0.875rem;
-            color: rgba(255, 255, 255, 0.5);
+        .footer-trust-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .footer-trust-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 4px;
+        }
+
+        .footer-trust-desc {
+            font-size: 12px;
+            color: #8898AA;
+            line-height: 1.4;
+        }
+
+        /* Zone 4: Bottom Bar */
+        .footer-bottom-bar {
+            background: #081C30;
+            padding: 24px 24px 20px;
+        }
+
+        .footer-bottom-inner {
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        .footer-disclaimer {
+            font-size: 12px;
+            color: #556B7E;
+            line-height: 1.7;
+            text-align: center;
+            max-width: 960px;
+            margin: 0 auto 20px;
+        }
+
+        .footer-copyright-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 16px;
+            border-top: 1px solid #1A3A5C;
+        }
+
+        .footer-copyright {
+            font-size: 12px;
+            color: #556B7E;
+        }
+
+        .footer-bottom-links {
+            display: flex;
+            gap: 8px;
+            font-size: 12px;
+        }
+
+        .footer-bottom-links a {
+            color: #556B7E;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .footer-bottom-links a:hover {
+            color: #8898AA;
+        }
+
+        .footer-bottom-links span {
+            color: #3D5166;
+        }
+
+        /* Mobile Footer Accordion */
+        .footer-mobile-accordion {
+            display: none;
+        }
+
+        .footer-accordion-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            padding: 16px 0;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid #1A3A5C;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .footer-accordion-header svg {
+            width: 16px;
+            height: 16px;
+            color: #8898AA;
+            transition: transform 0.3s ease;
+        }
+
+        .footer-accordion-item.open .footer-accordion-header svg {
+            transform: rotate(45deg);
+        }
+
+        .footer-accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .footer-accordion-item.open .footer-accordion-content {
+            max-height: 400px;
+        }
+
+        .footer-accordion-links {
+            padding: 16px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .footer-accordion-links a {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            color: #8898AA;
+            text-decoration: none;
+            padding: 8px 0;
+        }
+
+        /* Footer Responsive */
+        @media (max-width: 1024px) {
+            .footer-grid {
+                grid-template-columns: 280px repeat(3, 1fr);
+                gap: 32px;
+            }
+
+            .footer-column:nth-child(5),
+            .footer-column:nth-child(6) {
+                grid-column: span 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .footer-cta-inner {
+                flex-direction: column;
+                text-align: center;
+                gap: 16px;
+            }
+
+            .footer-grid {
+                display: none;
+            }
+
+            .footer-mobile-accordion {
+                display: block;
+            }
+
+            .footer-brand {
+                text-align: center;
+                align-items: center;
+                margin-bottom: 32px;
+                padding-bottom: 32px;
+                border-bottom: 1px solid #1A3A5C;
+            }
+
+            .footer-social {
+                justify-content: center;
+            }
+
+            .footer-trust-inner {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 24px;
+            }
+
+            .footer-copyright-row {
+                flex-direction: column;
+                gap: 12px;
+                text-align: center;
+            }
+
+            .footer-bottom-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .footer-trust-inner {
+                grid-template-columns: 1fr;
+            }
         }
 
         /* Landing Page Responsive */
@@ -3946,15 +4242,6 @@
             .value-props-grid {
                 grid-template-columns: 1fr;
                 max-width: 500px;
-            }
-
-            .footer-grid {
-                grid-template-columns: 1fr;
-                text-align: center;
-            }
-
-            .footer-brand {
-                align-items: center;
             }
 
             .footer-links {
@@ -11791,40 +12078,250 @@
 
         </div><!-- End landing sections -->
 
-        <!-- Enhanced Footer -->
+        <!-- Stripe-Style Footer -->
         <footer class="site-footer">
-            <div class="container">
+            <!-- Zone 1: CTA Bar -->
+            <div class="footer-cta-bar">
+                <div class="footer-cta-inner">
+                    <span class="footer-cta-text">Ready to analyze your portfolio?</span>
+                    <button class="footer-cta-btn" onclick="scrollToUpload()">Get Started — Free</button>
+                </div>
+            </div>
+
+            <!-- Zone 2: Main Footer Content -->
+            <div class="footer-main">
+                <!-- Brand Section -->
+                <div class="footer-brand">
+                    <div class="footer-logo">
+                        <div class="footer-logo-icon">
+                            <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="0" y="0" width="24" height="24" rx="4" fill="white"/>
+                                <rect x="20" y="20" width="24" height="24" rx="4" fill="white"/>
+                                <rect x="0" y="19" width="44" height="6" fill="white" opacity="0.4"/>
+                                <rect x="16" y="16" width="12" height="12" rx="2" fill="white"/>
+                            </svg>
+                        </div>
+                        <span class="footer-logo-text">Statement Scan</span>
+                    </div>
+                    <p class="footer-tagline">Professional portfolio intelligence for everyone. Analyze your brokerage statements with institutional-grade tools.</p>
+                    <div class="footer-social">
+                        <a href="#" class="footer-social-link" aria-label="Twitter">
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                        </a>
+                        <a href="#" class="footer-social-link" aria-label="LinkedIn">
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                        </a>
+                        <a href="#" class="footer-social-link" aria-label="GitHub">
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                        </a>
+                    </div>
+                    <span class="footer-country-badge">🇺🇸 United States</span>
+                </div>
+
+                <!-- Desktop Footer Grid -->
                 <div class="footer-grid">
                     <div class="footer-brand">
                         <div class="footer-logo">
-                            <div class="footer-logo-icon">SS</div>
-                            <span>Statement Scan</span>
+                            <div class="footer-logo-icon">
+                                <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <rect x="0" y="0" width="24" height="24" rx="4" fill="white"/>
+                                    <rect x="20" y="20" width="24" height="24" rx="4" fill="white"/>
+                                    <rect x="0" y="19" width="44" height="6" fill="white" opacity="0.4"/>
+                                    <rect x="16" y="16" width="12" height="12" rx="2" fill="white"/>
+                                </svg>
+                            </div>
+                            <span class="footer-logo-text">Statement Scan</span>
                         </div>
-                        <p class="footer-tagline">Professional portfolio intelligence for everyone.</p>
+                        <p class="footer-tagline">Professional portfolio intelligence for everyone. Analyze your brokerage statements with institutional-grade tools.</p>
+                        <div class="footer-social">
+                            <a href="#" class="footer-social-link" aria-label="Twitter">
+                                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                            </a>
+                            <a href="#" class="footer-social-link" aria-label="LinkedIn">
+                                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                            </a>
+                            <a href="#" class="footer-social-link" aria-label="GitHub">
+                                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                            </a>
+                        </div>
+                        <span class="footer-country-badge">🇺🇸 United States</span>
                     </div>
-                    <div class="footer-links">
-                        <div class="footer-column">
-                            <h4>Product</h4>
-                            <a href="#" onclick="scrollToUpload(); return false;">Analyze Portfolio</a>
-                            <a href="#landingSections">How It Works</a>
-                            <a href="#" onclick="showAuthModal(); return false;">Sign In</a>
+
+                    <nav class="footer-column" aria-label="Products">
+                        <h4 class="footer-column-title">Products</h4>
+                        <a href="#" onclick="navScrollToUpload('upload'); return false;">Statement Upload</a>
+                        <a href="#" onclick="navScrollToUpload('manual'); return false;">Manual Entry</a>
+                        <a href="#" onclick="navScrollToUpload('connect'); return false;">Brokerage Connect</a>
+                        <a href="#" onclick="navScrollToSection('previewSection'); return false;">Portfolio Report</a>
+                        <a href="#" onclick="navScrollToSection('previewSection'); return false;">Fee Analyzer</a>
+                        <a href="#">API <span class="footer-coming-soon">Coming Soon</span></a>
+                    </nav>
+
+                    <nav class="footer-column" aria-label="Use Cases">
+                        <h4 class="footer-column-title">Use Cases</h4>
+                        <a href="#" onclick="navScrollToSection('heroSection'); return false;">Self-Directed Investors</a>
+                        <a href="#">Financial Advisors <span class="footer-coming-soon">Coming Soon</span></a>
+                        <a href="#" onclick="navScrollToSection('heroSection'); return false;">Family Portfolios</a>
+                        <a href="#" onclick="navScrollToSection('heroSection'); return false;">Retirement Planning</a>
+                        <a href="#">Tax-Loss Harvesting <span class="footer-coming-soon">Coming Soon</span></a>
+                        <a href="#" onclick="navScrollToSection('heroSection'); return false;">Portfolio Rebalancing</a>
+                    </nav>
+
+                    <nav class="footer-column" aria-label="Resources">
+                        <h4 class="footer-column-title">Resources</h4>
+                        <a href="#" onclick="navScrollToSection('howItWorksSection'); return false;">How It Works</a>
+                        <a href="#" onclick="navScrollToSection('trustSection'); return false;">Supported Brokerages</a>
+                        <a href="#">Help Center</a>
+                        <a href="#">Blog <span class="footer-coming-soon">Coming Soon</span></a>
+                        <a href="#">Status Page</a>
+                        <a href="#">Changelog <span class="footer-coming-soon">Coming Soon</span></a>
+                    </nav>
+
+                    <nav class="footer-column" aria-label="Company">
+                        <h4 class="footer-column-title">Company</h4>
+                        <a href="#">About</a>
+                        <a href="#">Careers</a>
+                        <a href="mailto:support@statementscan.app">Contact</a>
+                        <a href="#">Press</a>
+                        <a href="#">Brand Assets</a>
+                    </nav>
+
+                    <nav class="footer-column" aria-label="Legal">
+                        <h4 class="footer-column-title">Legal</h4>
+                        <a href="#">Privacy Policy</a>
+                        <a href="#">Terms of Service</a>
+                        <a href="#">Cookie Policy</a>
+                        <a href="#">Disclaimer</a>
+                        <a href="#">Data Processing Agreement</a>
+                        <a href="#">Do Not Sell My Info</a>
+                    </nav>
+                </div>
+
+                <!-- Mobile Footer Accordion -->
+                <div class="footer-mobile-accordion">
+                    <div class="footer-accordion-item" data-accordion="products">
+                        <button class="footer-accordion-header" onclick="toggleFooterAccordion('products')">
+                            Products
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        </button>
+                        <div class="footer-accordion-content">
+                            <div class="footer-accordion-links">
+                                <a href="#" onclick="navScrollToUpload('upload'); return false;">Statement Upload</a>
+                                <a href="#" onclick="navScrollToUpload('manual'); return false;">Manual Entry</a>
+                                <a href="#" onclick="navScrollToUpload('connect'); return false;">Brokerage Connect</a>
+                                <a href="#" onclick="navScrollToSection('previewSection'); return false;">Portfolio Report</a>
+                                <a href="#" onclick="navScrollToSection('previewSection'); return false;">Fee Analyzer</a>
+                            </div>
                         </div>
-                        <div class="footer-column">
-                            <h4>Resources</h4>
-                            <a href="#">Help Center</a>
-                            <a href="#">Supported Brokerages</a>
-                            <a href="#">API Documentation</a>
+                    </div>
+                    <div class="footer-accordion-item" data-accordion="usecases">
+                        <button class="footer-accordion-header" onclick="toggleFooterAccordion('usecases')">
+                            Use Cases
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        </button>
+                        <div class="footer-accordion-content">
+                            <div class="footer-accordion-links">
+                                <a href="#" onclick="navScrollToSection('heroSection'); return false;">Self-Directed Investors</a>
+                                <a href="#" onclick="navScrollToSection('heroSection'); return false;">Family Portfolios</a>
+                                <a href="#" onclick="navScrollToSection('heroSection'); return false;">Retirement Planning</a>
+                                <a href="#" onclick="navScrollToSection('heroSection'); return false;">Portfolio Rebalancing</a>
+                            </div>
                         </div>
-                        <div class="footer-column">
-                            <h4>Legal</h4>
-                            <a href="#">Privacy Policy</a>
-                            <a href="#">Terms of Service</a>
-                            <a href="#">Disclaimer</a>
+                    </div>
+                    <div class="footer-accordion-item" data-accordion="resources">
+                        <button class="footer-accordion-header" onclick="toggleFooterAccordion('resources')">
+                            Resources
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        </button>
+                        <div class="footer-accordion-content">
+                            <div class="footer-accordion-links">
+                                <a href="#" onclick="navScrollToSection('howItWorksSection'); return false;">How It Works</a>
+                                <a href="#" onclick="navScrollToSection('trustSection'); return false;">Supported Brokerages</a>
+                                <a href="#">Help Center</a>
+                                <a href="#">Status Page</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="footer-accordion-item" data-accordion="company">
+                        <button class="footer-accordion-header" onclick="toggleFooterAccordion('company')">
+                            Company
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        </button>
+                        <div class="footer-accordion-content">
+                            <div class="footer-accordion-links">
+                                <a href="#">About</a>
+                                <a href="#">Careers</a>
+                                <a href="mailto:support@statementscan.app">Contact</a>
+                                <a href="#">Press</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="footer-accordion-item" data-accordion="legal">
+                        <button class="footer-accordion-header" onclick="toggleFooterAccordion('legal')">
+                            Legal
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        </button>
+                        <div class="footer-accordion-content">
+                            <div class="footer-accordion-links">
+                                <a href="#">Privacy Policy</a>
+                                <a href="#">Terms of Service</a>
+                                <a href="#">Disclaimer</a>
+                                <a href="#">Do Not Sell My Info</a>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="footer-bottom">
-                    <p>&copy; 2025 Statement Scan. Not financial advice. For informational purposes only.</p>
+            </div>
+
+            <!-- Zone 3: Trust Strip -->
+            <section class="footer-trust-strip" data-animate>
+                <div class="footer-trust-inner">
+                    <div class="footer-trust-badge">
+                        <div class="footer-trust-icon">🔒</div>
+                        <div class="footer-trust-title">SSL Encrypted</div>
+                        <div class="footer-trust-desc">256-bit SSL encryption</div>
+                    </div>
+                    <div class="footer-trust-badge">
+                        <div class="footer-trust-icon">🛡️</div>
+                        <div class="footer-trust-title">SOC 2 Aligned</div>
+                        <div class="footer-trust-desc">Enterprise-grade security practices</div>
+                    </div>
+                    <div class="footer-trust-badge">
+                        <div class="footer-trust-icon">🏦</div>
+                        <div class="footer-trust-title">Plaid Secured</div>
+                        <div class="footer-trust-desc">Bank-level security for connections</div>
+                    </div>
+                    <div class="footer-trust-badge">
+                        <div class="footer-trust-icon">📋</div>
+                        <div class="footer-trust-title">GDPR Ready</div>
+                        <div class="footer-trust-desc">Full data privacy compliance</div>
+                    </div>
+                    <div class="footer-trust-badge">
+                        <div class="footer-trust-icon">🔐</div>
+                        <div class="footer-trust-title">Client-Side Processing</div>
+                        <div class="footer-trust-desc">Your data never leaves your browser</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Zone 4: Bottom Bar -->
+            <div class="footer-bottom-bar">
+                <div class="footer-bottom-inner">
+                    <p class="footer-disclaimer">
+                        Statement Scan is not a registered investment advisor, broker-dealer, or financial planner. All portfolio analytics, projections, and recommendations provided by this service are for informational and educational purposes only and do not constitute financial, investment, tax, or legal advice. Past performance does not guarantee future results. You should consult with a qualified financial professional before making any investment decisions. By using this service, you acknowledge that you are solely responsible for your own investment decisions.
+                    </p>
+                    <div class="footer-copyright-row">
+                        <span class="footer-copyright">© 2026 Statement Scan, Inc. All rights reserved.</span>
+                        <div class="footer-bottom-links">
+                            <a href="#">Privacy</a>
+                            <span>·</span>
+                            <a href="#">Terms</a>
+                            <span>·</span>
+                            <a href="#">Cookies</a>
+                            <span>·</span>
+                            <a href="#">Sitemap</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </footer>
@@ -12895,6 +13392,18 @@
             if (accordion) {
                 accordion.classList.toggle('open');
             }
+        }
+
+        // Footer accordion toggle
+        function toggleFooterAccordion(name) {
+            const allAccordions = document.querySelectorAll('.footer-accordion-item');
+            allAccordions.forEach(item => {
+                if (item.dataset.accordion === name) {
+                    item.classList.toggle('open');
+                } else {
+                    item.classList.remove('open');
+                }
+            });
         }
 
         // Navigation scroll functions
