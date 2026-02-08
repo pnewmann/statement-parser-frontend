@@ -814,7 +814,15 @@
         .upload-hint {
             color: var(--text-muted);
             font-size: 0.875rem;
-            margin-bottom: 24px;
+            margin-bottom: 12px;
+        }
+
+        .upload-free-badge {
+            display: block;
+            font-size: 12px;
+            color: #94A3B8;
+            margin-bottom: 20px;
+            text-align: center;
         }
 
         /* Coming Soon Card Styles */
@@ -2810,6 +2818,13 @@
 
         .hero-cta-link:hover svg {
             transform: translateX(3px);
+        }
+
+        .hero-trust-line {
+            font-size: 13px;
+            color: #94A3B8;
+            margin-top: 20px;
+            letter-spacing: 0.01em;
         }
 
         /* Hero Upload Widget */
@@ -10737,7 +10752,7 @@
                         AI-Powered Portfolio Intelligence
                     </div>
                     <h1 class="hero-title" data-hero-animate style="animation-delay: 0.08s;">Your brokerage statement, <span class="gradient-text">decoded</span></h1>
-                    <p class="hero-subtitle" data-hero-animate style="animation-delay: 0.16s;">Upload any statement and get instant portfolio analytics, fee analysis, and actionable insights — all processed locally on your device.</p>
+                    <p class="hero-subtitle" data-hero-animate style="animation-delay: 0.16s;">Upload any statement and get instant portfolio analytics, fee analysis, and actionable insights — completely free, no account required.</p>
                     <div class="hero-ctas" data-hero-animate style="animation-delay: 0.24s;">
                         <button class="hero-cta-primary" onclick="scrollToUpload()">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -10745,7 +10760,7 @@
                                 <polyline points="17 8 12 3 7 8"/>
                                 <line x1="12" y1="3" x2="12" y2="15"/>
                             </svg>
-                            Analyze Your Portfolio
+                            Analyze Your Portfolio — Free
                         </button>
                         <a href="#landingSections" class="hero-cta-link">
                             See how it works
@@ -10755,6 +10770,7 @@
                             </svg>
                         </a>
                     </div>
+                    <p class="hero-trust-line">✓ Free forever · No credit card · No signup required · 100% private</p>
                 </div>
 
                 <!-- Right Column: Upload Widget -->
@@ -10806,6 +10822,7 @@
                                     </div>
                                     <div class="upload-title">Drop your statement here</div>
                                     <p class="upload-hint">PDF or CSV files from any brokerage</p>
+                                    <span class="upload-free-badge">100% free · Analyzed on your device</span>
                                     <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()" aria-label="Select files to upload">
                                         Select Files
                                     </button>
