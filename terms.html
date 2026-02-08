@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms of Service - Statement Scan</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23635bff'/><rect x='2' y='2' width='14' height='14' rx='3' fill='white'/><rect x='16' y='16' width='14' height='14' rx='3' fill='white'/><rect x='0' y='13' width='32' height='6' fill='white' opacity='0.4'/><rect x='11' y='11' width='10' height='10' rx='2' fill='white'/></svg>" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #635bff;
+            --text-primary: #0a2540;
+            --text-secondary: #425466;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f6f9fc;
+            --border: #e3e8ee;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 48px 24px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            margin-bottom: 32px;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .policy-card {
+            background: var(--bg-primary);
+            border-radius: 16px;
+            padding: 48px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .last-updated {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-bottom: 32px;
+            padding-bottom: 32px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-top: 32px;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+
+        p {
+            margin-bottom: 16px;
+            color: var(--text-secondary);
+        }
+
+        ul, ol {
+            margin-bottom: 16px;
+            padding-left: 24px;
+            color: var(--text-secondary);
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .highlight-box {
+            background: var(--bg-secondary);
+            border-left: 4px solid var(--primary);
+            padding: 20px 24px;
+            margin: 24px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .highlight-box p {
+            margin-bottom: 0;
+        }
+
+        .warning-box {
+            background: #fff8e6;
+            border-left: 4px solid #f59e0b;
+            padding: 20px 24px;
+            margin: 24px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .warning-box p {
+            margin-bottom: 0;
+            color: #92400e;
+        }
+
+        a {
+            color: var(--primary);
+        }
+
+        .contact-info {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 32px;
+        }
+
+        .contact-info h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .related-policies {
+            margin-top: 48px;
+            padding-top: 32px;
+            border-top: 1px solid var(--border);
+        }
+
+        .related-policies h2 {
+            margin-top: 0;
+        }
+
+        .related-policies ul {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px 24px;
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .related-policies a {
+            text-decoration: none;
+        }
+
+        .related-policies a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 24px 16px;
+            }
+
+            .policy-card {
+                padding: 24px;
+                border-radius: 12px;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            h2 {
+                font-size: 1.125rem;
+            }
+
+            .related-policies ul {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-link">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            Back to Statement Scan
+        </a>
+
+        <div class="policy-card">
+            <h1>Terms of Service</h1>
+            <p class="last-updated">Last updated: February 8, 2026</p>
+
+            <p>Welcome to Statement Scan. These Terms of Service ("Terms") govern your access to and use of the Statement Scan website and services operated by Statement Scan, Inc. ("Statement Scan," "we," "our," or "us").</p>
+
+            <p>Please read these Terms carefully before using our service. By accessing or using Statement Scan, you agree to be bound by these Terms and our <a href="/privacy.html">Privacy Policy</a>.</p>
+
+            <h2>1. Acceptance of Terms</h2>
+
+            <p>By accessing or using Statement Scan, you acknowledge that you have read, understood, and agree to be bound by these Terms. If you do not agree to these Terms, you may not access or use our service.</p>
+
+            <p>We reserve the right to update these Terms at any time. Your continued use of the service after any changes constitutes acceptance of the new Terms.</p>
+
+            <h2>2. Description of Service</h2>
+
+            <p>Statement Scan is a portfolio analysis tool that helps you understand your investments. Our service includes:</p>
+
+            <ul>
+                <li><strong>Statement Processing:</strong> Upload brokerage statements (PDF or CSV) for automated parsing and analysis</li>
+                <li><strong>Portfolio Analytics:</strong> View allocation breakdowns, fee analysis, risk metrics, and performance insights</li>
+                <li><strong>Manual Entry:</strong> Manually enter holdings for analysis</li>
+                <li><strong>Brokerage Connection:</strong> Connect accounts via Plaid for automatic portfolio sync</li>
+            </ul>
+
+            <div class="highlight-box">
+                <p><strong>Important:</strong> All document processing occurs locally on your device. Your brokerage statements are not uploaded to any server unless you explicitly choose to save a portfolio to your account.</p>
+            </div>
+
+            <h2>3. Account Registration</h2>
+
+            <p>To access certain features, you may create a free account. When creating an account, you agree to:</p>
+
+            <ul>
+                <li>Provide accurate and complete registration information</li>
+                <li>Maintain the security of your password and account credentials</li>
+                <li>Notify us immediately of any unauthorized access to your account</li>
+                <li>Accept responsibility for all activities that occur under your account</li>
+            </ul>
+
+            <p>You must be at least 18 years old to create an account and use our service.</p>
+
+            <h2>4. Acceptable Use</h2>
+
+            <p>You agree to use Statement Scan only for lawful purposes. You may not:</p>
+
+            <ul>
+                <li>Use the service for any illegal purpose or in violation of any laws</li>
+                <li>Attempt to reverse-engineer, decompile, or scrape the service</li>
+                <li>Upload malicious files, viruses, or harmful code</li>
+                <li>Misrepresent your identity or affiliation</li>
+                <li>Use automated scripts, bots, or crawlers to access the service</li>
+                <li>Share your account credentials with others</li>
+                <li>Use the service to provide financial advice to others without proper authorization</li>
+                <li>Interfere with or disrupt the integrity or performance of the service</li>
+                <li>Attempt to gain unauthorized access to any part of the service</li>
+            </ul>
+
+            <h2>5. Intellectual Property</h2>
+
+            <p>All content, features, and functionality of Statement Scan, including but not limited to text, graphics, logos, icons, code, and software, are the exclusive property of Statement Scan, Inc. and are protected by copyright, trademark, and other intellectual property laws.</p>
+
+            <p>You retain ownership of your financial data and any documents you upload. By using our service, you grant us a limited license to process your data solely for the purpose of providing the service to you.</p>
+
+            <h2>6. Financial Disclaimer</h2>
+
+            <div class="warning-box">
+                <p><strong>IMPORTANT: Statement Scan is NOT a registered investment advisor, broker-dealer, or financial planner. We are not a fiduciary.</strong></p>
+            </div>
+
+            <p>All analytics, projections, recommendations, and insights provided by Statement Scan are for <strong>informational and educational purposes only</strong>. They do NOT constitute:</p>
+
+            <ul>
+                <li>Financial advice</li>
+                <li>Investment advice</li>
+                <li>Tax advice</li>
+                <li>Legal advice</li>
+                <li>A recommendation to buy, sell, or hold any security</li>
+            </ul>
+
+            <p><strong>Past performance does not guarantee future results.</strong> All investments carry risk, including possible loss of principal. The information provided by Statement Scan should not be relied upon as the sole basis for any investment decision.</p>
+
+            <p><strong>You should consult a qualified financial professional</strong> before making any investment decisions. You acknowledge that you are solely responsible for your own investment decisions and any consequences thereof.</p>
+
+            <h2>7. Data and Privacy</h2>
+
+            <p>Your use of Statement Scan is also governed by our <a href="/privacy.html">Privacy Policy</a> and <a href="/data-retention-policy.html">Data Retention Policy</a>, which describe how we collect, use, and protect your information.</p>
+
+            <p>Key data handling principles:</p>
+
+            <ul>
+                <li><strong>Local Processing:</strong> Uploaded documents are processed in your browser and never leave your device unless you save to your account</li>
+                <li><strong>Encryption:</strong> Saved portfolios and sensitive data are encrypted at rest</li>
+                <li><strong>No Sale of Data:</strong> We do not sell your personal or financial information to third parties</li>
+                <li><strong>Right to Delete:</strong> You may request deletion of your data at any time</li>
+            </ul>
+
+            <h2>8. Third-Party Services</h2>
+
+            <p>Statement Scan integrates with third-party services to provide certain features:</p>
+
+            <ul>
+                <li><strong>Plaid:</strong> If you choose to connect your brokerage account, you will be directed to Plaid's secure authentication flow. By using this feature, you also agree to <a href="https://plaid.com/legal/" target="_blank" rel="noopener">Plaid's Terms of Service</a> and <a href="https://plaid.com/legal/#end-user-privacy-policy" target="_blank" rel="noopener">Privacy Policy</a>.</li>
+                <li><strong>Market Data Providers:</strong> We use third-party APIs for stock prices, market data, and fund information. This data is provided "as is" without warranty of accuracy or timeliness.</li>
+            </ul>
+
+            <p>We are not responsible for the practices or content of third-party services.</p>
+
+            <h2>9. Service Availability</h2>
+
+            <p>Statement Scan is provided "as is" and "as available" without warranty of any kind, either express or implied.</p>
+
+            <p>We do not guarantee:</p>
+
+            <ul>
+                <li>Uninterrupted or error-free access to the service</li>
+                <li>That all brokerage statement formats will be parsed correctly</li>
+                <li>The accuracy of market data, pricing, or analytics</li>
+                <li>That the service will meet your specific requirements</li>
+            </ul>
+
+            <p>We may modify, suspend, or discontinue any part of the service at any time, with or without notice.</p>
+
+            <h2>10. Limitation of Liability</h2>
+
+            <p>To the maximum extent permitted by applicable law, Statement Scan, Inc. and its directors, officers, employees, agents, and affiliates shall not be liable for any:</p>
+
+            <ul>
+                <li>Indirect, incidental, special, consequential, or punitive damages</li>
+                <li>Loss of profits, revenue, data, or business opportunities</li>
+                <li>Investment losses or financial damages</li>
+                <li>Damages resulting from errors in statement parsing or analytics</li>
+                <li>Damages arising from third-party services or market data</li>
+            </ul>
+
+            <p>Our total liability for any claims arising from your use of the service shall not exceed the greater of: (a) the amount you paid to Statement Scan in the 12 months preceding the claim, or (b) $100 USD.</p>
+
+            <h2>11. Indemnification</h2>
+
+            <p>You agree to indemnify, defend, and hold harmless Statement Scan, Inc. and its officers, directors, employees, agents, and affiliates from and against any claims, liabilities, damages, losses, and expenses (including reasonable attorneys' fees) arising out of or in any way connected with:</p>
+
+            <ul>
+                <li>Your access to or use of the service</li>
+                <li>Your violation of these Terms</li>
+                <li>Your violation of any third-party rights</li>
+                <li>Any investment decisions you make based on information from the service</li>
+            </ul>
+
+            <h2>12. Termination</h2>
+
+            <p>You may terminate your account at any time by contacting us or using the account deletion feature (if available).</p>
+
+            <p>We may suspend or terminate your access to the service at any time, without notice, for any reason, including if we reasonably believe you have violated these Terms.</p>
+
+            <p>Upon termination, your right to use the service will immediately cease. Your saved data will be handled in accordance with our <a href="/data-retention-policy.html">Data Retention Policy</a>.</p>
+
+            <h2>13. Governing Law</h2>
+
+            <p>These Terms shall be governed by and construed in accordance with the laws of the State of Delaware, United States, without regard to its conflict of law provisions.</p>
+
+            <h2>14. Dispute Resolution</h2>
+
+            <p>Any dispute, controversy, or claim arising out of or relating to these Terms or the service shall be resolved through binding arbitration in accordance with the Commercial Arbitration Rules of the American Arbitration Association.</p>
+
+            <p>The arbitration shall be conducted in the State of Delaware. The arbitrator's decision shall be final and binding.</p>
+
+            <p><strong>Class Action Waiver:</strong> You agree that any arbitration or proceeding shall be limited to the dispute between us and you individually. To the fullest extent permitted by law, you waive any right to participate in a class action lawsuit or class-wide arbitration.</p>
+
+            <h2>15. Changes to Terms</h2>
+
+            <p>We reserve the right to modify these Terms at any time. If we make material changes, we will notify you through the service or by other means.</p>
+
+            <p>Your continued use of the service after any changes constitutes acceptance of the new Terms. If you do not agree to the modified Terms, you should discontinue use of the service.</p>
+
+            <h2>16. Severability</h2>
+
+            <p>If any provision of these Terms is held to be invalid, illegal, or unenforceable, the remaining provisions shall continue in full force and effect. The invalid provision shall be modified to the minimum extent necessary to make it valid and enforceable.</p>
+
+            <h2>17. Entire Agreement</h2>
+
+            <p>These Terms, together with our Privacy Policy and Data Retention Policy, constitute the entire agreement between you and Statement Scan, Inc. regarding your use of the service, superseding any prior agreements.</p>
+
+            <div class="contact-info">
+                <h3>Contact Us</h3>
+                <p>If you have any questions about these Terms of Service, please contact us:</p>
+                <p><strong>Email:</strong> support@statementscan.app</p>
+                <p><strong>Company:</strong> Statement Scan, Inc.</p>
+                <p><strong>Website:</strong> statementscan.app</p>
+            </div>
+
+            <div class="related-policies">
+                <h2>Related Policies</h2>
+                <ul>
+                    <li><a href="/privacy.html">Privacy Policy</a></li>
+                    <li><a href="/cookies.html">Cookie Policy</a></li>
+                    <li><a href="/disclaimer.html">Disclaimer</a></li>
+                    <li><a href="/data-processing.html">Data Processing Agreement</a></li>
+                    <li><a href="/data-retention-policy.html">Data Retention Policy</a></li>
+                    <li><a href="/do-not-sell.html">Do Not Sell My Info</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

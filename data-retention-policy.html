@@ -195,6 +195,34 @@
             margin-bottom: 8px;
         }
 
+        .related-policies {
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+        }
+
+        .related-policies h2 {
+            margin-top: 0;
+            font-size: 1rem;
+        }
+
+        .related-policies ul {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px 24px;
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .related-policies a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .related-policies a:hover {
+            text-decoration: underline;
+        }
+
         @media (max-width: 600px) {
             .container {
                 padding: 24px 16px;
@@ -222,6 +250,10 @@
             }
 
             .doc-control {
+                grid-template-columns: 1fr;
+            }
+
+            .related-policies ul {
                 grid-template-columns: 1fr;
             }
         }
@@ -273,7 +305,7 @@
             </div>
 
             <p><strong>Effective Date:</strong> February 1, 2025<br>
-            <strong>Last Reviewed:</strong> February 1, 2025</p>
+            <strong>Last Reviewed:</strong> February 8, 2026</p>
 
             <h2>1. Purpose</h2>
             <p>This policy defines how Statement Scan collects, retains, and disposes of user data to ensure compliance with applicable data privacy laws and protect consumer information.</p>
@@ -337,7 +369,7 @@
 
             <p><strong>4.3 Account Deletion Process</strong></p>
             <ol>
-                <li>User submits deletion request via email to pnewmann@gmail.com</li>
+                <li>User submits deletion request via email to support@statementscan.app</li>
                 <li>Request acknowledged within 5 business days</li>
                 <li>All user data permanently deleted within 30 days</li>
                 <li>Confirmation sent to user upon completion</li>
@@ -378,8 +410,20 @@
 
             <div class="contact-box">
                 <h3>Data-Related Inquiries</h3>
-                <p><strong>Email:</strong> pnewmann@gmail.com<br>
+                <p><strong>Email:</strong> support@statementscan.app<br>
                 <strong>Subject Line:</strong> Data Retention Inquiry</p>
+            </div>
+
+            <div class="related-policies">
+                <h2>Related Policies</h2>
+                <ul>
+                    <li><a href="/privacy.html">Privacy Policy</a></li>
+                    <li><a href="/terms.html">Terms of Service</a></li>
+                    <li><a href="/cookies.html">Cookie Policy</a></li>
+                    <li><a href="/disclaimer.html">Disclaimer</a></li>
+                    <li><a href="/data-processing.html">Data Processing Agreement</a></li>
+                    <li><a href="/do-not-sell.html">Do Not Sell My Info</a></li>
+                </ul>
             </div>
 
             <div class="doc-footer">

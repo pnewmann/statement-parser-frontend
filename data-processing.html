@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Processing Agreement - Statement Scan</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23635bff'/><rect x='2' y='2' width='14' height='14' rx='3' fill='white'/><rect x='16' y='16' width='14' height='14' rx='3' fill='white'/><rect x='0' y='13' width='32' height='6' fill='white' opacity='0.4'/><rect x='11' y='11' width='10' height='10' rx='2' fill='white'/></svg>" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #635bff;
+            --text-primary: #0a2540;
+            --text-secondary: #425466;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f6f9fc;
+            --border: #e3e8ee;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 48px 24px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            margin-bottom: 32px;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .policy-card {
+            background: var(--bg-primary);
+            border-radius: 16px;
+            padding: 48px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .last-updated {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-bottom: 32px;
+            padding-bottom: 32px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-top: 32px;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+
+        h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-top: 24px;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        p {
+            margin-bottom: 16px;
+            color: var(--text-secondary);
+        }
+
+        ul, ol {
+            margin-bottom: 16px;
+            padding-left: 24px;
+            color: var(--text-secondary);
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .highlight-box {
+            background: var(--bg-secondary);
+            border-left: 4px solid var(--primary);
+            padding: 20px 24px;
+            margin: 24px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .highlight-box p {
+            margin-bottom: 0;
+        }
+
+        .success-box {
+            background: #ecfdf5;
+            border-left: 4px solid #10b981;
+            padding: 20px 24px;
+            margin: 24px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .success-box p {
+            margin-bottom: 0;
+            color: #065f46;
+        }
+
+        a {
+            color: var(--primary);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 24px 0;
+            font-size: 0.875rem;
+        }
+
+        th, td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: var(--bg-secondary);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        td {
+            color: var(--text-secondary);
+        }
+
+        .contact-info {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 32px;
+        }
+
+        .contact-info h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            margin-top: 0;
+        }
+
+        .related-policies {
+            margin-top: 48px;
+            padding-top: 32px;
+            border-top: 1px solid var(--border);
+        }
+
+        .related-policies h2 {
+            margin-top: 0;
+        }
+
+        .related-policies ul {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px 24px;
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .related-policies a {
+            text-decoration: none;
+        }
+
+        .related-policies a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 24px 16px;
+            }
+
+            .policy-card {
+                padding: 24px;
+                border-radius: 12px;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            h2 {
+                font-size: 1.125rem;
+            }
+
+            table {
+                font-size: 0.75rem;
+            }
+
+            th, td {
+                padding: 8px 10px;
+            }
+
+            .related-policies ul {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-link">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            Back to Statement Scan
+        </a>
+
+        <div class="policy-card">
+            <h1>Data Processing Agreement</h1>
+            <p class="last-updated">Last updated: February 8, 2026</p>
+
+            <p>This Data Processing Agreement ("DPA") forms part of the Terms of Service between Statement Scan, Inc. ("Statement Scan," "Processor," "we," "our," or "us") and you ("Controller," "you," or "your") and governs the processing of personal data in connection with your use of our services.</p>
+
+            <h2>1. Definitions</h2>
+
+            <p>For the purposes of this DPA:</p>
+
+            <ul>
+                <li><strong>"Personal Data"</strong> means any information relating to an identified or identifiable natural person</li>
+                <li><strong>"Processing"</strong> means any operation performed on Personal Data, including collection, storage, use, disclosure, or deletion</li>
+                <li><strong>"Data Protection Laws"</strong> means applicable laws relating to data protection and privacy, including GDPR, CCPA, and other relevant regulations</li>
+                <li><strong>"Sub-processor"</strong> means any third party engaged by Statement Scan to process Personal Data</li>
+                <li><strong>"Data Subject"</strong> means the individual to whom Personal Data relates</li>
+            </ul>
+
+            <h2>2. Scope and Purpose</h2>
+
+            <p>This DPA applies to the processing of Personal Data that you submit to Statement Scan or that we collect on your behalf through our portfolio analysis services.</p>
+
+            <div class="success-box">
+                <p><strong>Key Point:</strong> Most data processing occurs locally in your browser. We only process Personal Data on our servers when you explicitly choose to create an account or save portfolio data.</p>
+            </div>
+
+            <h2>3. Data Processing Details</h2>
+
+            <h3>Categories of Data Subjects</h3>
+            <ul>
+                <li>Users of Statement Scan services</li>
+                <li>Account holders who save portfolio data</li>
+            </ul>
+
+            <h3>Types of Personal Data</h3>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th>Examples</th>
+                        <th>Processing Location</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Account Information</td>
+                        <td>Email address, name</td>
+                        <td>Server (encrypted)</td>
+                    </tr>
+                    <tr>
+                        <td>Financial Data</td>
+                        <td>Holdings, account values, transactions</td>
+                        <td>Browser (local) / Server if saved</td>
+                    </tr>
+                    <tr>
+                        <td>Usage Data</td>
+                        <td>Feature usage, analytics</td>
+                        <td>Server (anonymized)</td>
+                    </tr>
+                    <tr>
+                        <td>Technical Data</td>
+                        <td>IP address, browser type</td>
+                        <td>Server (logs)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Purpose of Processing</h3>
+            <ul>
+                <li>Providing portfolio analysis services</li>
+                <li>Account management and authentication</li>
+                <li>Service improvement and analytics</li>
+                <li>Customer support</li>
+                <li>Legal compliance</li>
+            </ul>
+
+            <h2>4. Our Obligations as Processor</h2>
+
+            <p>Statement Scan agrees to:</p>
+
+            <ul>
+                <li>Process Personal Data only on your documented instructions</li>
+                <li>Ensure persons authorized to process Personal Data are bound by confidentiality</li>
+                <li>Implement appropriate technical and organizational security measures</li>
+                <li>Assist you in responding to Data Subject requests</li>
+                <li>Delete or return Personal Data upon termination of services, at your choice</li>
+                <li>Make available all information necessary to demonstrate compliance</li>
+                <li>Allow for and contribute to audits and inspections</li>
+            </ul>
+
+            <h2>5. Security Measures</h2>
+
+            <p>We implement the following security measures to protect Personal Data:</p>
+
+            <h3>Technical Measures</h3>
+            <ul>
+                <li>TLS/SSL encryption for data in transit</li>
+                <li>AES-256 encryption for data at rest</li>
+                <li>Secure authentication mechanisms</li>
+                <li>Regular security assessments and penetration testing</li>
+                <li>Intrusion detection and prevention systems</li>
+                <li>Regular security patches and updates</li>
+            </ul>
+
+            <h3>Organizational Measures</h3>
+            <ul>
+                <li>Access controls based on least privilege principle</li>
+                <li>Employee background checks and confidentiality agreements</li>
+                <li>Regular security awareness training</li>
+                <li>Incident response procedures</li>
+                <li>Business continuity planning</li>
+            </ul>
+
+            <h2>6. Sub-processors</h2>
+
+            <p>We engage the following categories of sub-processors:</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Sub-processor</th>
+                        <th>Purpose</th>
+                        <th>Location</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Cloud Infrastructure Provider</td>
+                        <td>Hosting and data storage</td>
+                        <td>United States</td>
+                    </tr>
+                    <tr>
+                        <td>Plaid Inc.</td>
+                        <td>Brokerage account connection</td>
+                        <td>United States</td>
+                    </tr>
+                    <tr>
+                        <td>Analytics Provider</td>
+                        <td>Anonymized usage analytics</td>
+                        <td>United States</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p>We will notify you of any intended changes to sub-processors, giving you the opportunity to object. All sub-processors are bound by data protection obligations no less protective than those in this DPA.</p>
+
+            <h2>7. Data Subject Rights</h2>
+
+            <p>We will assist you in fulfilling your obligations to respond to Data Subject requests, including:</p>
+
+            <ul>
+                <li>Right of access</li>
+                <li>Right to rectification</li>
+                <li>Right to erasure ("right to be forgotten")</li>
+                <li>Right to restriction of processing</li>
+                <li>Right to data portability</li>
+                <li>Right to object</li>
+            </ul>
+
+            <p>We will notify you promptly if we receive a request directly from a Data Subject.</p>
+
+            <h2>8. Data Breach Notification</h2>
+
+            <p>In the event of a Personal Data breach, we will:</p>
+
+            <ul>
+                <li>Notify you without undue delay (and in any event within 72 hours) after becoming aware of the breach</li>
+                <li>Provide information about the nature of the breach, categories of data affected, and approximate number of Data Subjects affected</li>
+                <li>Describe likely consequences and measures taken or proposed to address the breach</li>
+                <li>Cooperate with any investigation and provide necessary assistance</li>
+            </ul>
+
+            <h2>9. International Data Transfers</h2>
+
+            <p>If Personal Data is transferred outside the European Economic Area (EEA), we ensure appropriate safeguards are in place, such as:</p>
+
+            <ul>
+                <li>Standard Contractual Clauses approved by the European Commission</li>
+                <li>Binding Corporate Rules</li>
+                <li>Adequacy decisions by the European Commission</li>
+            </ul>
+
+            <h2>10. Data Retention</h2>
+
+            <p>We retain Personal Data in accordance with our <a href="/data-retention-policy.html">Data Retention Policy</a>. Upon termination of services or at your request, we will delete or return your Personal Data, unless retention is required by law.</p>
+
+            <h2>11. Audit Rights</h2>
+
+            <p>Upon reasonable notice and subject to confidentiality obligations, you may:</p>
+
+            <ul>
+                <li>Request information about our data processing activities</li>
+                <li>Review our security certifications and audit reports</li>
+                <li>Conduct or commission an audit (at your expense) to verify compliance with this DPA</li>
+            </ul>
+
+            <h2>12. Term and Termination</h2>
+
+            <p>This DPA remains in effect for as long as we process Personal Data on your behalf. Upon termination:</p>
+
+            <ul>
+                <li>We will cease processing Personal Data</li>
+                <li>We will delete or return all Personal Data at your choice</li>
+                <li>We will provide certification of deletion upon request</li>
+            </ul>
+
+            <h2>13. Amendments</h2>
+
+            <p>We may update this DPA from time to time to reflect changes in our practices or applicable law. We will notify you of material changes through the service or by other means.</p>
+
+            <div class="contact-info">
+                <h3>Contact Us</h3>
+                <p>For questions about this Data Processing Agreement or to exercise your rights, please contact us:</p>
+                <p><strong>Email:</strong> support@statementscan.app</p>
+                <p><strong>Data Protection Inquiries:</strong> privacy@statementscan.app</p>
+            </div>
+
+            <div class="related-policies">
+                <h2>Related Policies</h2>
+                <ul>
+                    <li><a href="/privacy.html">Privacy Policy</a></li>
+                    <li><a href="/terms.html">Terms of Service</a></li>
+                    <li><a href="/cookies.html">Cookie Policy</a></li>
+                    <li><a href="/disclaimer.html">Disclaimer</a></li>
+                    <li><a href="/data-retention-policy.html">Data Retention Policy</a></li>
+                    <li><a href="/do-not-sell.html">Do Not Sell My Info</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

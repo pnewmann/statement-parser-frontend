@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disclaimer - Statement Scan</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23635bff'/><rect x='2' y='2' width='14' height='14' rx='3' fill='white'/><rect x='16' y='16' width='14' height='14' rx='3' fill='white'/><rect x='0' y='13' width='32' height='6' fill='white' opacity='0.4'/><rect x='11' y='11' width='10' height='10' rx='2' fill='white'/></svg>" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #635bff;
+            --text-primary: #0a2540;
+            --text-secondary: #425466;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f6f9fc;
+            --border: #e3e8ee;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 48px 24px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            margin-bottom: 32px;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .policy-card {
+            background: var(--bg-primary);
+            border-radius: 16px;
+            padding: 48px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .last-updated {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-bottom: 32px;
+            padding-bottom: 32px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-top: 32px;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+
+        p {
+            margin-bottom: 16px;
+            color: var(--text-secondary);
+        }
+
+        ul {
+            margin-bottom: 16px;
+            padding-left: 24px;
+            color: var(--text-secondary);
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .warning-box {
+            background: #fef2f2;
+            border-left: 4px solid #ef4444;
+            padding: 20px 24px;
+            margin: 24px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .warning-box p {
+            margin-bottom: 0;
+            color: #991b1b;
+        }
+
+        .highlight-box {
+            background: var(--bg-secondary);
+            border-left: 4px solid var(--primary);
+            padding: 20px 24px;
+            margin: 24px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .highlight-box p {
+            margin-bottom: 0;
+        }
+
+        a {
+            color: var(--primary);
+        }
+
+        .contact-info {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 32px;
+        }
+
+        .contact-info h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .related-policies {
+            margin-top: 48px;
+            padding-top: 32px;
+            border-top: 1px solid var(--border);
+        }
+
+        .related-policies h2 {
+            margin-top: 0;
+        }
+
+        .related-policies ul {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px 24px;
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .related-policies a {
+            text-decoration: none;
+        }
+
+        .related-policies a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 24px 16px;
+            }
+
+            .policy-card {
+                padding: 24px;
+                border-radius: 12px;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            h2 {
+                font-size: 1.125rem;
+            }
+
+            .related-policies ul {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-link">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            Back to Statement Scan
+        </a>
+
+        <div class="policy-card">
+            <h1>Disclaimer</h1>
+            <p class="last-updated">Last updated: February 8, 2026</p>
+
+            <div class="warning-box">
+                <p><strong>IMPORTANT: Please read this entire disclaimer carefully before using Statement Scan. By using our service, you acknowledge that you have read, understood, and agree to be bound by this disclaimer.</strong></p>
+            </div>
+
+            <h2>Not Financial Advice</h2>
+
+            <p>Statement Scan, Inc. ("Statement Scan," "we," "our," or "us") provides portfolio analysis tools for <strong>informational and educational purposes only</strong>.</p>
+
+            <p><strong>We are NOT:</strong></p>
+
+            <ul>
+                <li>A registered investment advisor (RIA)</li>
+                <li>A broker-dealer</li>
+                <li>A financial planner or financial advisor</li>
+                <li>A fiduciary</li>
+                <li>A tax advisor or tax preparer</li>
+                <li>A legal advisor or attorney</li>
+            </ul>
+
+            <p>Nothing on Statement Scan should be construed as financial, investment, tax, legal, or other professional advice. We do not provide personalized investment recommendations. Any analysis, projections, or insights generated by our service are based solely on the data you provide and general market information.</p>
+
+            <h2>No Recommendation to Buy or Sell</h2>
+
+            <p>Statement Scan does NOT recommend that you buy, sell, or hold any particular security, portfolio allocation, or investment strategy. All investment decisions are yours alone.</p>
+
+            <p>Any references to specific securities, asset classes, or investment strategies are for illustrative purposes only and should not be interpreted as recommendations.</p>
+
+            <h2>Past Performance</h2>
+
+            <div class="highlight-box">
+                <p><strong>Past performance does not guarantee future results.</strong> Historical returns, projections, and analytics displayed by Statement Scan are not indicative of future performance. All investments carry risk, including the possible loss of principal.</p>
+            </div>
+
+            <h2>Accuracy of Information</h2>
+
+            <p>While we strive for accuracy, Statement Scan makes no representations or warranties regarding:</p>
+
+            <ul>
+                <li>The accuracy, completeness, or timeliness of market data, prices, or quotes</li>
+                <li>The accuracy of statement parsing or data extraction</li>
+                <li>The correctness of fee calculations, performance metrics, or analytics</li>
+                <li>The reliability of third-party data sources</li>
+                <li>The accuracy of tax lot information or cost basis data</li>
+            </ul>
+
+            <p>You should always verify information with your brokerage statements, financial advisor, and official sources before making any decisions.</p>
+
+            <h2>Investment Risk</h2>
+
+            <p>Investing involves substantial risk. You may lose some or all of your invested capital. The value of investments can go down as well as up. Specific risks include, but are not limited to:</p>
+
+            <ul>
+                <li><strong>Market Risk:</strong> The value of securities may decline due to market conditions</li>
+                <li><strong>Concentration Risk:</strong> Portfolios concentrated in specific sectors or securities may experience greater volatility</li>
+                <li><strong>Interest Rate Risk:</strong> Bond values may decline when interest rates rise</li>
+                <li><strong>Inflation Risk:</strong> Returns may not keep pace with inflation</li>
+                <li><strong>Currency Risk:</strong> International investments may be affected by exchange rate fluctuations</li>
+                <li><strong>Liquidity Risk:</strong> Some investments may be difficult to sell quickly</li>
+            </ul>
+
+            <h2>Tax Information</h2>
+
+            <p>Any tax-related information, calculations, or estimates provided by Statement Scan are for informational purposes only. We are not tax advisors. Tax laws are complex and subject to change. You should consult a qualified tax professional for advice regarding your specific tax situation.</p>
+
+            <h2>Third-Party Content</h2>
+
+            <p>Statement Scan may display content, data, or links from third-party sources. We do not endorse, guarantee, or assume responsibility for the accuracy or reliability of any third-party information. This includes:</p>
+
+            <ul>
+                <li>Market data and stock prices from data providers</li>
+                <li>Fund information and expense ratios</li>
+                <li>Links to external websites</li>
+                <li>Content from brokerage integrations (e.g., Plaid)</li>
+            </ul>
+
+            <h2>Consult a Professional</h2>
+
+            <p>Before making any financial decisions, we strongly recommend consulting with qualified professionals:</p>
+
+            <ul>
+                <li>A registered investment advisor for investment advice</li>
+                <li>A certified public accountant (CPA) for tax advice</li>
+                <li>An attorney for legal matters</li>
+                <li>A certified financial planner (CFP) for comprehensive financial planning</li>
+            </ul>
+
+            <h2>Limitation of Liability</h2>
+
+            <p>To the maximum extent permitted by law, Statement Scan, Inc. and its directors, officers, employees, and affiliates shall not be liable for any damages arising from:</p>
+
+            <ul>
+                <li>Your use of or reliance on information from our service</li>
+                <li>Any investment decisions you make</li>
+                <li>Errors in data parsing, calculations, or analytics</li>
+                <li>Inaccuracies in market data or third-party information</li>
+                <li>Any losses, including investment losses</li>
+            </ul>
+
+            <h2>Your Responsibility</h2>
+
+            <p>By using Statement Scan, you acknowledge and agree that:</p>
+
+            <ul>
+                <li>You are solely responsible for your own investment decisions</li>
+                <li>You will not rely solely on Statement Scan for financial decisions</li>
+                <li>You will seek professional advice when appropriate</li>
+                <li>You understand the risks associated with investing</li>
+                <li>You accept full responsibility for any consequences of your decisions</li>
+            </ul>
+
+            <h2>Changes to This Disclaimer</h2>
+
+            <p>We may update this disclaimer from time to time. We will post any changes on this page with an updated "Last updated" date. Your continued use of Statement Scan after any changes constitutes acceptance of the updated disclaimer.</p>
+
+            <div class="contact-info">
+                <h3>Contact Us</h3>
+                <p>If you have questions about this disclaimer, please contact us:</p>
+                <p><strong>Email:</strong> support@statementscan.app</p>
+            </div>
+
+            <div class="related-policies">
+                <h2>Related Policies</h2>
+                <ul>
+                    <li><a href="/privacy.html">Privacy Policy</a></li>
+                    <li><a href="/terms.html">Terms of Service</a></li>
+                    <li><a href="/cookies.html">Cookie Policy</a></li>
+                    <li><a href="/data-processing.html">Data Processing Agreement</a></li>
+                    <li><a href="/data-retention-policy.html">Data Retention Policy</a></li>
+                    <li><a href="/do-not-sell.html">Do Not Sell My Info</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
