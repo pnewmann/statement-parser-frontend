@@ -49,6 +49,24 @@
             --dark-card-bg: #112840;
             --dark-border: #1E3A5F;
             --gradient-primary: linear-gradient(90deg, #635BFF, #A259FF);
+
+            /* Spacing System - 8px base scale */
+            --section-padding-y: 96px;
+            --section-padding-y-sm: 72px;
+            --section-padding-y-lg: 120px;
+            --heading-gap: 16px;
+            --content-gap: 56px;
+            --section-divider-height: 80px;
+        }
+
+        @media (max-width: 768px) {
+            :root {
+                --section-padding-y: 64px;
+                --section-padding-y-sm: 48px;
+                --section-padding-y-lg: 80px;
+                --content-gap: 40px;
+                --section-divider-height: 48px;
+            }
         }
 
         /* Gradient Text Utility - Enhanced for vibrancy */
@@ -2575,15 +2593,12 @@
 
         /* Landing Sections Container */
         .landing-sections {
-            margin-top: 80px;
+            margin-top: 48px;
+            margin-bottom: 0;
         }
 
         .landing-section {
-            padding: 80px 0;
-        }
-
-        .landing-section:first-child {
-            padding-top: 40px;
+            padding: var(--section-padding-y) 0;
         }
 
         .section-header {
@@ -2608,26 +2623,26 @@
         }
 
         .section-heading {
-            font-size: 2.25rem;
-            font-weight: 700;
+            font-size: 44px;
+            font-weight: 800;
             color: var(--text-primary);
-            margin-bottom: 12px;
+            margin-bottom: var(--heading-gap);
             text-align: center;
-            letter-spacing: -0.02em;
+            letter-spacing: -0.03em;
         }
 
         .section-subheading {
             font-size: 1.125rem;
             color: var(--text-secondary);
             line-height: 1.7;
-            margin-bottom: 48px;
+            margin-bottom: var(--content-gap);
             text-align: center;
         }
 
         /* ========== HERO SECTION - STRIPE-INSPIRED ========== */
         .hero-section {
             width: 100%;
-            padding: 60px 0 80px;
+            padding: 80px 0 var(--section-padding-y);
             position: relative;
             background:
                 radial-gradient(ellipse 80% 60% at 15% 45%, rgba(99, 91, 255, 0.1) 0%, transparent 60%),
@@ -2671,16 +2686,28 @@
             line-height: 0;
             margin: 0;
             padding: 0;
+            height: var(--section-divider-height);
+            overflow: hidden;
         }
 
         .section-divider svg {
             display: block;
             width: 100%;
-            height: 60px;
+            height: 100%;
         }
 
         .section-divider-inverted {
             transform: rotate(180deg);
+        }
+
+        /* Light to Dark transition (preview → value-props) */
+        .section-divider-light-to-dark {
+            background: transparent;
+        }
+
+        /* Dark to Light transition (value-props → trust) */
+        .section-divider-dark-to-light {
+            background: #0A2540;
         }
 
         .hero-grid {
@@ -2897,7 +2924,7 @@
         /* How It Works Section - Dark Bento Cards */
         .how-it-works {
             background: #0A2540;
-            padding: 100px 0;
+            padding: var(--section-padding-y) 0;
             position: relative;
         }
 
@@ -2938,13 +2965,13 @@
             font-size: 44px;
             font-weight: 800;
             letter-spacing: -0.03em;
-            margin-bottom: 12px;
+            margin-bottom: var(--heading-gap);
         }
 
         .how-it-works .section-subheading {
             color: #94A3B8;
             font-size: 18px;
-            margin-bottom: 48px;
+            margin-bottom: var(--content-gap);
         }
 
         .how-it-works-grid {
@@ -3105,7 +3132,7 @@
         /* Preview Grid - 2x2 layout with Browser Frame */
         .preview-section {
             background: linear-gradient(180deg, #F6F9FC 0%, #FFFFFF 50%, #F6F9FC 100%);
-            padding: 100px 0 120px;
+            padding: var(--section-padding-y) 0;
         }
 
         /* Section badge pill */
@@ -3127,13 +3154,13 @@
             font-weight: 800;
             color: #0A2540;
             letter-spacing: -0.03em;
-            margin-bottom: 12px;
+            margin-bottom: var(--heading-gap);
         }
 
         .preview-section .section-subheading {
             font-size: 20px;
             color: #556B7E;
-            margin-bottom: 56px;
+            margin-bottom: var(--content-gap);
         }
 
         /* Browser Frame */
@@ -3851,15 +3878,20 @@
         /* Value Props Section - Dark 2x2 Grid */
         .value-props {
             background: #0A2540;
-            padding: 80px 0;
+            padding: var(--section-padding-y) 0;
         }
 
         .value-props .section-heading {
             color: #FFFFFF;
+            font-size: 44px;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            margin-bottom: var(--heading-gap);
         }
 
         .value-props .section-subheading {
             color: #94A3B8;
+            margin-bottom: var(--content-gap);
         }
 
         .value-props-grid {
@@ -3919,7 +3951,7 @@
         .trust-section {
             background: var(--bg-primary);
             text-align: center;
-            padding: 60px 0;
+            padding: var(--section-padding-y-sm) 0;
             overflow: hidden;
         }
 
@@ -4032,10 +4064,10 @@
             background: linear-gradient(-45deg, #635BFF, #A259FF, #4B45C6, #7C3AED);
             background-size: 400% 400%;
             animation: ctaGradientFlow 8s ease infinite;
-            padding: 96px 24px;
+            padding: var(--section-padding-y) 24px;
             text-align: center;
             border-radius: var(--radius-lg);
-            margin: 0 24px 60px;
+            margin: 0 24px;
             position: relative;
             overflow: hidden;
         }
@@ -9756,8 +9788,8 @@
             padding: 16px 24px;
             background: var(--bg-primary);
             border-radius: var(--radius-lg);
-            margin-top: 32px;
-            margin-bottom: 24px;
+            margin-top: 0;
+            margin-bottom: 0;
             overflow-x: auto;
         }
 
@@ -12321,6 +12353,13 @@
                 </div>
             </section>
 
+            <!-- Wave Divider: Preview to Value Props -->
+            <div class="section-divider section-divider-light-to-dark">
+                <svg viewBox="0 0 1440 80" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+                    <path d="M0,0 C360,80 1080,80 1440,0 L1440,80 L0,80 Z" fill="#0A2540"/>
+                </svg>
+            </div>
+
             <!-- Value Props Section -->
             <section class="landing-section value-props" data-animate>
                 <div class="container">
@@ -12372,6 +12411,13 @@
                     </div>
                 </div>
             </section>
+
+            <!-- Wave Divider: Value Props to Trust -->
+            <div class="section-divider section-divider-dark-to-light">
+                <svg viewBox="0 0 1440 80" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+                    <path d="M0,0 C360,80 1080,80 1440,0 L1440,80 L0,80 Z" fill="#FFFFFF"/>
+                </svg>
+            </div>
 
             <!-- Trust Section - Marquee -->
             <section class="landing-section trust-section">
