@@ -2897,15 +2897,54 @@
         /* How It Works Section - Dark Bento Cards */
         .how-it-works {
             background: #0A2540;
-            padding: 80px 0;
+            padding: 100px 0;
+            position: relative;
+        }
+
+        /* Subtle grid texture background */
+        .how-it-works::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 48px 48px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .how-it-works > .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Section badge pill */
+        .how-it-works .section-badge {
+            display: inline-block;
+            background: rgba(99, 91, 255, 0.15);
+            color: #A78BFA;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 6px 16px;
+            border-radius: 100px;
+            letter-spacing: 0.5px;
+            margin-bottom: 16px;
+            text-transform: uppercase;
         }
 
         .how-it-works .section-heading {
             color: #FFFFFF;
+            font-size: 44px;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            margin-bottom: 12px;
         }
 
         .how-it-works .section-subheading {
             color: #94A3B8;
+            font-size: 18px;
+            margin-bottom: 48px;
         }
 
         .how-it-works-grid {
@@ -2914,18 +2953,30 @@
             gap: 24px;
             max-width: 1000px;
             margin: 0 auto;
+            position: relative;
+        }
+
+        /* Grid with connectors on desktop */
+        @media (min-width: 768px) {
+            .how-it-works-grid {
+                display: grid;
+                grid-template-columns: 1fr auto 1fr auto 1fr;
+                gap: 0 16px;
+                align-items: start;
+            }
         }
 
         .how-it-works-step,
         .step-card {
             text-align: center;
-            padding: 32px 28px;
+            padding: 40px 28px 36px;
             position: relative;
             background: #112840;
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--dark-border);
-            transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             overflow: hidden;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
         }
 
         .how-it-works-step::before,
@@ -2935,162 +2986,204 @@
             top: 0;
             left: 0;
             right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, #635BFF, #A259FF);
+            height: 4px;
+            background: linear-gradient(90deg, #635BFF, #A259FF, #00D4AA);
+            background-size: 200% 100%;
+            border-radius: 20px 20px 0 0;
+            transition: background-position 0.6s ease;
+        }
+
+        .how-it-works-step:hover::before,
+        .step-card:hover::before {
+            background-position: 100% 0;
         }
 
         .how-it-works-step:hover,
         .step-card:hover {
             transform: translateY(-8px);
             background: #152D4A;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border-color: rgba(99, 91, 255, 0.3);
+            box-shadow: 0 24px 48px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(99, 91, 255, 0.15);
         }
 
         .step-number {
-            width: 48px;
-            height: 48px;
-            background: #00D4AA;
-            color: #0A2540;
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #635BFF, #7C3AED);
+            color: #FFFFFF;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.25rem;
-            font-weight: 700;
-            transition: transform 0.3s ease;
-            margin: 0 auto 20px;
-            box-shadow: 0 4px 12px rgba(0, 212, 170, 0.3);
+            font-size: 22px;
+            font-weight: 800;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin: 0 auto 24px;
+            box-shadow: 0 4px 16px rgba(99, 91, 255, 0.4);
+            position: relative;
+            z-index: 1;
         }
 
         .step-icon {
-            width: 64px;
-            height: 64px;
-            background: rgba(0, 212, 170, 0.15);
+            width: 72px;
+            height: 72px;
+            background: rgba(0, 212, 170, 0.12);
             border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
             margin: 0 auto 20px;
+            color: #00D4AA !important;
+            transition: all 0.3s ease;
+        }
+
+        .step-card:hover .step-icon {
+            background: rgba(0, 212, 170, 0.2);
+            transform: scale(1.08);
         }
 
         .how-it-works .step-icon svg,
         .step-card .step-icon svg {
             width: 32px;
             height: 32px;
-            color: #00D4AA;
+            color: #00D4AA !important;
+            stroke: currentColor !important;
         }
 
         .how-it-works .step-title,
         .step-card .step-title {
-            font-size: 1.125rem;
-            font-weight: 600;
+            font-size: 20px;
+            font-weight: 700;
             color: #FFFFFF;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
+            letter-spacing: -0.01em;
         }
 
         .how-it-works .step-description,
         .step-card .step-description {
-            font-size: 0.9375rem;
-            color: #94A3B8;
-            line-height: 1.6;
+            font-size: 15px;
+            color: #B0BEC5;
+            line-height: 1.7;
         }
 
         .how-it-works-step:hover .step-number,
         .step-card:hover .step-number {
             transform: scale(1.1);
+            box-shadow: 0 8px 24px rgba(99, 91, 255, 0.5);
         }
 
+        /* Step connector arrows */
         .step-connector {
             display: none;
-        }
-
-        .step-connector::after {
-            content: '';
-            position: absolute;
-            right: 0;
-            top: -4px;
-            border: 5px solid transparent;
-            border-left-color: var(--border);
-        }
-
-        .how-it-works-step:last-child .step-connector {
-            display: none;
-        }
-
-        /* Step Card (alternative class name) */
-        .step-card {
-            text-align: center;
-            padding: 32px 24px;
-            position: relative;
-        }
-
-        .step-card .step-number {
-            width: 48px;
-            height: 48px;
-            background: var(--primary);
-            color: white;
-            border-radius: 50%;
-            display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.25rem;
-            font-weight: 700;
-            margin: 0 auto 20px;
+            padding-top: 80px;
         }
 
-        .step-card .step-icon {
-            margin-bottom: 20px;
+        .step-connector svg {
+            width: 40px;
+            height: 2px;
         }
 
-        .step-card .step-icon svg {
-            color: var(--primary);
+        @media (min-width: 768px) {
+            .step-connector {
+                display: flex;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .how-it-works-grid {
+                display: flex;
+                flex-direction: column;
+                gap: 24px;
+            }
+            .step-connector {
+                display: none;
+            }
         }
 
         /* Preview Grid - 2x2 layout with Browser Frame */
         .preview-section {
-            background: var(--bg-secondary);
-            padding: 100px 0;
+            background: linear-gradient(180deg, #F6F9FC 0%, #FFFFFF 50%, #F6F9FC 100%);
+            padding: 100px 0 120px;
+        }
+
+        /* Section badge pill */
+        .preview-section .section-badge {
+            display: inline-block;
+            background: rgba(99, 91, 255, 0.08);
+            color: #635BFF;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 6px 16px;
+            border-radius: 100px;
+            letter-spacing: 0.5px;
+            margin-bottom: 16px;
+            text-transform: uppercase;
         }
 
         .preview-section .section-heading {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 16px;
+            font-size: 44px;
+            font-weight: 800;
+            color: #0A2540;
+            letter-spacing: -0.03em;
+            margin-bottom: 12px;
         }
 
         .preview-section .section-subheading {
-            font-size: 1.25rem;
+            font-size: 20px;
+            color: #556B7E;
             margin-bottom: 56px;
         }
 
         /* Browser Frame */
         .browser-frame {
-            background: var(--bg-primary);
+            background: #FFFFFF;
             border-radius: 16px;
             box-shadow:
                 0 50px 100px -20px rgba(10, 37, 64, 0.2),
-                0 0 0 1px rgba(10, 37, 64, 0.05);
+                0 30px 60px -15px rgba(99, 91, 255, 0.07),
+                0 0 0 1px rgba(10, 37, 64, 0.04);
             overflow: hidden;
             max-width: 1000px;
             margin: 0 auto;
             transform: perspective(2000px) rotateY(-1deg) rotateX(1deg);
-            transition: transform 0.4s ease, box-shadow 0.4s ease;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.6s ease;
+            position: relative;
+        }
+
+        /* Shine overlay on browser frame */
+        .browser-frame::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -50%;
+            width: 200%;
+            height: 50%;
+            background: linear-gradient(
+                180deg,
+                rgba(255, 255, 255, 0.04) 0%,
+                transparent 100%
+            );
+            pointer-events: none;
+            z-index: 1;
         }
 
         .browser-frame:hover {
             transform: perspective(1500px) rotateX(0deg);
             box-shadow:
-                0 30px 60px -15px rgba(10, 37, 64, 0.3),
-                0 0 0 1px rgba(0, 0, 0, 0.05);
+                0 60px 120px -20px rgba(10, 37, 64, 0.22),
+                0 35px 70px -15px rgba(99, 91, 255, 0.1),
+                0 0 0 1px rgba(10, 37, 64, 0.06);
         }
 
         .browser-header {
-            background: linear-gradient(180deg, var(--bg-tertiary) 0%, var(--bg-secondary) 100%);
+            background: #F5F5F5;
             padding: 14px 20px;
             display: flex;
             align-items: center;
-            gap: 14px;
-            border-bottom: 1px solid var(--border);
+            gap: 12px;
+            border-bottom: 1px solid #E3E8EE;
         }
 
         .browser-dots {
@@ -3105,21 +3198,21 @@
             box-shadow: inset 0 -1px 2px rgba(0,0,0,0.2);
         }
 
-        .browser-dot.red { background: linear-gradient(180deg, #FF6B5B 0%, #FF5F56 100%); }
-        .browser-dot.yellow { background: linear-gradient(180deg, #FFC83D 0%, #FFBD2E 100%); }
-        .browser-dot.green { background: linear-gradient(180deg, #32D74B 0%, #27CA40 100%); }
+        .browser-dot.red { background: #FF5F57 !important; }
+        .browser-dot.yellow { background: #FFBD2E !important; }
+        .browser-dot.green { background: #27C93F !important; }
 
         .browser-url-bar {
             flex: 1;
-            background: var(--bg-primary);
+            background: #FFFFFF;
+            border: 1px solid #E0E4E8;
             border-radius: 8px;
             padding: 8px 14px;
-            font-size: 0.8125rem;
-            color: var(--text-muted);
+            font-size: 13px;
+            color: #425466;
             display: flex;
             align-items: center;
-            gap: 10px;
-            border: 1px solid var(--border);
+            gap: 8px;
         }
 
         .browser-url-bar svg {
@@ -3130,27 +3223,42 @@
 
         .browser-content {
             padding: 28px;
-            background: var(--bg-secondary);
+            background: #F6F9FC;
         }
 
         .preview-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 24px;
+            gap: 20px;
         }
 
         .preview-card {
-            background: var(--bg-primary);
-            border-radius: 12px;
-            padding: 28px;
-            border: 1px solid var(--border);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
-            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            background: #FFFFFF;
+            border-radius: 14px;
+            padding: 24px;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            box-shadow: 0 2px 8px rgba(10, 37, 64, 0.06);
+            transition: all 0.3s ease;
+            position: relative;
         }
 
         .preview-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 8px 24px rgba(10, 37, 64, 0.1);
+            transform: translateY(-2px);
+        }
+
+        /* Colored left borders for each preview card */
+        .preview-grid .preview-card:nth-child(1) {
+            border-left: 4px solid #635BFF; /* Asset Allocation - Purple */
+        }
+        .preview-grid .preview-card:nth-child(2) {
+            border-left: 4px solid #FFBD2E; /* Risk Score - Amber */
+        }
+        .preview-grid .preview-card:nth-child(3) {
+            border-left: 4px solid #00D4AA; /* Sector Exposure - Teal */
+        }
+        .preview-grid .preview-card:nth-child(4) {
+            border-left: 4px solid #FF5F57; /* Fee Analysis - Red */
         }
 
         .preview-card-header h3 {
@@ -3170,18 +3278,18 @@
             border-radius: 2px;
         }
 
-        /* Colored left borders for each preview card */
+        /* Keep the header accent bars too */
         .preview-grid .preview-card:nth-child(1) .preview-card-header h3::before {
-            background: #635BFF; /* Asset Allocation - Purple */
+            background: #635BFF;
         }
         .preview-grid .preview-card:nth-child(2) .preview-card-header h3::before {
-            background: #FFBD2E; /* Risk Score - Yellow */
+            background: #FFBD2E;
         }
         .preview-grid .preview-card:nth-child(3) .preview-card-header h3::before {
-            background: #00D4AA; /* Sector Exposure - Teal */
+            background: #00D4AA;
         }
         .preview-grid .preview-card:nth-child(4) .preview-card-header h3::before {
-            background: #FF5F57; /* Fee Analysis - Red */
+            background: #FF5F57;
         }
 
         .preview-card-body {
@@ -3201,7 +3309,10 @@
                 grid-template-columns: 1fr;
             }
             .preview-section .section-heading {
-                font-size: 1.75rem;
+                font-size: 28px;
+            }
+            .preview-section .section-subheading {
+                font-size: 16px;
             }
         }
 
@@ -3408,8 +3519,9 @@
 
         .pv-bar-fill {
             height: 100%;
-            background: linear-gradient(90deg, #635BFF, #818CF8);
+            background: linear-gradient(90deg, #635BFF, #A259FF);
             border-radius: 4px;
+            transition: width 0.6s ease;
         }
 
         .pv-bar-value {
@@ -3720,17 +3832,20 @@
         }
 
         .fee-savings {
-            background: linear-gradient(135deg, rgba(0, 212, 170, 0.12) 0%, rgba(0, 212, 170, 0.06) 100%);
-            padding: 14px 18px;
+            background: rgba(0, 212, 170, 0.1);
+            border: 1px solid rgba(0, 212, 170, 0.25);
+            padding: 14px 20px;
             border-radius: 10px;
             text-align: center;
             font-size: 1rem;
-            color: #00D4AA;
-            border: 1px solid rgba(0, 212, 170, 0.2);
+            color: #00B894;
+            font-weight: 600;
         }
 
         .fee-savings strong {
-            font-weight: 700;
+            color: #00B894;
+            font-size: 20px;
+            font-weight: 800;
         }
 
         /* Value Props Section - Dark 2x2 Grid */
@@ -6668,6 +6783,26 @@
 
         :root[data-theme="dark"] .preview-card {
             background: var(--bg-primary);
+            border-color: var(--border);
+        }
+
+        /* Maintain colored left borders in dark mode */
+        :root[data-theme="dark"] .preview-grid .preview-card:nth-child(1) {
+            border-left: 4px solid #635BFF;
+        }
+        :root[data-theme="dark"] .preview-grid .preview-card:nth-child(2) {
+            border-left: 4px solid #FFBD2E;
+        }
+        :root[data-theme="dark"] .preview-grid .preview-card:nth-child(3) {
+            border-left: 4px solid #00D4AA;
+        }
+        :root[data-theme="dark"] .preview-grid .preview-card:nth-child(4) {
+            border-left: 4px solid #FF5F57;
+        }
+
+        /* Section badge in dark mode */
+        :root[data-theme="dark"] .preview-section .section-badge {
+            background: rgba(99, 91, 255, 0.15);
         }
 
         /* Marquee gradients for dark mode */
@@ -12084,6 +12219,7 @@
             <!-- How It Works Section -->
             <section class="landing-section how-it-works" data-animate>
                 <div class="container">
+                    <div class="section-badge">Simple 3-Step Process</div>
                     <h2 class="section-heading">How It Works</h2>
                     <p class="section-subheading">Get professional portfolio analytics in three simple steps</p>
                     <div class="how-it-works-grid" data-animate-child>
@@ -12099,6 +12235,9 @@
                             <h3 class="step-title">Upload Your Statement</h3>
                             <p class="step-description">Drag and drop your brokerage PDF or CSV. We support Schwab, Fidelity, Vanguard, and 50+ other brokerages.</p>
                         </div>
+                        <div class="step-connector">
+                            <svg width="40" height="2"><line x1="0" y1="1" x2="40" y2="1" stroke="rgba(99,91,255,0.3)" stroke-width="2" stroke-dasharray="6,4"/></svg>
+                        </div>
                         <div class="step-card">
                             <div class="step-number">2</div>
                             <div class="step-icon">
@@ -12108,6 +12247,9 @@
                             </div>
                             <h3 class="step-title">AI Analyzes Holdings</h3>
                             <p class="step-description">Our engine extracts positions, fetches live prices, and runs sophisticated portfolio analytics in seconds.</p>
+                        </div>
+                        <div class="step-connector">
+                            <svg width="40" height="2"><line x1="0" y1="1" x2="40" y2="1" stroke="rgba(99,91,255,0.3)" stroke-width="2" stroke-dasharray="6,4"/></svg>
                         </div>
                         <div class="step-card">
                             <div class="step-number">3</div>
@@ -12134,6 +12276,7 @@
             <!-- Sample Report Preview Section -->
             <section class="landing-section preview-section" data-animate>
                 <div class="container">
+                    <div class="section-badge">Portfolio Intelligence</div>
                     <h2 class="section-heading">See What's In Your Report</h2>
                     <p class="section-subheading">Professional-grade analytics that would cost $500+ from a financial advisor</p>
                     <div class="browser-frame">
