@@ -51,18 +51,28 @@
             --gradient-primary: linear-gradient(90deg, #635BFF, #A259FF);
         }
 
-        /* Gradient Text Utility */
+        /* Gradient Text Utility - Enhanced for vibrancy */
         .gradient-text {
-            background: var(--gradient-primary);
+            background: linear-gradient(135deg, #635BFF 0%, #A259FF 50%, #00D4AA 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
 
-        /* Dark Section Text Colors */
+        /* Dark Section Text Colors - Enhanced contrast */
         .text-white { color: #ffffff; }
         .text-light { color: rgba(255, 255, 255, 0.9); }
-        .text-muted-light { color: rgba(255, 255, 255, 0.6); }
+        .text-muted-light { color: #94A3B8; }
+
+        /* Global Polish */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        ::selection {
+            background: rgba(99, 91, 255, 0.2);
+            color: #0A2540;
+        }
 
         * {
             box-sizing: border-box;
@@ -1377,14 +1387,28 @@
         }
 
         .btn-primary {
-            background: var(--primary);
+            background: #635BFF;
             color: white;
+            border-radius: 12px;
+            font-weight: 600;
+            padding: 14px 28px;
+            transition: all 0.2s ease;
         }
 
         .btn-primary:hover {
-            background: var(--primary-dark);
+            background: #4B45C6;
             transform: translateY(-1px);
-            box-shadow: var(--shadow-md);
+            box-shadow: 0 4px 12px rgba(99, 91, 255, 0.4);
+        }
+
+        /* Subtle pulse animation for primary CTA buttons on page load */
+        @keyframes subtlePulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(99, 91, 255, 0.4); }
+            50% { box-shadow: 0 0 0 12px rgba(99, 91, 255, 0); }
+        }
+
+        .hero-upload-card .btn-primary {
+            animation: subtlePulse 2s ease 1s 1;
         }
 
         .btn-secondary {
@@ -2524,16 +2548,18 @@
         }
 
         .section-heading {
-            font-size: 2rem;
+            font-size: 2.25rem;
             font-weight: 700;
             color: var(--text-primary);
             margin-bottom: 12px;
             text-align: center;
+            letter-spacing: -0.02em;
         }
 
         .section-subheading {
             font-size: 1.125rem;
             color: var(--text-secondary);
+            line-height: 1.7;
             margin-bottom: 48px;
             text-align: center;
         }
@@ -2541,6 +2567,35 @@
         /* ========== HERO SECTION - STRIPE-INSPIRED ========== */
         .hero-section {
             padding: 60px 0 80px;
+            background:
+                radial-gradient(ellipse at 20% 50%, rgba(99, 91, 255, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(0, 212, 170, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 60% 80%, rgba(162, 89, 255, 0.05) 0%, transparent 50%),
+                var(--bg-secondary);
+            background-size: 200% 200%;
+            animation: heroGradientShift 15s ease infinite;
+        }
+
+        @keyframes heroGradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        /* Section Dividers - Stripe-style waves */
+        .section-divider {
+            line-height: 0;
+            margin: 0;
+            padding: 0;
+        }
+
+        .section-divider svg {
+            display: block;
+            width: 100%;
+            height: 60px;
+        }
+
+        .section-divider-inverted {
+            transform: rotate(180deg);
         }
 
         .hero-grid {
@@ -2667,10 +2722,15 @@
             z-index: 1;
             background: var(--bg-primary);
             border-radius: var(--radius-lg);
-            border: 1px solid var(--border);
+            border: 1px solid rgba(10, 37, 64, 0.04);
             padding: 40px;
-            box-shadow: 0 30px 60px rgba(10, 37, 64, 0.12);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 25px 60px rgba(10, 37, 64, 0.12), 0 0 0 1px rgba(10, 37, 64, 0.04);
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        .hero-upload-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 35px 80px rgba(10, 37, 64, 0.16), 0 0 0 1px rgba(10, 37, 64, 0.04);
         }
 
         .hero-upload-card:hover {
@@ -2751,16 +2811,16 @@
 
         /* How It Works Section - Dark Bento Cards */
         .how-it-works {
-            background: var(--dark-section-bg);
+            background: #0A2540;
             padding: 80px 0;
         }
 
         .how-it-works .section-heading {
-            color: #ffffff;
+            color: #FFFFFF;
         }
 
         .how-it-works .section-subheading {
-            color: rgba(255, 255, 255, 0.7);
+            color: #94A3B8;
         }
 
         .how-it-works-grid {
@@ -2776,10 +2836,10 @@
             text-align: center;
             padding: 32px 28px;
             position: relative;
-            background: var(--dark-card-bg);
+            background: #112840;
             border-radius: var(--radius-lg);
             border: 1px solid var(--dark-border);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
             overflow: hidden;
         }
 
@@ -2791,26 +2851,28 @@
             left: 0;
             right: 0;
             height: 3px;
-            background: var(--gradient-primary);
+            background: linear-gradient(90deg, #635BFF, #A259FF);
         }
 
         .how-it-works-step:hover,
         .step-card:hover {
             transform: translateY(-8px);
+            background: #152D4A;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
         }
 
         .step-number {
             width: 48px;
             height: 48px;
-            background: var(--accent-teal);
-            color: var(--dark-section-bg);
+            background: #00D4AA;
+            color: #0A2540;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 1.25rem;
             font-weight: 700;
+            transition: transform 0.3s ease;
             margin: 0 auto 20px;
             box-shadow: 0 4px 12px rgba(0, 212, 170, 0.3);
         }
@@ -2818,7 +2880,7 @@
         .step-icon {
             width: 64px;
             height: 64px;
-            background: rgba(0, 212, 170, 0.1);
+            background: rgba(0, 212, 170, 0.15);
             border-radius: 16px;
             display: flex;
             align-items: center;
@@ -2830,22 +2892,27 @@
         .step-card .step-icon svg {
             width: 32px;
             height: 32px;
-            color: var(--accent-teal);
+            color: #00D4AA;
         }
 
         .how-it-works .step-title,
         .step-card .step-title {
             font-size: 1.125rem;
             font-weight: 600;
-            color: #ffffff;
+            color: #FFFFFF;
             margin-bottom: 8px;
         }
 
         .how-it-works .step-description,
         .step-card .step-description {
             font-size: 0.9375rem;
-            color: rgba(255, 255, 255, 0.65);
-            line-height: 1.5;
+            color: #94A3B8;
+            line-height: 1.6;
+        }
+
+        .how-it-works-step:hover .step-number,
+        .step-card:hover .step-number {
+            transform: scale(1.1);
         }
 
         .step-connector {
@@ -2916,12 +2983,12 @@
             background: var(--bg-primary);
             border-radius: 16px;
             box-shadow:
-                0 25px 50px -12px rgba(10, 37, 64, 0.25),
-                0 0 0 1px rgba(0, 0, 0, 0.05);
+                0 50px 100px -20px rgba(10, 37, 64, 0.2),
+                0 0 0 1px rgba(10, 37, 64, 0.05);
             overflow: hidden;
             max-width: 1000px;
             margin: 0 auto;
-            transform: perspective(1500px) rotateX(2deg);
+            transform: perspective(2000px) rotateY(-1deg) rotateX(1deg);
             transition: transform 0.4s ease, box-shadow 0.4s ease;
         }
 
@@ -3015,8 +3082,21 @@
             content: '';
             width: 4px;
             height: 16px;
-            background: var(--primary);
             border-radius: 2px;
+        }
+
+        /* Colored left borders for each preview card */
+        .preview-grid .preview-card:nth-child(1) .preview-card-header h3::before {
+            background: #635BFF; /* Asset Allocation - Purple */
+        }
+        .preview-grid .preview-card:nth-child(2) .preview-card-header h3::before {
+            background: #FFBD2E; /* Risk Score - Yellow */
+        }
+        .preview-grid .preview-card:nth-child(3) .preview-card-header h3::before {
+            background: #00D4AA; /* Sector Exposure - Teal */
+        }
+        .preview-grid .preview-card:nth-child(4) .preview-card-header h3::before {
+            background: #FF5F57; /* Fee Analysis - Red */
         }
 
         .preview-card-body {
@@ -3570,16 +3650,16 @@
 
         /* Value Props Section - Dark 2x2 Grid */
         .value-props {
-            background: var(--dark-section-bg);
+            background: #0A2540;
             padding: 80px 0;
         }
 
         .value-props .section-heading {
-            color: #ffffff;
+            color: #FFFFFF;
         }
 
         .value-props .section-subheading {
-            color: rgba(255, 255, 255, 0.7);
+            color: #94A3B8;
         }
 
         .value-props-grid {
@@ -3592,22 +3672,23 @@
 
         .value-card {
             text-align: left;
-            background: var(--dark-card-bg);
+            background: #112840;
             border-radius: var(--radius-lg);
             padding: 32px;
             border: 1px solid var(--dark-border);
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            transition: all 0.3s ease;
         }
 
         .value-card:hover {
-            border-color: var(--accent-teal);
-            box-shadow: 0 0 30px rgba(0, 212, 170, 0.15);
+            border-color: rgba(99, 91, 255, 0.4);
+            box-shadow: 0 0 30px rgba(99, 91, 255, 0.15);
+            transform: translateY(-2px);
         }
 
         .value-icon {
             width: 56px;
             height: 56px;
-            background: rgba(0, 212, 170, 0.15);
+            background: rgba(99, 91, 255, 0.15);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -3616,25 +3697,27 @@
         }
 
         .value-icon svg {
-            color: var(--accent-teal);
+            width: 28px;
+            height: 28px;
+            color: #635BFF;
         }
 
         .value-props .value-title {
             font-size: 1.25rem;
             font-weight: 600;
-            color: #ffffff;
+            color: #FFFFFF;
             margin-bottom: 10px;
         }
 
         .value-props .value-description {
             font-size: 1rem;
-            color: rgba(255, 255, 255, 0.65);
-            line-height: 1.6;
+            color: #94A3B8;
+            line-height: 1.7;
         }
 
         /* Social Proof Numbers Bar */
         .social-proof-bar {
-            background: var(--dark-section-bg);
+            background: #0A2540;
             padding: 60px 24px;
             border-bottom: 1px solid var(--dark-border);
         }
@@ -3655,15 +3738,16 @@
         .social-proof-number {
             font-size: 3rem;
             font-weight: 700;
-            color: #ffffff;
+            color: #FFFFFF;
             line-height: 1;
             margin-bottom: 8px;
+            text-shadow: 0 0 40px rgba(99, 91, 255, 0.3);
         }
 
         .social-proof-label {
             font-size: 0.875rem;
             font-weight: 500;
-            color: #8898AA;
+            color: #94A3B8;
             text-transform: uppercase;
             letter-spacing: 0.05em;
         }
@@ -3694,11 +3778,12 @@
         }
 
         .trust-label {
-            font-size: 0.875rem;
-            color: var(--text-muted);
+            font-size: 1rem;
+            color: #425466;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.15em;
             margin-bottom: 32px;
+            font-weight: 500;
         }
 
         .marquee-container {
@@ -3730,7 +3815,7 @@
 
         .marquee-track {
             display: flex;
-            animation: marquee 30s linear infinite;
+            animation: marquee 45s linear infinite;
             width: max-content;
         }
 
@@ -3798,13 +3883,33 @@
 
         /* CTA Section - Animated Gradient */
         .cta-section {
-            background: linear-gradient(135deg, #635BFF 0%, #A259FF 50%, #635BFF 100%);
-            background-size: 200% 200%;
-            animation: gradientShift 8s ease infinite;
+            background: linear-gradient(-45deg, #635BFF, #A259FF, #4B45C6, #7C3AED);
+            background-size: 400% 400%;
+            animation: ctaGradientFlow 8s ease infinite;
             padding: 96px 24px;
             text-align: center;
             border-radius: var(--radius-lg);
             margin: 0 24px 60px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            opacity: 0.03;
+            pointer-events: none;
+        }
+
+        @keyframes ctaGradientFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         @keyframes gradientShift {
@@ -3814,16 +3919,20 @@
         }
 
         .cta-heading {
-            font-size: 2.5rem;
+            font-size: 3rem;
             font-weight: 700;
             color: white;
             margin-bottom: 16px;
             letter-spacing: -0.02em;
+            position: relative;
+            z-index: 1;
         }
 
         .cta-subheading {
             font-size: 1.25rem;
             color: rgba(255, 255, 255, 0.9);
+            position: relative;
+            z-index: 1;
             margin-bottom: 40px;
         }
 
@@ -3832,12 +3941,14 @@
             align-items: center;
             gap: 10px;
             background: white;
-            color: var(--dark-section-bg);
-            font-size: 1.0625rem;
+            color: #0A2540;
+            font-size: 1.125rem;
             font-weight: 600;
-            padding: 18px 36px;
-            border-radius: var(--radius-md);
+            padding: 20px 40px;
+            border-radius: 12px;
             border: none;
+            position: relative;
+            z-index: 1;
             cursor: pointer;
             transition: transform 0.2s, box-shadow 0.2s;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -3845,7 +3956,7 @@
 
         .cta-button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
         }
 
         /* ========== STRIPE-STYLE FOOTER ========== */
@@ -4023,8 +4134,8 @@
         .footer-trust-strip {
             border-top: 1px solid #1A3A5C;
             border-bottom: 1px solid #1A3A5C;
-            padding: 32px 24px;
-            background: #0A2540;
+            padding: 40px 24px;
+            background: #0F2D47;
         }
 
         .footer-trust-inner {
@@ -4037,24 +4148,29 @@
 
         .footer-trust-badge {
             text-align: center;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.02);
         }
 
         .footer-trust-icon {
-            font-size: 24px;
-            margin-bottom: 8px;
+            font-size: 28px;
+            margin-bottom: 12px;
+            filter: saturate(1.2);
         }
 
         .footer-trust-title {
-            font-size: 13px;
+            font-size: 14px;
             font-weight: 600;
-            color: #ffffff;
-            margin-bottom: 4px;
+            color: #FFFFFF;
+            margin-bottom: 6px;
         }
 
         .footer-trust-desc {
             font-size: 12px;
-            color: #8898AA;
-            line-height: 1.4;
+            color: #94A3B8;
+            line-height: 1.5;
         }
 
         /* Zone 4: Bottom Bar */
@@ -9488,6 +9604,24 @@
             padding: 12px 16px;
             background: var(--bg-secondary);
             border-radius: var(--radius-md);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .market-indicator::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+            animation: shimmer 10s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 90%, 100% { left: -100%; }
+            95% { left: 200%; }
         }
 
         .market-indicator-name {
@@ -11821,23 +11955,30 @@
 
         </main><!-- End main content -->
 
+        <!-- Wave Divider: Hero to Stats -->
+        <div class="section-divider">
+            <svg viewBox="0 0 1440 60" preserveAspectRatio="none">
+                <path d="M0,60 C360,0 1080,0 1440,60 L1440,60 L0,60 Z" fill="#0A2540"/>
+            </svg>
+        </div>
+
         <!-- Social Proof Numbers Bar -->
         <section class="social-proof-bar" data-animate>
             <div class="social-proof-grid" data-animate-child>
                 <div class="social-proof-stat">
-                    <div class="social-proof-number">50K+</div>
+                    <div class="social-proof-number" data-count="50" data-suffix="K+">0K+</div>
                     <div class="social-proof-label">Statements Analyzed</div>
                 </div>
                 <div class="social-proof-stat">
-                    <div class="social-proof-number">30s</div>
+                    <div class="social-proof-number" data-count="30" data-suffix="s">0s</div>
                     <div class="social-proof-label">Average Analysis Time</div>
                 </div>
                 <div class="social-proof-stat">
-                    <div class="social-proof-number">$2.8M</div>
+                    <div class="social-proof-number" data-count="2.8" data-prefix="$" data-suffix="M">$0M</div>
                     <div class="social-proof-label">Hidden Fees Found</div>
                 </div>
                 <div class="social-proof-stat">
-                    <div class="social-proof-number">100%</div>
+                    <div class="social-proof-number" data-count="100" data-suffix="%">0%</div>
                     <div class="social-proof-label">Client-Side Processing</div>
                 </div>
             </div>
@@ -11888,6 +12029,13 @@
                     </div>
                 </div>
             </section>
+
+            <!-- Wave Divider: How It Works to Preview -->
+            <div class="section-divider section-divider-inverted">
+                <svg viewBox="0 0 1440 60" preserveAspectRatio="none">
+                    <path d="M0,60 C360,0 1080,0 1440,60 L1440,60 L0,60 Z" fill="#0A2540"/>
+                </svg>
+            </div>
 
             <!-- Sample Report Preview Section -->
             <section class="landing-section preview-section" data-animate>
@@ -13334,6 +13482,64 @@
 
         // Initialize scroll animations on DOM ready
         document.addEventListener('DOMContentLoaded', initScrollAnimations);
+
+        // =============================================================================
+        // COUNTER ANIMATIONS FOR STATS
+        // =============================================================================
+
+        function animateCounter(element, target, suffix = '', prefix = '', duration = 2000) {
+            const startTime = performance.now();
+            const startValue = 0;
+
+            // Easing function: easeOutExpo
+            const easeOutExpo = (t) => t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
+
+            function updateCounter(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const easedProgress = easeOutExpo(progress);
+                const currentValue = startValue + (target - startValue) * easedProgress;
+
+                // Format the number
+                let displayValue;
+                if (target < 10) {
+                    displayValue = currentValue.toFixed(1);
+                } else {
+                    displayValue = Math.round(currentValue);
+                }
+
+                element.textContent = prefix + displayValue + suffix;
+
+                if (progress < 1) {
+                    requestAnimationFrame(updateCounter);
+                }
+            }
+
+            requestAnimationFrame(updateCounter);
+        }
+
+        function initCounterAnimations() {
+            const statNumbers = document.querySelectorAll('.social-proof-number[data-count]');
+
+            if ('IntersectionObserver' in window) {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const el = entry.target;
+                            const target = parseFloat(el.dataset.count);
+                            const suffix = el.dataset.suffix || '';
+                            const prefix = el.dataset.prefix || '';
+                            animateCounter(el, target, suffix, prefix);
+                            observer.unobserve(el);
+                        }
+                    });
+                }, { threshold: 0.5 });
+
+                statNumbers.forEach(el => observer.observe(el));
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', initCounterAnimations);
 
         // =============================================================================
         // STICKY NAVBAR
