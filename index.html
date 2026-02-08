@@ -3915,60 +3915,6 @@
             line-height: 1.7;
         }
 
-        /* Social Proof Numbers Bar */
-        .social-proof-bar {
-            background: #0A2540;
-            padding: 60px 24px;
-            border-bottom: 1px solid var(--dark-border);
-        }
-
-        .social-proof-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 32px;
-            max-width: 1000px;
-            margin: 0 auto;
-            text-align: center;
-        }
-
-        .social-proof-stat {
-            padding: 20px;
-        }
-
-        .social-proof-number {
-            font-size: 3rem;
-            font-weight: 700;
-            color: #FFFFFF;
-            line-height: 1;
-            margin-bottom: 8px;
-            text-shadow: 0 0 40px rgba(99, 91, 255, 0.3);
-        }
-
-        .social-proof-label {
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: #94A3B8;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        @media (max-width: 768px) {
-            .social-proof-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 24px;
-            }
-
-            .social-proof-number {
-                font-size: 2.25rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .social-proof-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
         /* Trust Section - Marquee */
         .trust-section {
             background: var(--bg-primary);
@@ -6751,7 +6697,6 @@
         /* Dark sections should stay dark in both modes */
         :root[data-theme="dark"] .how-it-works,
         :root[data-theme="dark"] .value-props,
-        :root[data-theme="dark"] .social-proof-bar,
         :root[data-theme="dark"] .site-footer {
             background: var(--dark-section-bg);
         }
@@ -12184,34 +12129,12 @@
 
         </main><!-- End main content -->
 
-        <!-- Wave Divider: Hero to Stats -->
+        <!-- Wave Divider: Hero to How It Works -->
         <div class="section-divider">
             <svg viewBox="0 0 1440 60" preserveAspectRatio="none">
                 <path d="M0,60 C360,0 1080,0 1440,60 L1440,60 L0,60 Z" fill="#0A2540"/>
             </svg>
         </div>
-
-        <!-- Social Proof Numbers Bar -->
-        <section class="social-proof-bar" data-animate>
-            <div class="social-proof-grid" data-animate-child>
-                <div class="social-proof-stat">
-                    <div class="social-proof-number" data-count="50" data-suffix="K+">0K+</div>
-                    <div class="social-proof-label">Statements Analyzed</div>
-                </div>
-                <div class="social-proof-stat">
-                    <div class="social-proof-number" data-count="30" data-suffix="s">0s</div>
-                    <div class="social-proof-label">Average Analysis Time</div>
-                </div>
-                <div class="social-proof-stat">
-                    <div class="social-proof-number" data-count="2.8" data-prefix="$" data-suffix="M">$0M</div>
-                    <div class="social-proof-label">Hidden Fees Found</div>
-                </div>
-                <div class="social-proof-stat">
-                    <div class="social-proof-number" data-count="100" data-suffix="%">0%</div>
-                    <div class="social-proof-label">Client-Side Processing</div>
-                </div>
-            </div>
-        </section>
 
         <!-- Landing Page Sections -->
         <div class="landing-sections" id="landingSections">
@@ -13718,64 +13641,6 @@
 
         // Initialize scroll animations on DOM ready
         document.addEventListener('DOMContentLoaded', initScrollAnimations);
-
-        // =============================================================================
-        // COUNTER ANIMATIONS FOR STATS
-        // =============================================================================
-
-        function animateCounter(element, target, suffix = '', prefix = '', duration = 2000) {
-            const startTime = performance.now();
-            const startValue = 0;
-
-            // Easing function: easeOutExpo
-            const easeOutExpo = (t) => t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
-
-            function updateCounter(currentTime) {
-                const elapsed = currentTime - startTime;
-                const progress = Math.min(elapsed / duration, 1);
-                const easedProgress = easeOutExpo(progress);
-                const currentValue = startValue + (target - startValue) * easedProgress;
-
-                // Format the number
-                let displayValue;
-                if (target < 10) {
-                    displayValue = currentValue.toFixed(1);
-                } else {
-                    displayValue = Math.round(currentValue);
-                }
-
-                element.textContent = prefix + displayValue + suffix;
-
-                if (progress < 1) {
-                    requestAnimationFrame(updateCounter);
-                }
-            }
-
-            requestAnimationFrame(updateCounter);
-        }
-
-        function initCounterAnimations() {
-            const statNumbers = document.querySelectorAll('.social-proof-number[data-count]');
-
-            if ('IntersectionObserver' in window) {
-                const observer = new IntersectionObserver((entries) => {
-                    entries.forEach(entry => {
-                        if (entry.isIntersecting) {
-                            const el = entry.target;
-                            const target = parseFloat(el.dataset.count);
-                            const suffix = el.dataset.suffix || '';
-                            const prefix = el.dataset.prefix || '';
-                            animateCounter(el, target, suffix, prefix);
-                            observer.unobserve(el);
-                        }
-                    });
-                }, { threshold: 0.5 });
-
-                statNumbers.forEach(el => observer.observe(el));
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', initCounterAnimations);
 
         // =============================================================================
         // STICKY NAVBAR
