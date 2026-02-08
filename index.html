@@ -94,11 +94,71 @@
             padding: 40px 24px;
         }
 
-        /* Header */
-        header {
-            margin-bottom: 40px;
+        /* Announcement Bar */
+        .announcement-bar {
+            width: 100%;
+            background: linear-gradient(90deg, #0A2540 0%, #112840 100%);
+            color: #94A3B8;
+            font-size: 13px;
+            padding: 10px 0;
+            text-align: center;
+            border-bottom: 1px solid rgba(99, 91, 255, 0.15);
+            position: relative;
+            z-index: 1001;
         }
 
+        .announcement-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .announcement-link {
+            color: #A259FF;
+            font-weight: 600;
+            text-decoration: none;
+            margin-left: 4px;
+            transition: color 0.2s;
+        }
+
+        .announcement-link:hover {
+            color: #FFFFFF;
+        }
+
+        .announcement-close {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #556B7E;
+            font-size: 14px;
+            cursor: pointer;
+            padding: 4px 8px;
+            transition: color 0.2s;
+        }
+
+        .announcement-close:hover {
+            color: #FFFFFF;
+        }
+
+        @media (max-width: 768px) {
+            .announcement-bar {
+                padding: 8px 40px 8px 16px;
+                font-size: 12px;
+            }
+            .announcement-inner {
+                gap: 4px;
+            }
+        }
+
+        /* Top Navigation */
         .top-nav {
             position: sticky;
             top: 0;
@@ -109,7 +169,7 @@
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            transition: background 0.3s ease, backdrop-filter 0.3s ease, box-shadow 0.3s ease;
+            transition: background 0.3s ease, backdrop-filter 0.3s ease, box-shadow 0.3s ease, top 0.3s ease;
             border-bottom: 1px solid rgba(0, 0, 0, 0.08);
         }
 
@@ -2566,19 +2626,44 @@
 
         /* ========== HERO SECTION - STRIPE-INSPIRED ========== */
         .hero-section {
+            width: 100%;
             padding: 60px 0 80px;
+            position: relative;
             background:
-                radial-gradient(ellipse at 20% 50%, rgba(99, 91, 255, 0.08) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 20%, rgba(0, 212, 170, 0.06) 0%, transparent 50%),
-                radial-gradient(ellipse at 60% 80%, rgba(162, 89, 255, 0.05) 0%, transparent 50%),
-                var(--bg-secondary);
-            background-size: 200% 200%;
-            animation: heroGradientShift 15s ease infinite;
+                radial-gradient(ellipse 80% 60% at 15% 45%, rgba(99, 91, 255, 0.1) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 80% at 85% 25%, rgba(0, 212, 170, 0.07) 0%, transparent 55%),
+                radial-gradient(ellipse 50% 50% at 50% 90%, rgba(162, 89, 255, 0.06) 0%, transparent 50%),
+                linear-gradient(180deg, #F6F9FC 0%, #EEF2F7 100%);
+            overflow: hidden;
         }
 
-        @keyframes heroGradientShift {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(circle, rgba(99, 91, 255, 0.05) 1px, transparent 1px);
+            background-size: 28px 28px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .hero-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Hero page load animation */
+        .hero-inner [data-hero-animate] {
+            opacity: 0;
+            transform: translateY(24px);
+            animation: heroFadeIn 0.7s ease forwards;
+        }
+
+        @keyframes heroFadeIn {
+            to { opacity: 1; transform: translateY(0); }
         }
 
         /* Section Dividers - Stripe-style waves */
@@ -10057,6 +10142,15 @@
         </button>
     </div>
 
+    <!-- Announcement Bar -->
+    <div class="announcement-bar" id="announcement-bar">
+        <div class="announcement-inner">
+            <span>🚀 Now supporting 50+ brokerages including Schwab, Fidelity, and Vanguard</span>
+            <a href="#hero-upload" class="announcement-link" onclick="scrollToUpload(); return false;">Try it free →</a>
+            <button class="announcement-close" aria-label="Close announcement" onclick="document.getElementById('announcement-bar').style.display='none';">✕</button>
+        </div>
+    </div>
+
     <nav class="top-nav" role="navigation" aria-label="Main navigation">
         <div class="nav-inner">
             <!-- Left: Logo -->
@@ -10385,22 +10479,21 @@
                 </div>
             </div>
 
-    <div class="container">
-        <header>
         <!-- Hero Section -->
         <section class="hero-section">
+            <div class="hero-inner">
             <div class="hero-grid">
                 <!-- Left Column: Content -->
                 <div class="hero-content">
-                    <div class="hero-badge">
+                    <div class="hero-badge" data-hero-animate style="animation-delay: 0s;">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
                         </svg>
                         AI-Powered Portfolio Intelligence
                     </div>
-                    <h1 class="hero-title">Your brokerage statement, <span class="gradient-text">decoded</span></h1>
-                    <p class="hero-subtitle">Upload any statement and get instant portfolio analytics, fee analysis, and actionable insights — all processed locally on your device.</p>
-                    <div class="hero-ctas">
+                    <h1 class="hero-title" data-hero-animate style="animation-delay: 0.08s;">Your brokerage statement, <span class="gradient-text">decoded</span></h1>
+                    <p class="hero-subtitle" data-hero-animate style="animation-delay: 0.16s;">Upload any statement and get instant portfolio analytics, fee analysis, and actionable insights — all processed locally on your device.</p>
+                    <div class="hero-ctas" data-hero-animate style="animation-delay: 0.24s;">
                         <button class="hero-cta-primary" onclick="scrollToUpload()">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
@@ -10420,7 +10513,7 @@
                 </div>
 
                 <!-- Right Column: Upload Widget -->
-                <div class="hero-upload-wrapper">
+                <div class="hero-upload-wrapper" data-hero-animate style="animation-delay: 0.35s;">
                     <div class="hero-upload-glow"></div>
                     <div class="hero-upload-card">
                         <!-- Entry Method Selector -->
@@ -10691,6 +10784,7 @@
                     </div><!-- End hero-upload-card -->
                 </div><!-- End hero-upload-wrapper -->
             </div><!-- End hero-grid -->
+            </div><!-- End hero-inner -->
         </section><!-- End hero-section -->
 
         <!-- Progress -->
@@ -12528,7 +12622,6 @@
                 </div>
             </div>
         </footer>
-    </div>
 
     <!-- Auth Modal -->
     <div class="modal-overlay" id="authModal">
