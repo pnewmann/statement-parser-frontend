@@ -1558,8 +1558,8 @@
         }
 
         .account-icon.has-favicon {
-            background: var(--bg-secondary);
-            border: 1px solid rgba(0, 0, 0, 0.06);
+            background: #FFFFFF;
+            border: 1px solid rgba(0, 0, 0, 0.08);
         }
 
         .account-icon.no-favicon {
@@ -1570,10 +1570,9 @@
         }
 
         .account-favicon {
-            width: 28px;
-            height: 28px;
+            width: 24px;
+            height: 24px;
             object-fit: contain;
-            border-radius: 2px;
         }
 
         .account-icon-fallback {
@@ -16632,6 +16631,35 @@
                 }
 
                 try {
+                    // Client-side brokerage detection from file text content
+                    let clientDetectedBrokerage = null;
+                    const isPdf = file.name.toLowerCase().endsWith('.pdf');
+
+                    if (isPdf && typeof pdfjsLib !== 'undefined') {
+                        try {
+                            const arrayBuf = await file.arrayBuffer();
+                            const pdf = await pdfjsLib.getDocument({ data: arrayBuf }).promise;
+                            let extractedText = '';
+                            const pagesToRead = Math.min(pdf.numPages, 3);
+                            for (let i = 1; i <= pagesToRead; i++) {
+                                const page = await pdf.getPage(i);
+                                const content = await page.getTextContent();
+                                extractedText += content.items.map(item => item.str).join(' ') + ' ';
+                            }
+                            clientDetectedBrokerage = detectBrokerage(extractedText);
+                        } catch (e) {
+                            console.warn('Client-side PDF brokerage detection failed:', e);
+                        }
+                    } else if (!isPdf) {
+                        // CSV - read as text
+                        try {
+                            const text = await file.text();
+                            clientDetectedBrokerage = detectBrokerage(text);
+                        } catch (e) {
+                            console.warn('Client-side CSV brokerage detection failed:', e);
+                        }
+                    }
+
                     const result = await parseFile(file);
 
                     if (result.error && !result.positions?.length) {
@@ -16649,11 +16677,17 @@
                         return { success: false };
                     }
 
+                    // Use backend brokerage if it has a favicon, otherwise use client detection
+                    const backendBrokerage = result.brokerage;
+                    const backendHasFavicon = getBrokerageFavicon(backendBrokerage) !== null;
+                    const resolvedBrokerage = backendHasFavicon ? backendBrokerage
+                        : (clientDetectedBrokerage || backendBrokerage);
+
                     accounts.push({
                         id: Date.now() + Math.random(),
-                        name: getBrokerageName(result.brokerage),
+                        name: getBrokerageName(resolvedBrokerage),
                         positions: result.positions,
-                        brokerage: result.brokerage,
+                        brokerage: resolvedBrokerage,
                         totalValue: result.positions.reduce((s, p) => s + (p.value || 0), 0)
                     });
 
@@ -16737,41 +16771,268 @@
         }
 
         // Brokerage domain mapping for favicon API
+        // Client-side brokerage detection from PDF/CSV text content
+        function detectBrokerage(text) {
+            if (!text) return null;
+            const t = text.toLowerCase();
+
+            // [pattern, brokerage_id] - more specific patterns first
+            const patterns = [
+                // Major brokerages
+                ['charles schwab', 'schwab'],
+                ['schwab & co', 'schwab'],
+                ['schwab one', 'schwab'],
+                ['td ameritrade', 'td_ameritrade'],
+                ['ameritrade', 'td_ameritrade'],
+                ['fidelity investments', 'fidelity'],
+                ['fidelity brokerage', 'fidelity'],
+                ['national financial services', 'fidelity'],
+                ['vanguard group', 'vanguard'],
+                ['vanguard brokerage', 'vanguard'],
+                ['vanguard marketing', 'vanguard'],
+                ['e*trade', 'etrade'],
+                ['e trade', 'etrade'],
+                ['etrade securities', 'etrade'],
+                ['morgan stanley', 'morgan_stanley'],
+                ['morgan stanley smith barney', 'morgan_stanley'],
+                ['morgan stanley wealth', 'morgan_stanley'],
+                ['ms wealth management', 'morgan_stanley'],
+                ['robinhood', 'robinhood'],
+                ['robinhood markets', 'robinhood'],
+                ['robinhood securities', 'robinhood'],
+                ['merrill lynch', 'merrill'],
+                ['merrill edge', 'merrill'],
+                ['merrill, pierce', 'merrill'],
+                ['interactive brokers', 'interactive_brokers'],
+                ['ibkr', 'interactive_brokers'],
+                ['stifel', 'stifel'],
+                ['stifel nicolaus', 'stifel'],
+                ['stifel, nicolaus', 'stifel'],
+                ['stifel financial', 'stifel'],
+
+                // Mid-size / online brokerages
+                ['ally invest', 'ally'],
+                ['ally financial', 'ally'],
+                ['webull', 'webull'],
+                ['webull financial', 'webull'],
+                ['sofi securities', 'sofi'],
+                ['sofi invest', 'sofi'],
+                ['sofi wealth', 'sofi'],
+                ['betterment', 'betterment'],
+                ['betterment securities', 'betterment'],
+                ['wealthfront', 'wealthfront'],
+                ['wealthfront brokerage', 'wealthfront'],
+                ['j.p. morgan', 'jpmorgan'],
+                ['jp morgan', 'jpmorgan'],
+                ['j.p.morgan', 'jpmorgan'],
+                ['jpmorgan', 'jpmorgan'],
+                ['chase investment', 'jpmorgan'],
+                ['wells fargo advisors', 'wells_fargo'],
+                ['wells fargo clearing', 'wells_fargo'],
+                ['wells fargo', 'wells_fargo'],
+                ['usaa', 'usaa'],
+                ['firstrade', 'firstrade'],
+                ['firstrade securities', 'firstrade'],
+                ['tastytrade', 'tastytrade'],
+                ['tastyworks', 'tastytrade'],
+                ['public.com', 'public_com'],
+                ['public holdings', 'public_com'],
+                ['m1 finance', 'm1'],
+                ['m1 holdings', 'm1'],
+
+                // Clearing firms / custodians
+                ['pershing', 'pershing'],
+                ['pershing llc', 'pershing'],
+                ['pershing advisor', 'pershing'],
+                ['apex clearing', 'apex'],
+                ['apex fintech', 'apex'],
+                ['lpl financial', 'lpl'],
+                ['lpl securities', 'lpl'],
+                ['raymond james', 'raymond_james'],
+                ['raymond james financial', 'raymond_james'],
+                ['edward jones', 'edward_jones'],
+                ['edward d. jones', 'edward_jones'],
+                ['ubs financial', 'ubs'],
+                ['ubs securities', 'ubs'],
+                ['ubs wealth', 'ubs'],
+                ['ubs ag', 'ubs'],
+                ['goldman sachs', 'goldman'],
+                ['marcus by goldman', 'goldman'],
+                ['goldman sachs & co', 'goldman'],
+                ['baird', 'baird'],
+                ['robert w. baird', 'baird'],
+                ['tiaa', 'tiaa'],
+                ['tiaa-cref', 'tiaa'],
+                ['teachers insurance', 'tiaa'],
+                ['empower', 'empower'],
+                ['empower retirement', 'empower'],
+                ['empower advisory', 'empower'],
+                ['principal financial', 'principal'],
+                ['principal life', 'principal'],
+                ['principal securities', 'principal'],
+                ['northwestern mutual', 'northwestern'],
+                ['northwestern mutual investment', 'northwestern'],
+                ['ameriprise', 'ameriprise'],
+                ['ameriprise financial', 'ameriprise'],
+                ['janney montgomery', 'janney'],
+                ['janney montgomery scott', 'janney'],
+                ['oppenheimer', 'oppenheimer'],
+                ['oppenheimer & co', 'oppenheimer'],
+                ['citigroup', 'citi'],
+                ['citi personal wealth', 'citi'],
+                ['citibank', 'citi'],
+                ['hilltop securities', 'hilltop'],
+                ['hilltop holdings', 'hilltop'],
+                ['da davidson', 'da_davidson'],
+                ['d.a. davidson', 'da_davidson'],
+                ['piper sandler', 'piper_sandler'],
+                ['siebert williams', 'siebert'],
+                ['siebert', 'siebert'],
+                ['drivewealth', 'drivewealth'],
+                ['tradier', 'tradier'],
+                ['tradestation', 'tradestation'],
+                ['moomoo', 'moomoo'],
+                ['futu', 'moomoo'],
+                ['tiger brokers', 'tiger'],
+                ['tigr securities', 'tiger'],
+                ['stake', 'stake'],
+
+                // Retirement / 401k providers
+                ['fidelity netbenefits', 'fidelity'],
+                ['vanguard retirement', 'vanguard'],
+                ['schwab retirement', 'schwab'],
+                ['transamerica', 'transamerica'],
+                ['transamerica retirement', 'transamerica'],
+                ['john hancock', 'john_hancock'],
+                ['manulife', 'john_hancock'],
+                ['t. rowe price', 'troweprice'],
+                ['t rowe price', 'troweprice'],
+                ['american funds', 'american_funds'],
+                ['capital group', 'american_funds'],
+
+                // Canadian
+                ['questrade', 'questrade'],
+                ['wealthsimple', 'wealthsimple'],
+                ['td direct investing', 'td_direct'],
+                ['rbc direct investing', 'rbc'],
+                ['bmo investorline', 'bmo'],
+                ['scotia itrade', 'scotia'],
+                ['national bank direct', 'nbc'],
+                ['cibc investor', 'cibc'],
+                ['desjardins', 'desjardins'],
+
+                // UK / International
+                ['hargreaves lansdown', 'hargreaves'],
+                ['interactive investor', 'ii'],
+                ['aj bell', 'ajbell'],
+                ['freetrade', 'freetrade'],
+                ['trading 212', 'trading212'],
+                ['degiro', 'degiro'],
+                ['saxo bank', 'saxo'],
+                ['ig group', 'ig'],
+                ['etoro', 'etoro'],
+                ['revolut', 'revolut'],
+            ];
+
+            for (const [pattern, id] of patterns) {
+                if (t.includes(pattern)) {
+                    return id;
+                }
+            }
+            return null;
+        }
+
+        // Brokerage domain mapping for favicon API
         const BROKERAGE_DOMAINS = {
+            // Major US brokerages
             schwab: 'schwab.com',
             fidelity: 'fidelity.com',
             vanguard: 'vanguard.com',
             etrade: 'etrade.com',
             td_ameritrade: 'tdameritrade.com',
-            ameritrade: 'tdameritrade.com',
             robinhood: 'robinhood.com',
             merrill: 'merrilledge.com',
             morgan_stanley: 'morganstanley.com',
             interactive_brokers: 'interactivebrokers.com',
+            stifel: 'stifel.com',
+
+            // Online / fintech brokerages
             ally: 'ally.com',
             webull: 'webull.com',
             sofi: 'sofi.com',
             betterment: 'betterment.com',
             wealthfront: 'wealthfront.com',
             jpmorgan: 'chase.com',
-            chase: 'chase.com',
-            wells_fargo: 'wellsfargo.com',
-            wellsfargo: 'wellsfargo.com',
+            wells_fargo: 'wellsfargoadvisors.com',
             usaa: 'usaa.com',
             firstrade: 'firstrade.com',
             tastytrade: 'tastytrade.com',
-            tastyworks: 'tastytrade.com',
-            public: 'public.com',
+            public_com: 'public.com',
             m1: 'm1.com',
-            m1_finance: 'm1.com',
-            apex: 'apexclearing.com',
+            moomoo: 'moomoo.com',
+            tiger: 'tigerbrokers.com',
+            stake: 'hellostake.com',
+            tradestation: 'tradestation.com',
+            tradier: 'tradier.com',
+            drivewealth: 'drivewealth.com',
+
+            // Wirehouses / full-service
+            ubs: 'ubs.com',
+            goldman: 'goldmansachs.com',
+            baird: 'rwbaird.com',
+            citi: 'citi.com',
+            ameriprise: 'ameriprise.com',
+            northwestern: 'northwesternmutual.com',
+            oppenheimer: 'opco.com',
+            janney: 'janney.com',
+            hilltop: 'hilltopsecurities.com',
+            da_davidson: 'dadavidson.com',
+            piper_sandler: 'pipersandler.com',
+            siebert: 'siebert.com',
+
+            // Clearing / custodian firms
             pershing: 'pershing.com',
+            apex: 'apexclearing.com',
             lpl: 'lpl.com',
             raymond_james: 'raymondjames.com',
             edward_jones: 'edwardjones.com',
+
+            // Retirement / 401k
             tiaa: 'tiaa.org',
             empower: 'empower.com',
+            principal: 'principal.com',
+            transamerica: 'transamerica.com',
+            john_hancock: 'johnhancock.com',
+            troweprice: 'troweprice.com',
+            american_funds: 'americanfunds.com',
+
+            // Canadian
+            questrade: 'questrade.com',
+            wealthsimple: 'wealthsimple.com',
+            td_direct: 'td.com',
+            rbc: 'rbcdirectinvesting.com',
+            bmo: 'bmo.com',
+            scotia: 'scotiabank.com',
+            nbc: 'nbc.ca',
+            cibc: 'cibc.com',
+            desjardins: 'desjardins.com',
+
+            // UK / International
+            hargreaves: 'hl.co.uk',
+            ii: 'ii.co.uk',
+            ajbell: 'ajbell.co.uk',
+            freetrade: 'freetrade.io',
+            trading212: 'trading212.com',
+            degiro: 'degiro.com',
+            saxo: 'home.saxo',
+            ig: 'ig.com',
+            etoro: 'etoro.com',
+            revolut: 'revolut.com',
+
+            // Special cases
             plaid: 'plaid.com',
+
+            // No favicon for these
             csv: null,
             saved: null,
             manual: null,
@@ -16787,39 +17048,85 @@
 
         function getBrokerageName(brokerage) {
             const names = {
+                // Major US brokerages
                 schwab: 'Charles Schwab',
                 fidelity: 'Fidelity',
                 vanguard: 'Vanguard',
                 etrade: 'E*TRADE',
                 td_ameritrade: 'TD Ameritrade',
-                ameritrade: 'TD Ameritrade',
                 robinhood: 'Robinhood',
                 merrill: 'Merrill Edge',
                 morgan_stanley: 'Morgan Stanley',
                 interactive_brokers: 'Interactive Brokers',
+                stifel: 'Stifel',
+                // Online / fintech
                 ally: 'Ally Invest',
                 webull: 'Webull',
                 sofi: 'SoFi',
                 betterment: 'Betterment',
                 wealthfront: 'Wealthfront',
                 jpmorgan: 'J.P. Morgan',
-                chase: 'J.P. Morgan',
                 wells_fargo: 'Wells Fargo',
-                wellsfargo: 'Wells Fargo',
                 usaa: 'USAA',
                 firstrade: 'Firstrade',
                 tastytrade: 'tastytrade',
-                tastyworks: 'tastytrade',
-                public: 'Public',
+                public_com: 'Public',
                 m1: 'M1 Finance',
-                m1_finance: 'M1 Finance',
-                apex: 'Apex Clearing',
+                moomoo: 'moomoo',
+                tiger: 'Tiger Brokers',
+                tradestation: 'TradeStation',
+                tradier: 'Tradier',
+                drivewealth: 'DriveWealth',
+                stake: 'Stake',
+                // Wirehouses / full-service
+                ubs: 'UBS',
+                goldman: 'Goldman Sachs',
+                baird: 'Baird',
+                citi: 'Citi',
+                ameriprise: 'Ameriprise',
+                northwestern: 'Northwestern Mutual',
+                oppenheimer: 'Oppenheimer',
+                janney: 'Janney',
+                hilltop: 'Hilltop Securities',
+                da_davidson: 'D.A. Davidson',
+                piper_sandler: 'Piper Sandler',
+                siebert: 'Siebert',
+                // Clearing / custodian
                 pershing: 'Pershing',
+                apex: 'Apex Clearing',
                 lpl: 'LPL Financial',
                 raymond_james: 'Raymond James',
                 edward_jones: 'Edward Jones',
+                // Retirement / 401k
                 tiaa: 'TIAA',
                 empower: 'Empower',
+                principal: 'Principal',
+                transamerica: 'Transamerica',
+                john_hancock: 'John Hancock',
+                troweprice: 'T. Rowe Price',
+                american_funds: 'American Funds',
+                // Canadian
+                questrade: 'Questrade',
+                wealthsimple: 'Wealthsimple',
+                td_direct: 'TD Direct',
+                rbc: 'RBC',
+                bmo: 'BMO',
+                scotia: 'Scotiabank',
+                nbc: 'National Bank',
+                cibc: 'CIBC',
+                desjardins: 'Desjardins',
+                // UK / International
+                hargreaves: 'Hargreaves Lansdown',
+                ii: 'interactive investor',
+                ajbell: 'AJ Bell',
+                freetrade: 'Freetrade',
+                trading212: 'Trading 212',
+                degiro: 'DEGIRO',
+                saxo: 'Saxo Bank',
+                ig: 'IG',
+                etoro: 'eToro',
+                revolut: 'Revolut',
+                // Special
                 plaid: 'Connected Account',
                 csv: 'Account',
                 saved: 'Saved Portfolio',
