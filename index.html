@@ -1549,14 +1549,44 @@
         .account-icon {
             width: 40px;
             height: 40px;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            min-width: 40px;
             border-radius: var(--radius-sm);
             display: flex;
             align-items: center;
             justify-content: center;
+            overflow: hidden;
+        }
+
+        .account-icon.has-favicon {
+            background: var(--bg-secondary);
+            border: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        .account-icon.no-favicon {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
             color: white;
             font-weight: 600;
             font-size: 0.875rem;
+        }
+
+        .account-favicon {
+            width: 28px;
+            height: 28px;
+            object-fit: contain;
+            border-radius: 2px;
+        }
+
+        .account-icon-fallback {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            font-weight: 600;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            border-radius: var(--radius-sm);
         }
 
         .account-details {
@@ -16706,9 +16736,96 @@
             renderAccounts();
         }
 
+        // Brokerage domain mapping for favicon API
+        const BROKERAGE_DOMAINS = {
+            schwab: 'schwab.com',
+            fidelity: 'fidelity.com',
+            vanguard: 'vanguard.com',
+            etrade: 'etrade.com',
+            td_ameritrade: 'tdameritrade.com',
+            ameritrade: 'tdameritrade.com',
+            robinhood: 'robinhood.com',
+            merrill: 'merrilledge.com',
+            morgan_stanley: 'morganstanley.com',
+            interactive_brokers: 'interactivebrokers.com',
+            ally: 'ally.com',
+            webull: 'webull.com',
+            sofi: 'sofi.com',
+            betterment: 'betterment.com',
+            wealthfront: 'wealthfront.com',
+            jpmorgan: 'chase.com',
+            chase: 'chase.com',
+            wells_fargo: 'wellsfargo.com',
+            wellsfargo: 'wellsfargo.com',
+            usaa: 'usaa.com',
+            firstrade: 'firstrade.com',
+            tastytrade: 'tastytrade.com',
+            tastyworks: 'tastytrade.com',
+            public: 'public.com',
+            m1: 'm1.com',
+            m1_finance: 'm1.com',
+            apex: 'apexclearing.com',
+            pershing: 'pershing.com',
+            lpl: 'lpl.com',
+            raymond_james: 'raymondjames.com',
+            edward_jones: 'edwardjones.com',
+            tiaa: 'tiaa.org',
+            empower: 'empower.com',
+            plaid: 'plaid.com',
+            csv: null,
+            saved: null,
+            manual: null,
+            unknown: null,
+        };
+
+        function getBrokerageFavicon(brokerage) {
+            if (!brokerage) return null;
+            const domain = BROKERAGE_DOMAINS[brokerage.toLowerCase()];
+            if (!domain) return null;
+            return `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
+        }
+
         function getBrokerageName(brokerage) {
-            const names = { schwab: 'Schwab', fidelity: 'Fidelity', vanguard: 'Vanguard', csv: 'Account' };
-            const base = names[brokerage] || 'Account';
+            const names = {
+                schwab: 'Charles Schwab',
+                fidelity: 'Fidelity',
+                vanguard: 'Vanguard',
+                etrade: 'E*TRADE',
+                td_ameritrade: 'TD Ameritrade',
+                ameritrade: 'TD Ameritrade',
+                robinhood: 'Robinhood',
+                merrill: 'Merrill Edge',
+                morgan_stanley: 'Morgan Stanley',
+                interactive_brokers: 'Interactive Brokers',
+                ally: 'Ally Invest',
+                webull: 'Webull',
+                sofi: 'SoFi',
+                betterment: 'Betterment',
+                wealthfront: 'Wealthfront',
+                jpmorgan: 'J.P. Morgan',
+                chase: 'J.P. Morgan',
+                wells_fargo: 'Wells Fargo',
+                wellsfargo: 'Wells Fargo',
+                usaa: 'USAA',
+                firstrade: 'Firstrade',
+                tastytrade: 'tastytrade',
+                tastyworks: 'tastytrade',
+                public: 'Public',
+                m1: 'M1 Finance',
+                m1_finance: 'M1 Finance',
+                apex: 'Apex Clearing',
+                pershing: 'Pershing',
+                lpl: 'LPL Financial',
+                raymond_james: 'Raymond James',
+                edward_jones: 'Edward Jones',
+                tiaa: 'TIAA',
+                empower: 'Empower',
+                plaid: 'Connected Account',
+                csv: 'Account',
+                saved: 'Saved Portfolio',
+                manual: 'Manual Entry',
+            };
+            const base = names[brokerage] || brokerage || 'Account';
             const count = accounts.filter(a => a.name.startsWith(base)).length + 1;
             return count > 1 ? `${base} ${count}` : base;
         }
@@ -16897,9 +17014,22 @@
         function renderAccounts() {
             accountsSection.style.display = accounts.length ? 'block' : 'none';
             analyzeBtn.disabled = !accounts.length;
-            accountsList.innerHTML = accounts.map(a => `
+            accountsList.innerHTML = accounts.map(a => {
+                const faviconUrl = getBrokerageFavicon(a.brokerage);
+                const hasFavicon = !!faviconUrl;
+                const fallbackLetter = (a.brokerage || 'A')[0].toUpperCase();
+                return `
                 <div class="account-item">
-                    <div class="account-icon">${a.brokerage[0].toUpperCase()}</div>
+                    <div class="account-icon ${hasFavicon ? 'has-favicon' : 'no-favicon'}">
+                        ${hasFavicon
+                            ? `<img src="${faviconUrl}"
+                                   alt="${getBrokerageName(a.brokerage)}"
+                                   class="account-favicon"
+                                   onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                               <span class="account-icon-fallback" style="display:none;">${fallbackLetter}</span>`
+                            : fallbackLetter
+                        }
+                    </div>
                     <div class="account-details">
                         <input type="text" class="account-name-input" value="${a.name}" onchange="updateName(${a.id}, this.value)">
                         <div class="account-meta">${a.positions.length} positions</div>
@@ -16911,7 +17041,7 @@
                         </svg>
                     </button>
                 </div>
-            `).join('');
+            `}).join('');
         }
 
         function updateName(id, name) {
