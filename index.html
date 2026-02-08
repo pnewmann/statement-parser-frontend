@@ -90,20 +90,26 @@
         }
 
         .top-nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 28px;
             position: sticky;
             top: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
             z-index: 1000;
-            padding: 16px 24px;
-            margin: -40px -24px 28px;
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             transition: background 0.3s ease, backdrop-filter 0.3s ease, box-shadow 0.3s ease;
             border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        }
+
+        .nav-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 16px 24px;
         }
 
         :root[data-theme="dark"] .top-nav {
@@ -530,9 +536,8 @@
                 display: block;
             }
 
-            .top-nav {
+            .nav-inner {
                 padding: 12px 16px;
-                margin: -24px -16px 20px;
             }
         }
 
@@ -5892,10 +5897,6 @@
             }
 
             /* Logo & Header */
-            .top-nav {
-                margin-bottom: 20px;
-            }
-
             .logo {
                 gap: 8px;
             }
@@ -9922,11 +9923,10 @@
         </button>
     </div>
 
-    <div class="container">
-        <header>
-            <nav class="top-nav" role="navigation" aria-label="Main navigation">
-                <!-- Left: Logo -->
-                <div class="nav-left">
+    <nav class="top-nav" role="navigation" aria-label="Main navigation">
+        <div class="nav-inner">
+            <!-- Left: Logo -->
+            <div class="nav-left">
                     <div class="logo">
                         <div class="logo-icon">
                             <!-- Paul Rand-inspired logo: Bold geometric "S" with scan line -->
@@ -10105,9 +10105,10 @@
                     </div>
                     <button class="btn-get-started" onclick="scrollToUpload()">Get Started</button>
                 </div>
-            </nav>
+            </div>
+        </nav>
 
-            <!-- Mobile Menu Overlay -->
+        <!-- Mobile Menu Overlay -->
             <div class="mobile-menu-overlay" id="mobileMenuOverlay">
                 <div class="mobile-menu-header">
                     <div class="logo">
@@ -10249,8 +10250,9 @@
                     </div>
                 </div>
             </div>
-        </header>
 
+    <div class="container">
+        <header>
         <!-- Hero Section -->
         <section class="hero-section">
             <div class="hero-grid">
