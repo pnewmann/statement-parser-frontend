@@ -3951,8 +3951,23 @@
         .trust-section {
             background: var(--bg-primary);
             text-align: center;
-            padding: var(--section-padding-y-sm) 0;
+            padding: 56px 0;
             overflow: hidden;
+        }
+
+        /* Wave divider: Trust section (white) to How It Works (dark navy) */
+        .section-divider-light-to-dark-trust {
+            height: 80px;
+            margin: 0;
+            padding: 0;
+            background: #FFFFFF;
+            line-height: 0;
+            overflow: hidden;
+        }
+        .section-divider-light-to-dark-trust svg {
+            width: 100%;
+            height: 100%;
+            display: block;
         }
 
         .trust-label {
@@ -12164,6 +12179,57 @@
         <!-- Landing Page Sections -->
         <div class="landing-sections" id="landingSections">
 
+            <!-- Trust Section - Marquee (Social Proof) -->
+            <section class="landing-section trust-section" id="trustSection">
+                <div class="container">
+                    <p class="trust-label">Works with statements from</p>
+                </div>
+                <div class="marquee-container">
+                    <div class="marquee-track">
+                        <!-- First set of logos -->
+                        <div class="brokerage-logos">
+                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/schwab.com" alt="Schwab" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=schwab.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Schwab</span></div>
+                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/fidelity.com" alt="Fidelity" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=fidelity.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Fidelity</span></div>
+                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/vanguard.com" alt="Vanguard" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=vanguard.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Vanguard</span></div>
+                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/etrade.com" alt="E*TRADE" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=etrade.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">E*TRADE</span></div>
+                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/tdameritrade.com" alt="TD Ameritrade" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=tdameritrade.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">TD Ameritrade</span></div>
+                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/robinhood.com" alt="Robinhood" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=robinhood.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Robinhood</span></div>
+                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/ml.com" alt="Merrill" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=ml.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Merrill</span></div>
+                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/interactivebrokers.com" alt="Interactive Brokers" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=interactivebrokers.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Interactive Brokers</span></div>
+                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/ally.com" alt="Ally Invest" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=ally.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Ally Invest</span></div>
+                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/webull.com" alt="Webull" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=webull.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Webull</span></div>
+                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/sofi.com" alt="SoFi" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=sofi.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">SoFi</span></div>
+                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/betterment.com" alt="Betterment" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=betterment.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Betterment</span></div>
+                        </div>
+                        <!-- Duplicate for seamless loop -->
+                        <div class="brokerage-logos">
+                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/schwab.com" alt="Schwab" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=schwab.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Schwab</span></div>
+                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/fidelity.com" alt="Fidelity" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=fidelity.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Fidelity</span></div>
+                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/vanguard.com" alt="Vanguard" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=vanguard.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Vanguard</span></div>
+                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/etrade.com" alt="E*TRADE" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=etrade.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">E*TRADE</span></div>
+                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/tdameritrade.com" alt="TD Ameritrade" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=tdameritrade.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">TD Ameritrade</span></div>
+                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/robinhood.com" alt="Robinhood" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=robinhood.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Robinhood</span></div>
+                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/ml.com" alt="Merrill" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=ml.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Merrill</span></div>
+                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/interactivebrokers.com" alt="Interactive Brokers" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=interactivebrokers.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Interactive Brokers</span></div>
+                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/ally.com" alt="Ally Invest" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=ally.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Ally Invest</span></div>
+                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/webull.com" alt="Webull" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=webull.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Webull</span></div>
+                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/sofi.com" alt="SoFi" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=sofi.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">SoFi</span></div>
+                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/betterment.com" alt="Betterment" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=betterment.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Betterment</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="container">
+                    <p class="trust-note">+ 50 more brokerages supported</p>
+                </div>
+            </section>
+
+            <!-- Wave Divider: Trust (white) to How It Works (dark navy) -->
+            <div class="section-divider section-divider-light-to-dark-trust">
+                <svg viewBox="0 0 1440 80" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+                    <path d="M0,0 C360,80 1080,80 1440,0 L1440,80 L0,80 Z" fill="#0A2540"/>
+                </svg>
+            </div>
+
             <!-- How It Works Section -->
             <section class="landing-section how-it-works" data-animate>
                 <div class="container">
@@ -12412,56 +12478,12 @@
                 </div>
             </section>
 
-            <!-- Wave Divider: Value Props to Trust -->
+            <!-- Wave Divider: Value Props to page background (before CTA) -->
             <div class="section-divider section-divider-dark-to-light">
                 <svg viewBox="0 0 1440 80" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
-                    <path d="M0,0 C360,80 1080,80 1440,0 L1440,80 L0,80 Z" fill="#FFFFFF"/>
+                    <path d="M0,0 C360,80 1080,80 1440,0 L1440,80 L0,80 Z" fill="#f6f9fc"/>
                 </svg>
             </div>
-
-            <!-- Trust Section - Marquee -->
-            <section class="landing-section trust-section">
-                <div class="container">
-                    <p class="trust-label">Works with statements from</p>
-                </div>
-                <div class="marquee-container">
-                    <div class="marquee-track">
-                        <!-- First set of logos -->
-                        <div class="brokerage-logos">
-                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/schwab.com" alt="Schwab" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=schwab.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Schwab</span></div>
-                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/fidelity.com" alt="Fidelity" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=fidelity.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Fidelity</span></div>
-                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/vanguard.com" alt="Vanguard" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=vanguard.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Vanguard</span></div>
-                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/etrade.com" alt="E*TRADE" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=etrade.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">E*TRADE</span></div>
-                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/tdameritrade.com" alt="TD Ameritrade" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=tdameritrade.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">TD Ameritrade</span></div>
-                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/robinhood.com" alt="Robinhood" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=robinhood.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Robinhood</span></div>
-                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/ml.com" alt="Merrill" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=ml.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Merrill</span></div>
-                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/interactivebrokers.com" alt="Interactive Brokers" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=interactivebrokers.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Interactive Brokers</span></div>
-                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/ally.com" alt="Ally Invest" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=ally.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Ally Invest</span></div>
-                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/webull.com" alt="Webull" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=webull.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Webull</span></div>
-                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/sofi.com" alt="SoFi" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=sofi.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">SoFi</span></div>
-                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/betterment.com" alt="Betterment" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=betterment.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Betterment</span></div>
-                        </div>
-                        <!-- Duplicate for seamless loop -->
-                        <div class="brokerage-logos">
-                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/schwab.com" alt="Schwab" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=schwab.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Schwab</span></div>
-                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/fidelity.com" alt="Fidelity" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=fidelity.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Fidelity</span></div>
-                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/vanguard.com" alt="Vanguard" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=vanguard.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Vanguard</span></div>
-                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/etrade.com" alt="E*TRADE" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=etrade.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">E*TRADE</span></div>
-                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/tdameritrade.com" alt="TD Ameritrade" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=tdameritrade.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">TD Ameritrade</span></div>
-                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/robinhood.com" alt="Robinhood" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=robinhood.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Robinhood</span></div>
-                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/ml.com" alt="Merrill" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=ml.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Merrill</span></div>
-                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/interactivebrokers.com" alt="Interactive Brokers" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=interactivebrokers.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Interactive Brokers</span></div>
-                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/ally.com" alt="Ally Invest" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=ally.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Ally Invest</span></div>
-                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/webull.com" alt="Webull" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=webull.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Webull</span></div>
-                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/sofi.com" alt="SoFi" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=sofi.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">SoFi</span></div>
-                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/betterment.com" alt="Betterment" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=betterment.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Betterment</span></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="container">
-                    <p class="trust-note">+ 50 more brokerages supported</p>
-                </div>
-            </section>
 
             <!-- CTA Section -->
             <section class="landing-section cta-section">
