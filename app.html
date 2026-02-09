@@ -13094,13 +13094,14 @@
                 // Hide empty state, show progress
                 const emptyState = document.getElementById('appEmptyState');
                 if (emptyState) emptyState.style.display = 'none';
-                showProgress();
 
-                // Process each file
-                for (const fileData of files) {
-                    const file = new File([fileData.buffer], fileData.name, { type: fileData.type });
-                    await processFile(file);
-                }
+                // Convert stored file data back to File objects
+                const fileObjects = files.map(fileData =>
+                    new File([fileData.buffer], fileData.name, { type: fileData.type })
+                );
+
+                // Process files using the existing handleFiles function
+                await handleFiles(fileObjects);
             } else {
                 // Show empty state or dashboard based on saved portfolios
                 showAppEmptyState();
@@ -14008,6 +14009,8 @@
         function updateConnectionStatus() {
             const statusEl = document.getElementById('connectionStatus');
             const textEl = document.getElementById('connectionText');
+
+            if (!statusEl || !textEl) return;
 
             if (isOnline) {
                 statusEl.classList.remove('offline');
