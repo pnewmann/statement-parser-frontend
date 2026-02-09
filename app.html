@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Statement Scan - Portfolio Intelligence</title>
+    <title>Dashboard - Statement Scan</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23635bff'/><rect x='2' y='2' width='14' height='14' rx='3' fill='white'/><rect x='16' y='16' width='14' height='14' rx='3' fill='white'/><rect x='0' y='13' width='32' height='6' fill='white' opacity='0.4'/><rect x='11' y='11' width='10' height='10' rx='2' fill='white'/></svg>" type="image/svg+xml">
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect width='180' height='180' rx='40' fill='%23635bff'/><rect x='22' y='22' width='75' height='75' rx='15' fill='white'/><rect x='83' y='83' width='75' height='75' rx='15' fill='white'/><rect x='0' y='78' width='180' height='24' fill='white' opacity='0.4'/><rect x='67' y='67' width='46' height='46' rx='8' fill='white'/></svg>">
@@ -14,7 +14,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- pdf.js needed for brokerage detection on upload -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://d3js.org/topojson.v3.min.js"></script>
+    <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <style>
         :root {
@@ -1850,9 +1854,83 @@
             font-size: 0.9375rem;
         }
 
+        /* App Empty State */
+        .app-empty-state {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: calc(100vh - 72px);
+            padding: 48px 24px 80px;
+            background: var(--bg-secondary);
+        }
+
+        .app-empty-state .empty-state-content {
+            max-width: 600px;
+            text-align: center;
+        }
+
+        .app-empty-state .empty-state-icon-large {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 24px;
+        }
+
+        .app-empty-state .empty-state-icon-large svg {
+            color: var(--primary);
+            opacity: 0.8;
+        }
+
+        .app-empty-state .empty-state-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .app-empty-state .empty-state-description {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
+
+        .app-empty-state .app-upload-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border);
+        }
+
+        .app-empty-state .saved-portfolios-preview {
+            margin-top: 32px;
+        }
+
+        .app-empty-state .divider-text {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            margin-bottom: 16px;
+        }
+
+        .app-empty-state .divider-text::before,
+        .app-empty-state .divider-text::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .app-empty-state .saved-portfolios-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
         /* Dashboard (Portfolio Analysis) */
         .dashboard {
-            display: none;
+            display: block;
             width: 100%;
             background: var(--bg-secondary);
             min-height: calc(100vh - 72px);
@@ -10465,402 +10543,156 @@
     <!-- Skip to main content link for accessibility -->
     <a href="#main-content" class="skip-link">Skip to main content</a>
 
-    <!-- Announcement Bar -->
-    <div class="announcement-bar" id="announcement-bar">
-        <div class="announcement-inner">
-            <span>🚀 Now supporting 50+ brokerages including Schwab, Fidelity, and Vanguard</span>
-            <a href="#hero-upload" class="announcement-link" onclick="scrollToUpload(); return false;">Try it free →</a>
-            <button class="announcement-close" aria-label="Close announcement" onclick="document.getElementById('announcement-bar').style.display='none';">✕</button>
-        </div>
+    <!-- Session Timeout Warning -->
+    <div class="session-warning" id="sessionWarning" role="alert">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+        </svg>
+        <span>Your session will expire in <strong id="sessionTimeLeft">5:00</strong></span>
+        <button class="btn btn-secondary" onclick="refreshSession()" style="padding: 6px 12px; font-size: 0.8125rem;">
+            Extend Session
+        </button>
     </div>
 
     <nav class="top-nav" role="navigation" aria-label="Main navigation">
         <div class="nav-inner">
-            <!-- Left: Logo -->
+            <!-- Left: Logo (links back to landing) -->
             <div class="nav-left">
-                    <div class="logo">
-                        <div class="logo-icon">
-                            <!-- Paul Rand-inspired logo: Bold geometric "S" with scan line -->
-                            <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <!-- Abstract S formed by two offset squares with negative space -->
-                                <rect x="0" y="0" width="24" height="24" rx="4" fill="white"/>
-                                <rect x="20" y="20" width="24" height="24" rx="4" fill="white"/>
-                                <!-- Scan line cutting through - the key action element -->
-                                <rect x="0" y="19" width="44" height="6" fill="white" opacity="0.4"/>
-                                <!-- Central diamond connector -->
-                                <rect x="16" y="16" width="12" height="12" rx="2" fill="white" transform="rotate(0 22 22)"/>
-                            </svg>
-                        </div>
-                        <div class="brand-text">
-                            <span class="brand-name">Statement Scan</span>
-                            <span class="brand-tagline">Portfolio Intelligence</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Center: Navigation Links -->
-                <div class="nav-center">
-                    <!-- Products Dropdown -->
-                    <div class="nav-item" data-dropdown="products">
-                        <button class="nav-link" aria-haspopup="true" aria-expanded="false">
-                            Products
-                            <svg class="nav-link-chevron" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5">
-                                <path d="M2 3.5L5 6.5L8 3.5"/>
-                            </svg>
-                        </button>
-                        <div class="nav-dropdown dropdown-wide" role="menu">
-                            <div class="dropdown-columns">
-                                <div class="dropdown-column">
-                                    <div class="dropdown-column-title">Analyze</div>
-                                    <a class="dropdown-item" role="menuitem" onclick="navScrollToUpload('upload'); closeAllDropdowns();">
-                                        <span class="dropdown-item-icon">📄</span>
-                                        <div class="dropdown-item-content">
-                                            <div class="dropdown-item-title">Statement Upload</div>
-                                            <div class="dropdown-item-desc">Upload PDF or CSV brokerage statements for instant analysis</div>
-                                        </div>
-                                    </a>
-                                    <a class="dropdown-item" role="menuitem" onclick="navScrollToUpload('manual'); closeAllDropdowns();">
-                                        <span class="dropdown-item-icon">✏️</span>
-                                        <div class="dropdown-item-content">
-                                            <div class="dropdown-item-title">Manual Entry</div>
-                                            <div class="dropdown-item-desc">Enter holdings by ticker and quantity or allocation percentage</div>
-                                        </div>
-                                    </a>
-                                    <a class="dropdown-item" role="menuitem" onclick="navScrollToUpload('connect'); closeAllDropdowns();">
-                                        <span class="dropdown-item-icon">🔗</span>
-                                        <div class="dropdown-item-content">
-                                            <div class="dropdown-item-title">Brokerage Connect <span class="tag-coming-soon">Coming Soon</span></div>
-                                            <div class="dropdown-item-desc">Link your Schwab, Fidelity, or Vanguard account directly</div>
-                                        </div>
-                                    </a>
-                                </div>
-                                <div class="dropdown-column">
-                                    <div class="dropdown-column-title">Insights</div>
-                                    <a class="dropdown-item" role="menuitem" onclick="navScrollToSection('previewSection'); closeAllDropdowns();">
-                                        <span class="dropdown-item-icon">📊</span>
-                                        <div class="dropdown-item-content">
-                                            <div class="dropdown-item-title">Portfolio Report</div>
-                                            <div class="dropdown-item-desc">Allocation, sector exposure, and risk analysis in one view</div>
-                                        </div>
-                                    </a>
-                                    <a class="dropdown-item" role="menuitem" onclick="navScrollToSection('previewSection'); closeAllDropdowns();">
-                                        <span class="dropdown-item-icon">💰</span>
-                                        <div class="dropdown-item-content">
-                                            <div class="dropdown-item-title">Fee Analysis</div>
-                                            <div class="dropdown-item-desc">Find hidden expense ratios and see potential savings</div>
-                                        </div>
-                                    </a>
-                                    <a class="dropdown-item" role="menuitem" onclick="navScrollToSection('previewSection'); closeAllDropdowns();">
-                                        <span class="dropdown-item-icon">📈</span>
-                                        <div class="dropdown-item-content">
-                                            <div class="dropdown-item-title">Benchmark Comparison</div>
-                                            <div class="dropdown-item-desc">Compare your performance against the S&P 500 and target-date funds</div>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Solutions Dropdown -->
-                    <div class="nav-item" data-dropdown="solutions">
-                        <button class="nav-link" aria-haspopup="true" aria-expanded="false">
-                            Solutions
-                            <svg class="nav-link-chevron" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5">
-                                <path d="M2 3.5L5 6.5L8 3.5"/>
-                            </svg>
-                        </button>
-                        <div class="nav-dropdown" role="menu">
-                            <a class="dropdown-item" role="menuitem" onclick="navScrollToSection('heroSection'); closeAllDropdowns();">
-                                <span class="dropdown-item-icon">🧑‍💼</span>
-                                <div class="dropdown-item-content">
-                                    <div class="dropdown-item-title">For Self-Directed Investors</div>
-                                    <div class="dropdown-item-desc">Understand your portfolio like the pros do</div>
-                                </div>
-                            </a>
-                            <a class="dropdown-item" role="menuitem" onclick="navScrollToSection('heroSection'); closeAllDropdowns();">
-                                <span class="dropdown-item-icon">👨‍👩‍👧‍👦</span>
-                                <div class="dropdown-item-content">
-                                    <div class="dropdown-item-title">For Families</div>
-                                    <div class="dropdown-item-desc">Get clarity across multiple accounts and beneficiaries</div>
-                                </div>
-                            </a>
-                            <a class="dropdown-item" role="menuitem" onclick="navScrollToSection('heroSection'); closeAllDropdowns();">
-                                <span class="dropdown-item-icon">📋</span>
-                                <div class="dropdown-item-content">
-                                    <div class="dropdown-item-title">For Financial Advisors <span class="tag-coming-soon">Coming Soon</span></div>
-                                    <div class="dropdown-item-desc">Quick portfolio diagnostics for client onboarding</div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Resources Dropdown -->
-                    <div class="nav-item" data-dropdown="resources">
-                        <button class="nav-link" aria-haspopup="true" aria-expanded="false">
-                            Resources
-                            <svg class="nav-link-chevron" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5">
-                                <path d="M2 3.5L5 6.5L8 3.5"/>
-                            </svg>
-                        </button>
-                        <div class="nav-dropdown" role="menu">
-                            <a class="dropdown-item" role="menuitem" onclick="navScrollToSection('howItWorksSection'); closeAllDropdowns();">
-                                <span class="dropdown-item-icon">📖</span>
-                                <div class="dropdown-item-content">
-                                    <div class="dropdown-item-title">How It Works</div>
-                                    <div class="dropdown-item-desc">Learn how Statement Scan analyzes your portfolio</div>
-                                </div>
-                            </a>
-                            <a class="dropdown-item" role="menuitem" onclick="scrollToUpload(); closeAllDropdowns();">
-                                <span class="dropdown-item-icon">🏦</span>
-                                <div class="dropdown-item-content">
-                                    <div class="dropdown-item-title">Supported Brokerages</div>
-                                    <div class="dropdown-item-desc">Upload from Schwab, Fidelity, Vanguard & 50+ more</div>
-                                </div>
-                            </a>
-                            <a class="dropdown-item" role="menuitem" onclick="navScrollToSection('valuePropsSection'); closeAllDropdowns();">
-                                <span class="dropdown-item-icon">🔒</span>
-                                <div class="dropdown-item-content">
-                                    <div class="dropdown-item-title">Privacy & Security</div>
-                                    <div class="dropdown-item-desc">How we protect your data</div>
-                                </div>
-                            </a>
-                            <a class="dropdown-item" role="menuitem" href="mailto:support@statementscan.app" onclick="closeAllDropdowns();">
-                                <span class="dropdown-item-icon">📬</span>
-                                <div class="dropdown-item-content">
-                                    <div class="dropdown-item-title">Contact Us</div>
-                                    <div class="dropdown-item-desc">Get in touch with our team</div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Right: Actions -->
-                <div class="nav-right">
-                    <!-- Mobile Menu Button -->
-                    <button class="mobile-menu-btn" onclick="openMobileMenu()" aria-label="Open menu">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <line x1="3" y1="6" x2="21" y2="6"/>
-                            <line x1="3" y1="12" x2="21" y2="12"/>
-                            <line x1="3" y1="18" x2="21" y2="18"/>
+                <a href="/" class="logo" style="text-decoration: none;">
+                    <div class="logo-icon">
+                        <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="0" y="0" width="24" height="24" rx="4" fill="white"/>
+                            <rect x="20" y="20" width="24" height="24" rx="4" fill="white"/>
+                            <rect x="0" y="19" width="44" height="6" fill="white" opacity="0.4"/>
+                            <rect x="16" y="16" width="12" height="12" rx="2" fill="white"/>
                         </svg>
+                    </div>
+                    <div class="brand-text">
+                        <span class="brand-name">Statement Scan</span>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Center: App Navigation Links -->
+            <div class="nav-center">
+                <a href="#allocation" class="nav-link" onclick="switchTab('allocation')">Dashboard</a>
+                <button class="nav-link" onclick="showSavedPortfolios()">Saved Portfolios</button>
+            </div>
+
+            <!-- Right: Actions -->
+            <div class="nav-right">
+                <!-- Mobile Menu Button -->
+                <button class="mobile-menu-btn" onclick="openMobileMenu()" aria-label="Open menu">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="6" x2="21" y2="6"/>
+                        <line x1="3" y1="12" x2="21" y2="12"/>
+                        <line x1="3" y1="18" x2="21" y2="18"/>
+                    </svg>
+                </button>
+                <button class="btn btn-primary" onclick="showAppUpload()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="17 8 12 3 7 8"/>
+                        <line x1="12" y1="3" x2="12" y2="15"/>
+                    </svg>
+                    Upload
+                </button>
+                <div id="authSection">
+                    <button class="btn btn-secondary" id="loginBtn" onclick="showAuthModal()">
+                        Sign In
                     </button>
-                    <div id="authSection">
-                        <button class="btn btn-secondary" id="loginBtn" onclick="showAuthModal()">
-                            Sign In
-                        </button>
-                    </div>
-                    <button class="btn-get-started" onclick="showAuthModal(); switchAuthTab('register');">Create Account</button>
                 </div>
             </div>
-        </nav>
+        </div>
+    </nav>
 
-        <!-- Mobile Menu Overlay -->
-            <div class="mobile-menu-overlay" id="mobileMenuOverlay">
-                <div class="mobile-menu-header">
-                    <div class="logo">
-                        <div class="logo-icon">
-                            <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <rect x="0" y="0" width="24" height="24" rx="4" fill="white"/>
-                                <rect x="20" y="20" width="24" height="24" rx="4" fill="white"/>
-                                <rect x="0" y="19" width="44" height="6" fill="white" opacity="0.4"/>
-                                <rect x="16" y="16" width="12" height="12" rx="2" fill="white"/>
-                            </svg>
-                        </div>
-                        <div class="brand-text">
-                            <span class="brand-name">Statement Scan</span>
-                        </div>
-                    </div>
-                    <button class="mobile-menu-close" onclick="closeMobileMenu()" aria-label="Close menu">✕</button>
-                </div>
-                <div class="mobile-menu-content">
-                    <!-- Products Accordion -->
-                    <div class="mobile-accordion" data-accordion="products">
-                        <button class="mobile-accordion-header" onclick="toggleMobileAccordion('products')">
-                            Products
-                            <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5">
-                                <path d="M2 3.5L5 6.5L8 3.5"/>
-                            </svg>
-                        </button>
-                        <div class="mobile-accordion-content">
-                            <a class="mobile-dropdown-item" onclick="navScrollToUpload('upload'); closeMobileMenu();">
-                                <span class="dropdown-item-icon">📄</span>
-                                <div class="dropdown-item-content">
-                                    <div class="dropdown-item-title">Statement Upload</div>
-                                    <div class="dropdown-item-desc">Upload PDF or CSV brokerage statements</div>
-                                </div>
-                            </a>
-                            <a class="mobile-dropdown-item" onclick="navScrollToUpload('manual'); closeMobileMenu();">
-                                <span class="dropdown-item-icon">✏️</span>
-                                <div class="dropdown-item-content">
-                                    <div class="dropdown-item-title">Manual Entry</div>
-                                    <div class="dropdown-item-desc">Enter holdings by ticker and quantity</div>
-                                </div>
-                            </a>
-                            <a class="mobile-dropdown-item" onclick="navScrollToUpload('connect'); closeMobileMenu();">
-                                <span class="dropdown-item-icon">🔗</span>
-                                <div class="dropdown-item-content">
-                                    <div class="dropdown-item-title">Brokerage Connect <span class="tag-coming-soon">Coming Soon</span></div>
-                                    <div class="dropdown-item-desc">Link your account directly</div>
-                                </div>
-                            </a>
-                            <a class="mobile-dropdown-item" onclick="navScrollToSection('previewSection'); closeMobileMenu();">
-                                <span class="dropdown-item-icon">📊</span>
-                                <div class="dropdown-item-content">
-                                    <div class="dropdown-item-title">Portfolio Report</div>
-                                    <div class="dropdown-item-desc">Allocation and risk analysis</div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Solutions Accordion -->
-                    <div class="mobile-accordion" data-accordion="solutions">
-                        <button class="mobile-accordion-header" onclick="toggleMobileAccordion('solutions')">
-                            Solutions
-                            <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5">
-                                <path d="M2 3.5L5 6.5L8 3.5"/>
-                            </svg>
-                        </button>
-                        <div class="mobile-accordion-content">
-                            <a class="mobile-dropdown-item" onclick="navScrollToSection('heroSection'); closeMobileMenu();">
-                                <span class="dropdown-item-icon">🧑‍💼</span>
-                                <div class="dropdown-item-content">
-                                    <div class="dropdown-item-title">For Self-Directed Investors</div>
-                                    <div class="dropdown-item-desc">Understand your portfolio like the pros</div>
-                                </div>
-                            </a>
-                            <a class="mobile-dropdown-item" onclick="navScrollToSection('heroSection'); closeMobileMenu();">
-                                <span class="dropdown-item-icon">👨‍👩‍👧‍👦</span>
-                                <div class="dropdown-item-content">
-                                    <div class="dropdown-item-title">For Families</div>
-                                    <div class="dropdown-item-desc">Clarity across multiple accounts</div>
-                                </div>
-                            </a>
-                            <a class="mobile-dropdown-item" onclick="navScrollToSection('heroSection'); closeMobileMenu();">
-                                <span class="dropdown-item-icon">📋</span>
-                                <div class="dropdown-item-content">
-                                    <div class="dropdown-item-title">For Financial Advisors <span class="tag-coming-soon">Coming Soon</span></div>
-                                    <div class="dropdown-item-desc">Client onboarding diagnostics</div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Resources Accordion -->
-                    <div class="mobile-accordion" data-accordion="resources">
-                        <button class="mobile-accordion-header" onclick="toggleMobileAccordion('resources')">
-                            Resources
-                            <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5">
-                                <path d="M2 3.5L5 6.5L8 3.5"/>
-                            </svg>
-                        </button>
-                        <div class="mobile-accordion-content">
-                            <a class="mobile-dropdown-item" onclick="navScrollToSection('howItWorksSection'); closeMobileMenu();">
-                                <span class="dropdown-item-icon">📖</span>
-                                <div class="dropdown-item-content">
-                                    <div class="dropdown-item-title">How It Works</div>
-                                    <div class="dropdown-item-desc">Learn about the analysis process</div>
-                                </div>
-                            </a>
-                            <a class="mobile-dropdown-item" onclick="scrollToUpload(); closeMobileMenu();">
-                                <span class="dropdown-item-icon">🏦</span>
-                                <div class="dropdown-item-content">
-                                    <div class="dropdown-item-title">Supported Brokerages</div>
-                                    <div class="dropdown-item-desc">Schwab, Fidelity, Vanguard & 50+ more</div>
-                                </div>
-                            </a>
-                            <a class="mobile-dropdown-item" onclick="navScrollToSection('valuePropsSection'); closeMobileMenu();">
-                                <span class="dropdown-item-icon">🔒</span>
-                                <div class="dropdown-item-content">
-                                    <div class="dropdown-item-title">Privacy & Security</div>
-                                    <div class="dropdown-item-desc">How we protect your data</div>
-                                </div>
-                            </a>
-                            <a class="mobile-dropdown-item" href="mailto:support@statementscan.app" onclick="closeMobileMenu();">
-                                <span class="dropdown-item-icon">📬</span>
-                                <div class="dropdown-item-content">
-                                    <div class="dropdown-item-title">Contact Us</div>
-                                    <div class="dropdown-item-desc">Get in touch</div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Actions -->
-                    <div class="mobile-menu-actions">
-                        <button class="btn btn-secondary" onclick="showAuthModal(); closeMobileMenu();">Sign In</button>
-                        <button class="btn-get-started" onclick="showAuthModal(); switchAuthTab('register'); closeMobileMenu();">Create Account</button>
-                    </div>
-                </div>
-            </div>
-
-        <!-- Hero Section -->
-        <section class="hero-section">
-            <div class="hero-inner">
-            <div class="hero-grid">
-                <!-- Left Column: Content -->
-                <div class="hero-content">
-                    <div class="hero-badge" data-hero-animate style="animation-delay: 0s;">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+        <!-- Mobile Menu Overlay (simplified for app) -->
+        <div class="mobile-menu-overlay" id="mobileMenuOverlay">
+            <div class="mobile-menu-header">
+                <a href="/" class="logo" style="text-decoration: none;">
+                    <div class="logo-icon">
+                        <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="0" y="0" width="24" height="24" rx="4" fill="white"/>
+                            <rect x="20" y="20" width="24" height="24" rx="4" fill="white"/>
+                            <rect x="0" y="19" width="44" height="6" fill="white" opacity="0.4"/>
+                            <rect x="16" y="16" width="12" height="12" rx="2" fill="white"/>
                         </svg>
-                        AI-Powered Portfolio Intelligence
                     </div>
-                    <h1 class="hero-title" data-hero-animate style="animation-delay: 0.08s;">Your brokerage statement, <span class="gradient-text">decoded</span></h1>
-                    <p class="hero-subtitle" data-hero-animate style="animation-delay: 0.16s;">Upload any statement and get instant portfolio analytics, fee analysis, and actionable insights — completely free, no account required.</p>
-                    <div class="hero-ctas" data-hero-animate style="animation-delay: 0.24s;">
-                        <button class="hero-cta-primary" onclick="scrollToUpload()">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <div class="brand-text">
+                        <span class="brand-name">Statement Scan</span>
+                    </div>
+                </a>
+                <button class="mobile-menu-close" onclick="closeMobileMenu()" aria-label="Close menu">✕</button>
+            </div>
+            <div class="mobile-menu-content">
+                <a class="mobile-dropdown-item" href="#allocation" onclick="switchTab('allocation'); closeMobileMenu();">
+                    <span class="dropdown-item-icon">📊</span>
+                    <div class="dropdown-item-content">
+                        <div class="dropdown-item-title">Dashboard</div>
+                        <div class="dropdown-item-desc">View your portfolio analysis</div>
+                    </div>
+                </a>
+                <a class="mobile-dropdown-item" onclick="showSavedPortfolios(); closeMobileMenu();">
+                    <span class="dropdown-item-icon">📁</span>
+                    <div class="dropdown-item-content">
+                        <div class="dropdown-item-title">Saved Portfolios</div>
+                        <div class="dropdown-item-desc">Load a previously saved analysis</div>
+                    </div>
+                </a>
+                <a class="mobile-dropdown-item" onclick="showAppUpload(); closeMobileMenu();">
+                    <span class="dropdown-item-icon">📤</span>
+                    <div class="dropdown-item-content">
+                        <div class="dropdown-item-title">Upload Statement</div>
+                        <div class="dropdown-item-desc">Analyze a new brokerage statement</div>
+                    </div>
+                </a>
+                <div class="mobile-menu-actions">
+                    <button class="btn btn-secondary" onclick="showAuthModal(); closeMobileMenu();">Sign In</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- App Empty State (shown when no portfolio is loaded) -->
+        <div id="appEmptyState" class="app-empty-state">
+            <div class="empty-state-content">
+                <div class="empty-state-icon-large">
+                    <svg viewBox="0 0 24 24" width="64" height="64" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M21.21 15.89A10 10 0 1 1 8 2.83"/>
+                        <path d="M22 12A10 10 0 0 0 12 2v10z"/>
+                    </svg>
+                </div>
+                <h2 class="empty-state-title">No Portfolio Loaded</h2>
+                <p class="empty-state-description">Upload a brokerage statement or enter holdings manually to get started</p>
+
+                <!-- Entry Method Selector for App -->
+                <div class="app-upload-card">
+                    <div class="entry-methods" style="margin-bottom: 20px;">
+                        <button class="entry-method-btn active" data-method="upload" onclick="switchEntryMethod('upload')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
                                 <polyline points="17 8 12 3 7 8"/>
                                 <line x1="12" y1="3" x2="12" y2="15"/>
                             </svg>
-                            Analyze Your Portfolio — Free
+                            Upload Files
                         </button>
-                        <a href="#landingSections" class="hero-cta-link">
-                            See how it works
+                        <button class="entry-method-btn" data-method="manual" onclick="switchEntryMethod('manual')">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <line x1="5" y1="12" x2="19" y2="12"/>
-                                <polyline points="12 5 19 12 12 19"/>
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
                             </svg>
-                        </a>
+                            Manual
+                        </button>
+                        <button class="entry-method-btn" data-method="connect" onclick="switchEntryMethod('connect')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="2" y="4" width="20" height="16" rx="2"/>
+                                <path d="M7 15h0M2 9h20"/>
+                            </svg>
+                            Connect
+                        </button>
                     </div>
-                    <p class="hero-trust-line">✓ Free forever · No credit card · No signup required · 100% private</p>
-                </div>
 
-                <!-- Right Column: Upload Widget -->
-                <div class="hero-upload-wrapper" data-hero-animate style="animation-delay: 0.35s;">
-                    <div class="hero-upload-glow"></div>
-                    <div class="hero-upload-card">
-                        <!-- Entry Method Selector -->
-                        <div class="entry-methods" style="margin-bottom: 20px;">
-                            <button class="entry-method-btn active" data-method="upload" onclick="switchEntryMethod('upload')">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                                    <polyline points="17 8 12 3 7 8"/>
-                                    <line x1="12" y1="3" x2="12" y2="15"/>
-                                </svg>
-                                Upload Files
-                            </button>
-                            <button class="entry-method-btn" data-method="manual" onclick="switchEntryMethod('manual')">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-                                </svg>
-                                Manual
-                            </button>
-                            <button class="entry-method-btn" data-method="connect" onclick="switchEntryMethod('connect')">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <rect x="2" y="4" width="20" height="16" rx="2"/>
-                                    <path d="M7 15h0M2 9h20"/>
-                                </svg>
-                                Connect
-                            </button>
-                        </div>
-
-                        <main id="main-content">
+                    <main id="main-content">
                         <!-- Error message container is now replaced by toast system -->
                         <div class="error-message" id="errorMessage" role="alert" aria-live="polite"></div>
 
@@ -11099,49 +10931,18 @@
                     <!-- Populated dynamically -->
                 </div>
             </div>
-        </div><!-- End uploadSection -->
-                    </div><!-- End hero-upload-card -->
-                </div><!-- End hero-upload-wrapper -->
-            </div><!-- End hero-grid -->
+                </div><!-- End uploadSection -->
 
-            <!-- Brokerage Logo Strip (Social Proof) - Inside Hero -->
-            <div class="brokerage-strip">
-                <p class="brokerage-strip-label">Works with statements from</p>
-                <div class="brokerage-strip-logos">
-                    <div class="brokerage-strip-track">
-                        <!-- First set -->
-                        <div class="brokerage-logo"><img src="https://logo.clearbit.com/schwab.com" alt="Schwab" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=schwab.com&sz=128';"><span class="brokerage-name">Schwab</span></div>
-                        <div class="brokerage-logo"><img src="https://logo.clearbit.com/fidelity.com" alt="Fidelity" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=fidelity.com&sz=128';"><span class="brokerage-name">Fidelity</span></div>
-                        <div class="brokerage-logo"><img src="https://logo.clearbit.com/vanguard.com" alt="Vanguard" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=vanguard.com&sz=128';"><span class="brokerage-name">Vanguard</span></div>
-                        <div class="brokerage-logo"><img src="https://logo.clearbit.com/etrade.com" alt="E*TRADE" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=etrade.com&sz=128';"><span class="brokerage-name">E*TRADE</span></div>
-                        <div class="brokerage-logo"><img src="https://logo.clearbit.com/tdameritrade.com" alt="TD Ameritrade" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=tdameritrade.com&sz=128';"><span class="brokerage-name">TD Ameritrade</span></div>
-                        <div class="brokerage-logo"><img src="https://logo.clearbit.com/robinhood.com" alt="Robinhood" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=robinhood.com&sz=128';"><span class="brokerage-name">Robinhood</span></div>
-                        <div class="brokerage-logo"><img src="https://logo.clearbit.com/ml.com" alt="Merrill" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=ml.com&sz=128';"><span class="brokerage-name">Merrill</span></div>
-                        <div class="brokerage-logo"><img src="https://logo.clearbit.com/interactivebrokers.com" alt="Interactive Brokers" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=interactivebrokers.com&sz=128';"><span class="brokerage-name">Interactive Brokers</span></div>
-                        <div class="brokerage-logo"><img src="https://logo.clearbit.com/ally.com" alt="Ally Invest" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=ally.com&sz=128';"><span class="brokerage-name">Ally Invest</span></div>
-                        <div class="brokerage-logo"><img src="https://logo.clearbit.com/webull.com" alt="Webull" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=webull.com&sz=128';"><span class="brokerage-name">Webull</span></div>
-                        <div class="brokerage-logo"><img src="https://logo.clearbit.com/sofi.com" alt="SoFi" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=sofi.com&sz=128';"><span class="brokerage-name">SoFi</span></div>
-                        <div class="brokerage-logo"><img src="https://logo.clearbit.com/betterment.com" alt="Betterment" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=betterment.com&sz=128';"><span class="brokerage-name">Betterment</span></div>
-                        <!-- Duplicate for seamless loop -->
-                        <div class="brokerage-logo"><img src="https://logo.clearbit.com/schwab.com" alt="Schwab" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=schwab.com&sz=128';"><span class="brokerage-name">Schwab</span></div>
-                        <div class="brokerage-logo"><img src="https://logo.clearbit.com/fidelity.com" alt="Fidelity" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=fidelity.com&sz=128';"><span class="brokerage-name">Fidelity</span></div>
-                        <div class="brokerage-logo"><img src="https://logo.clearbit.com/vanguard.com" alt="Vanguard" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=vanguard.com&sz=128';"><span class="brokerage-name">Vanguard</span></div>
-                        <div class="brokerage-logo"><img src="https://logo.clearbit.com/etrade.com" alt="E*TRADE" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=etrade.com&sz=128';"><span class="brokerage-name">E*TRADE</span></div>
-                        <div class="brokerage-logo"><img src="https://logo.clearbit.com/tdameritrade.com" alt="TD Ameritrade" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=tdameritrade.com&sz=128';"><span class="brokerage-name">TD Ameritrade</span></div>
-                        <div class="brokerage-logo"><img src="https://logo.clearbit.com/robinhood.com" alt="Robinhood" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=robinhood.com&sz=128';"><span class="brokerage-name">Robinhood</span></div>
-                        <div class="brokerage-logo"><img src="https://logo.clearbit.com/ml.com" alt="Merrill" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=ml.com&sz=128';"><span class="brokerage-name">Merrill</span></div>
-                        <div class="brokerage-logo"><img src="https://logo.clearbit.com/interactivebrokers.com" alt="Interactive Brokers" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=interactivebrokers.com&sz=128';"><span class="brokerage-name">Interactive Brokers</span></div>
-                        <div class="brokerage-logo"><img src="https://logo.clearbit.com/ally.com" alt="Ally Invest" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=ally.com&sz=128';"><span class="brokerage-name">Ally Invest</span></div>
-                        <div class="brokerage-logo"><img src="https://logo.clearbit.com/webull.com" alt="Webull" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=webull.com&sz=128';"><span class="brokerage-name">Webull</span></div>
-                        <div class="brokerage-logo"><img src="https://logo.clearbit.com/sofi.com" alt="SoFi" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=sofi.com&sz=128';"><span class="brokerage-name">SoFi</span></div>
-                        <div class="brokerage-logo"><img src="https://logo.clearbit.com/betterment.com" alt="Betterment" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=betterment.com&sz=128';"><span class="brokerage-name">Betterment</span></div>
+                <!-- Saved Portfolios Section in Empty State -->
+                <div class="saved-portfolios-preview" id="savedPortfoliosPreview">
+                    <div class="divider-text">or load a saved portfolio</div>
+                    <div id="savedPortfoliosGrid" class="saved-portfolios-grid">
+                        <!-- Populated dynamically -->
                     </div>
                 </div>
-                <p class="brokerage-strip-more">+ 50 more brokerages supported</p>
-            </div>
-
-            </div><!-- End hero-inner -->
-        </section><!-- End hero-section -->
+                </div><!-- End app-upload-card -->
+            </div><!-- End empty-state-content -->
+        </div><!-- End appEmptyState -->
 
         <!-- Progress -->
         <div class="progress-section" id="progressSection">
@@ -11266,19 +11067,8 @@
             </div>
         </div>
 
-        <!-- Dashboard (moved to app.html - placeholder for landing redirect) -->
-        <div class="dashboard" id="dashboard" style="display: none !important;">
-            <div class="dashboard-redirect" style="text-align: center; padding: 48px;">
-                <p>Loading dashboard...</p>
-                <script>
-                    // Redirect to app.html when dashboard is accessed on landing
-                    if (window.location.hash === '#dashboard' || document.getElementById('dashboard').style.display === 'block') {
-                        window.location.href = '/app.html';
-                    }
-                </script>
-            </div>
-            <!-- Original dashboard content hidden - moved to app.html -->
-            <div style="display: none;">
+        <!-- Dashboard -->
+        <div class="dashboard" id="dashboard">
             <div class="dashboard-header">
                 <div class="dashboard-title">
                     <div class="dashboard-logo">
@@ -12382,10 +12172,8 @@
                     </div>
                 </div>
             </div>
-            </div><!-- End hidden dashboard content -->
         </div>
 
-        <!-- Saved Portfolios Section - Hidden on landing (moved to app.html) -->
         <!-- Saved Portfolios Section (visible when logged in) -->
         <div class="saved-portfolios" id="savedPortfoliosSection" style="display: none;">
             <div class="saved-portfolios-header">
@@ -12417,329 +12205,6 @@
         </div>
 
         </main><!-- End main content -->
-
-        <!-- Wave Divider: Hero area to How It Works (inverted curve) -->
-        <div class="section-divider hero-to-dark">
-            <svg viewBox="0 0 1440 80" fill="none" preserveAspectRatio="none">
-                <path d="M0,80 C360,0 1080,0 1440,80 L1440,80 L0,80 Z" fill="#0A2540"/>
-            </svg>
-        </div>
-
-        <!-- Landing Page Sections -->
-        <div class="landing-sections" id="landingSections">
-
-            <!-- How It Works Section -->
-            <section class="landing-section how-it-works" data-animate>
-                <div class="container">
-                    <div class="section-badge">Simple 3-Step Process</div>
-                    <h2 class="section-heading">How It Works</h2>
-                    <p class="section-subheading">Get professional portfolio analytics in three simple steps</p>
-                    <div class="how-it-works-grid" data-animate-child>
-                        <div class="step-card">
-                            <div class="step-number">1</div>
-                            <div class="step-icon">
-                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                                    <polyline points="17 8 12 3 7 8"/>
-                                    <line x1="12" y1="3" x2="12" y2="15"/>
-                                </svg>
-                            </div>
-                            <h3 class="step-title">Upload Your Statement</h3>
-                            <p class="step-description">Drag and drop your brokerage PDF or CSV. We support Schwab, Fidelity, Vanguard, and 50+ other brokerages.</p>
-                        </div>
-                        <div class="step-connector">
-                            <svg width="40" height="2"><line x1="0" y1="1" x2="40" y2="1" stroke="rgba(99,91,255,0.3)" stroke-width="2" stroke-dasharray="6,4"/></svg>
-                        </div>
-                        <div class="step-card">
-                            <div class="step-number">2</div>
-                            <div class="step-icon">
-                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                    <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
-                                </svg>
-                            </div>
-                            <h3 class="step-title">AI Analyzes Holdings</h3>
-                            <p class="step-description">Our engine extracts positions, fetches live prices, and runs sophisticated portfolio analytics in seconds.</p>
-                        </div>
-                        <div class="step-connector">
-                            <svg width="40" height="2"><line x1="0" y1="1" x2="40" y2="1" stroke="rgba(99,91,255,0.3)" stroke-width="2" stroke-dasharray="6,4"/></svg>
-                        </div>
-                        <div class="step-card">
-                            <div class="step-number">3</div>
-                            <div class="step-icon">
-                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                    <path d="M21.21 15.89A10 10 0 1 1 8 2.83"/>
-                                    <path d="M22 12A10 10 0 0 0 12 2v10z"/>
-                                </svg>
-                            </div>
-                            <h3 class="step-title">Get Actionable Insights</h3>
-                            <p class="step-description">View allocation breakdowns, risk metrics, fee analysis, and personalized recommendations.</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Wave Divider: How It Works to Preview -->
-            <div class="section-divider section-divider-inverted">
-                <svg viewBox="0 0 1440 60" preserveAspectRatio="none">
-                    <path d="M0,60 C360,0 1080,0 1440,60 L1440,60 L0,60 Z" fill="#0A2540"/>
-                </svg>
-            </div>
-
-            <!-- Sample Report Preview Section -->
-            <section class="landing-section preview-section" data-animate>
-                <div class="container">
-                    <div class="section-badge">Portfolio Intelligence</div>
-                    <h2 class="section-heading">See What's In Your Report</h2>
-                    <p class="section-subheading">Professional-grade analytics for investors and advisors — powered by AI</p>
-                    <div class="browser-frame">
-                        <div class="browser-header">
-                            <div class="browser-dots">
-                                <span class="browser-dot red"></span>
-                                <span class="browser-dot yellow"></span>
-                                <span class="browser-dot green"></span>
-                            </div>
-                            <div class="browser-url-bar">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                                    <path d="M9 12l2 2 4-4"/>
-                                </svg>
-                                statementscan.app/report
-                            </div>
-                        </div>
-                        <div class="browser-content">
-                            <div class="preview-grid">
-                        <div class="preview-card">
-                            <div class="preview-card-header">
-                                <h3>Asset Allocation</h3>
-                            </div>
-                            <div class="preview-card-body">
-                                <div class="pv-donut">
-                                    <div class="pv-donut-ring">
-                                        <span class="pv-donut-value">$847K</span>
-                                        <span class="pv-donut-label">Total Value</span>
-                                    </div>
-                                    <div class="pv-donut-legend">
-                                        <span class="pv-legend-item"><span class="pv-dot pv-dot-stocks"></span>Stocks 62%</span>
-                                        <span class="pv-legend-item"><span class="pv-dot pv-dot-bonds"></span>Bonds 24%</span>
-                                        <span class="pv-legend-item"><span class="pv-dot pv-dot-cash"></span>Cash 14%</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="preview-card">
-                            <div class="preview-card-header">
-                                <h3>Risk Score</h3>
-                            </div>
-                            <div class="preview-card-body">
-                                <div class="pv-gauge">
-                                    <div class="pv-gauge-arc"></div>
-                                    <div class="pv-gauge-needle"></div>
-                                    <div class="pv-gauge-info">
-                                        <span class="pv-gauge-value">67</span>
-                                        <span class="pv-gauge-label">Moderate</span>
-                                    </div>
-                                    <div class="pv-gauge-scale">
-                                        <span>Conservative</span>
-                                        <span>Aggressive</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="preview-card">
-                            <div class="preview-card-header">
-                                <h3>Sector Exposure</h3>
-                            </div>
-                            <div class="preview-card-body">
-                                <div class="pv-bars">
-                                    <div class="pv-bar-row">
-                                        <span class="pv-bar-label">Technology</span>
-                                        <div class="pv-bar-track"><div class="pv-bar-fill" style="width: 100%;"></div></div>
-                                        <span class="pv-bar-value">32%</span>
-                                    </div>
-                                    <div class="pv-bar-row">
-                                        <span class="pv-bar-label">Healthcare</span>
-                                        <div class="pv-bar-track"><div class="pv-bar-fill" style="width: 56%;"></div></div>
-                                        <span class="pv-bar-value">18%</span>
-                                    </div>
-                                    <div class="pv-bar-row">
-                                        <span class="pv-bar-label">Financials</span>
-                                        <div class="pv-bar-track"><div class="pv-bar-fill" style="width: 47%;"></div></div>
-                                        <span class="pv-bar-value">15%</span>
-                                    </div>
-                                    <div class="pv-bar-row">
-                                        <span class="pv-bar-label">Consumer</span>
-                                        <div class="pv-bar-track"><div class="pv-bar-fill" style="width: 38%;"></div></div>
-                                        <span class="pv-bar-value">12%</span>
-                                    </div>
-                                    <div class="pv-bar-row">
-                                        <span class="pv-bar-label">Other</span>
-                                        <div class="pv-bar-track"><div class="pv-bar-fill" style="width: 72%;"></div></div>
-                                        <span class="pv-bar-value">23%</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="preview-card">
-                            <div class="preview-card-header">
-                                <h3>Fee Analysis</h3>
-                            </div>
-                            <div class="preview-card-body">
-                                <div class="fee-mockup">
-                                    <div class="fee-stat">
-                                        <span class="fee-amount">$2,847</span>
-                                        <span class="fee-label">Annual Fees</span>
-                                    </div>
-                                    <div class="fee-breakdown">
-                                        <div class="fee-item warning">
-                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-                                                <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
-                                            </svg>
-                                            <span>ARKK: 0.75% expense ratio</span>
-                                        </div>
-                                        <div class="fee-item">
-                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-                                                <polyline points="22 4 12 14.01 9 11.01"/>
-                                            </svg>
-                                            <span>VOO: 0.03% expense ratio</span>
-                                        </div>
-                                    </div>
-                                    <div class="fee-savings">
-                                        <span>Potential Savings: <strong>$1,200/yr</strong></span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="preview-card">
-                            <div class="preview-card-header">
-                                <h3>Performance Analysis</h3>
-                            </div>
-                            <div class="preview-card-body">
-                                <div class="pv-performance">
-                                    <div class="pv-perf-summary">
-                                        <div class="pv-perf-metric">
-                                            <span class="pv-perf-value positive">+18.4%</span>
-                                            <span class="pv-perf-label">Total Return</span>
-                                        </div>
-                                        <div class="pv-perf-metric">
-                                            <span class="pv-perf-value">+12.1%</span>
-                                            <span class="pv-perf-label">vs. S&P 500</span>
-                                        </div>
-                                        <div class="pv-perf-metric">
-                                            <span class="pv-perf-value">1.32</span>
-                                            <span class="pv-perf-label">Sharpe Ratio</span>
-                                        </div>
-                                    </div>
-                                    <div class="pv-perf-chart">
-                                        <div class="pv-perf-bars">
-                                            <div class="pv-perf-bar positive" style="height: 60%;" title="Jan +3.2%"></div>
-                                            <div class="pv-perf-bar negative" style="height: 20%;" title="Feb -1.1%"></div>
-                                            <div class="pv-perf-bar positive" style="height: 45%;" title="Mar +2.4%"></div>
-                                            <div class="pv-perf-bar positive" style="height: 75%;" title="Apr +4.1%"></div>
-                                            <div class="pv-perf-bar negative" style="height: 35%;" title="May -1.8%"></div>
-                                            <div class="pv-perf-bar positive" style="height: 55%;" title="Jun +2.9%"></div>
-                                            <div class="pv-perf-bar positive" style="height: 40%;" title="Jul +2.1%"></div>
-                                            <div class="pv-perf-bar positive" style="height: 80%;" title="Aug +4.5%"></div>
-                                            <div class="pv-perf-bar negative" style="height: 15%;" title="Sep -0.7%"></div>
-                                            <div class="pv-perf-bar positive" style="height: 50%;" title="Oct +2.6%"></div>
-                                            <div class="pv-perf-bar positive" style="height: 65%;" title="Nov +3.5%"></div>
-                                            <div class="pv-perf-bar positive" style="height: 30%;" title="Dec +1.5%"></div>
-                                        </div>
-                                        <span class="pv-perf-chart-label">Monthly Returns (12 mo.)</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div><!-- End preview-grid -->
-                        </div><!-- End browser-content -->
-                    </div><!-- End browser-frame -->
-                </div>
-            </section>
-
-            <!-- Wave Divider: Preview to Value Props -->
-            <div class="section-divider section-divider-light-to-dark">
-                <svg viewBox="0 0 1440 80" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
-                    <path d="M0,0 C360,80 1080,80 1440,0 L1440,80 L0,80 Z" fill="#0A2540"/>
-                </svg>
-            </div>
-
-            <!-- Value Props Section -->
-            <section class="landing-section value-props" data-animate>
-                <div class="container">
-                    <h2 class="section-heading">Why Statement Scan?</h2>
-                    <p class="section-subheading">Built for investors who want clarity, not complexity</p>
-                    <div class="value-props-grid" data-animate-child>
-                        <div class="value-card">
-                            <div class="value-icon">
-                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                    <circle cx="11" cy="11" r="8"/>
-                                    <path d="M21 21l-4.35-4.35"/>
-                                    <path d="M11 8v6M8 11h6"/>
-                                </svg>
-                            </div>
-                            <h3 class="value-title">Hidden Fee Detection</h3>
-                            <p class="value-description">Instantly spot high-cost funds eating into your returns. We analyze expense ratios across all your holdings.</p>
-                        </div>
-                        <div class="value-card">
-                            <div class="value-icon">
-                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                    <path d="M3 3v18h18"/>
-                                    <path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/>
-                                </svg>
-                            </div>
-                            <h3 class="value-title">Benchmark Comparison</h3>
-                            <p class="value-description">See how your portfolio stacks up against the S&P 500, target-date funds, and custom benchmarks.</p>
-                        </div>
-                        <div class="value-card">
-                            <div class="value-icon">
-                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                                    <path d="M9 12l2 2 4-4"/>
-                                </svg>
-                            </div>
-                            <h3 class="value-title">Risk Analysis</h3>
-                            <p class="value-description">Understand your true risk exposure with volatility metrics, concentration warnings, and scenario analysis.</p>
-                        </div>
-                        <div class="value-card">
-                            <div class="value-icon">
-                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                                    <circle cx="12" cy="16" r="1"/>
-                                </svg>
-                            </div>
-                            <h3 class="value-title">Privacy First</h3>
-                            <p class="value-description">Your data stays yours. We never store your statements or sell your information. Analyze locally or delete anytime.</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Wave Divider: Value Props to page background (before CTA) -->
-            <div class="section-divider section-divider-dark-to-light">
-                <svg viewBox="0 0 1440 80" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
-                    <path d="M0,0 C360,80 1080,80 1440,0 L1440,80 L0,80 Z" fill="#f6f9fc"/>
-                </svg>
-            </div>
-
-            <!-- CTA Section -->
-            <section class="landing-section cta-section">
-                <div class="container">
-                    <h2 class="cta-heading">Ready to see what's hiding in your portfolio?</h2>
-                    <p class="cta-subheading">Free analysis. No account required. Results in 30 seconds.</p>
-                    <button class="btn btn-primary btn-lg cta-button" onclick="scrollToUpload()">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                            <polyline points="17 8 12 3 7 8"/>
-                            <line x1="12" y1="3" x2="12" y2="15"/>
-                        </svg>
-                        Upload Your Statement
-                    </button>
-                </div>
-            </section>
-
-        </div><!-- End landing sections -->
 
         <!-- User Dashboard (shown when logged in) -->
         <section id="userDashboard" class="user-dashboard" style="display: none;">
@@ -13554,7 +13019,33 @@
         let visibleBenchmarks = { sp500: true, bonds: false, world: false, sixty_forty: false };
 
         // =============================================================================
-        // INDEXEDDB FOR FILE TRANSFER TO APP PAGE
+        // HASH-BASED TAB ROUTING (for deep linking)
+        // =============================================================================
+
+        const validTabs = ['allocation', 'insights', 'performance', 'sectors', 'risk',
+                          'holdings', 'dividends', 'geography', 'tax', 'alerts',
+                          'whatif', 'compare', 'watchlist', 'goals', 'news', 'earnings', 'tools'];
+
+        function initRouter() {
+            window.addEventListener('hashchange', handleRouteChange);
+            handleRouteChange();
+        }
+
+        function handleRouteChange() {
+            const hash = window.location.hash.slice(1) || 'allocation';
+            if (validTabs.includes(hash) && portfolioData) {
+                switchTab(hash);
+            }
+        }
+
+        function updateHash(tabName) {
+            if (validTabs.includes(tabName)) {
+                history.replaceState(null, null, '#' + tabName);
+            }
+        }
+
+        // =============================================================================
+        // INDEXEDDB FOR FILE TRANSFER FROM LANDING PAGE
         // =============================================================================
 
         function openUploadDB() {
@@ -13568,37 +13059,114 @@
             });
         }
 
-        async function handleLandingUpload(files) {
+        async function checkPendingUploads() {
             try {
                 const db = await openUploadDB();
-                const tx = db.transaction('files', 'readwrite');
+                const tx = db.transaction('files', 'readonly');
                 const store = tx.objectStore('files');
 
-                for (const file of files) {
-                    const buffer = await file.arrayBuffer();
-                    await new Promise((resolve, reject) => {
-                        const req = store.put({
-                            name: file.name,
-                            buffer: buffer,
-                            type: file.type,
-                            timestamp: Date.now()
-                        });
-                        req.onsuccess = resolve;
-                        req.onerror = reject;
-                    });
-                }
-
-                // Redirect to app page
-                window.location.href = '/app.html';
+                return new Promise((resolve, reject) => {
+                    const request = store.getAll();
+                    request.onsuccess = () => resolve(request.result);
+                    request.onerror = () => reject(request.error);
+                });
             } catch (e) {
-                console.error('Error storing files for transfer:', e);
-                // Fall back to processing on this page
-                processFilesLocally(files);
+                console.error('Error checking pending uploads:', e);
+                return [];
             }
         }
 
-        // Flag to use landing redirect behavior
-        let useLandingRedirect = true;
+        async function clearPendingUploads() {
+            try {
+                const db = await openUploadDB();
+                const tx = db.transaction('files', 'readwrite');
+                tx.objectStore('files').clear();
+            } catch (e) {
+                console.error('Error clearing pending uploads:', e);
+            }
+        }
+
+        async function processPendingUploads() {
+            const files = await checkPendingUploads();
+            if (files.length > 0) {
+                await clearPendingUploads();
+
+                // Hide empty state, show progress
+                const emptyState = document.getElementById('appEmptyState');
+                if (emptyState) emptyState.style.display = 'none';
+                showProgress();
+
+                // Process each file
+                for (const fileData of files) {
+                    const file = new File([fileData.buffer], fileData.name, { type: fileData.type });
+                    await processFile(file);
+                }
+            } else {
+                // Show empty state or dashboard based on saved portfolios
+                showAppEmptyState();
+            }
+        }
+
+        // =============================================================================
+        // APP HELPER FUNCTIONS
+        // =============================================================================
+
+        function showAppEmptyState() {
+            const emptyState = document.getElementById('appEmptyState');
+            const dashboard = document.getElementById('dashboard');
+
+            if (emptyState) emptyState.style.display = 'flex';
+            if (dashboard) dashboard.style.display = 'none';
+
+            // Load saved portfolios into the preview grid
+            loadSavedPortfoliosPreview();
+        }
+
+        function hideAppEmptyState() {
+            const emptyState = document.getElementById('appEmptyState');
+            if (emptyState) emptyState.style.display = 'none';
+        }
+
+        function showAppUpload() {
+            // Show the upload section within the empty state
+            const emptyState = document.getElementById('appEmptyState');
+            if (emptyState) {
+                emptyState.style.display = 'flex';
+                switchEntryMethod('upload');
+            }
+        }
+
+        function showSavedPortfolios() {
+            // Toggle saved portfolios section
+            const savedSection = document.getElementById('savedPortfoliosSection');
+            if (savedSection) {
+                savedSection.style.display = savedSection.style.display === 'none' ? 'block' : 'none';
+                loadSavedPortfolios();
+            }
+        }
+
+        async function loadSavedPortfoliosPreview() {
+            const grid = document.getElementById('savedPortfoliosGrid');
+            if (!grid) return;
+
+            try {
+                const saved = JSON.parse(localStorage.getItem('savedPortfolios') || '[]');
+                if (saved.length === 0) {
+                    grid.innerHTML = '<p style="color: var(--text-muted); font-size: 0.875rem;">No saved portfolios yet</p>';
+                    return;
+                }
+
+                grid.innerHTML = saved.slice(0, 4).map(p => `
+                    <div class="saved-portfolio-card" onclick="loadSavedPortfolio('${p.id}')" style="cursor: pointer; padding: 16px; background: white; border-radius: var(--radius-md); border: 1px solid var(--border); text-align: left;">
+                        <div style="font-weight: 600; margin-bottom: 4px;">${p.name || 'Unnamed Portfolio'}</div>
+                        <div style="font-size: 0.875rem; color: var(--text-muted);">${formatCurrency(p.totalValue || 0)}</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">${p.holdings?.length || 0} holdings</div>
+                    </div>
+                `).join('');
+            } catch (e) {
+                console.error('Error loading saved portfolios preview:', e);
+            }
+        }
 
         // =============================================================================
         // ENHANCED PROGRESS TRACKING SYSTEM
@@ -14441,8 +14009,6 @@
             const statusEl = document.getElementById('connectionStatus');
             const textEl = document.getElementById('connectionText');
 
-            if (!statusEl || !textEl) return;
-
             if (isOnline) {
                 statusEl.classList.remove('offline');
                 textEl.textContent = 'Online';
@@ -14482,8 +14048,6 @@
             const warningEl = document.getElementById('sessionWarning');
             const timeEl = document.getElementById('sessionTimeLeft');
 
-            if (!warningEl || !timeEl) return;
-
             warningEl.classList.add('show');
 
             let timeLeft = WARNING_BEFORE / 1000;
@@ -14500,8 +14064,7 @@
         }
 
         function hideSessionWarning() {
-            const warningEl = document.getElementById('sessionWarning');
-            if (warningEl) warningEl.classList.remove('show');
+            document.getElementById('sessionWarning').classList.remove('show');
         }
 
         function refreshSession() {
@@ -15531,8 +15094,7 @@
                 localStorage.setItem('authToken', authToken);
                 hideAuthModal();
                 updateAuthUI();
-                // Redirect to app after successful login
-                window.location.href = '/app.html';
+                loadSavedPortfolios();
             } catch (err) {
                 errorEl.textContent = 'Connection error. Please try again.';
                 errorEl.style.display = 'block';
@@ -15566,8 +15128,7 @@
                 localStorage.setItem('authToken', authToken);
                 hideAuthModal();
                 updateAuthUI();
-                // Redirect to app after successful registration
-                window.location.href = '/app.html';
+                loadSavedPortfolios();
             } catch (err) {
                 errorEl.textContent = 'Connection error. Please try again.';
                 errorEl.style.display = 'block';
@@ -17133,12 +16694,6 @@
 
             if (validFiles.length === 0) {
                 showError('Please select PDF or CSV files');
-                return;
-            }
-
-            // If on landing page, redirect to app with files stored in IndexedDB
-            if (useLandingRedirect && typeof handleLandingUpload === 'function') {
-                await handleLandingUpload(validFiles);
                 return;
             }
 
@@ -23185,6 +22740,43 @@
                     });
             });
         }
+
+        // =============================================================================
+        // APP INITIALIZATION
+        // =============================================================================
+
+        // Initialize app on load
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Initialize hash-based routing
+            initRouter();
+
+            // Check for pending uploads from landing page
+            await processPendingUploads();
+        });
+
+        // Update hash when switching tabs
+        const originalSwitchTab = typeof switchTab === 'function' ? switchTab : null;
+        if (originalSwitchTab) {
+            window.switchTabOriginal = originalSwitchTab;
+        }
+
+        function switchTabWithHash(tabName) {
+            if (window.switchTabOriginal) {
+                window.switchTabOriginal(tabName);
+            }
+            updateHash(tabName);
+        }
+
+        // Override switchTab to also update hash
+        window.addEventListener('load', () => {
+            if (typeof switchTab === 'function') {
+                const originalSwitch = switchTab;
+                window.switchTab = (tabName) => {
+                    originalSwitch(tabName);
+                    updateHash(tabName);
+                };
+            }
+        });
     </script>
 </body>
 </html>
