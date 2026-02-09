@@ -22754,25 +22754,12 @@
             await processPendingUploads();
         });
 
-        // Update hash when switching tabs
-        const originalSwitchTab = typeof switchTab === 'function' ? switchTab : null;
-        if (originalSwitchTab) {
-            window.switchTabOriginal = originalSwitchTab;
-        }
-
-        function switchTabWithHash(tabName) {
-            if (window.switchTabOriginal) {
-                window.switchTabOriginal(tabName);
-            }
-            updateHash(tabName);
-        }
-
-        // Override switchTab to also update hash
+        // Override switchTab to also update hash on tab changes
         window.addEventListener('load', () => {
             if (typeof switchTab === 'function') {
-                const originalSwitch = switchTab;
+                const _originalSwitchTab = switchTab;
                 window.switchTab = (tabName) => {
-                    originalSwitch(tabName);
+                    _originalSwitchTab(tabName);
                     updateHash(tabName);
                 };
             }
