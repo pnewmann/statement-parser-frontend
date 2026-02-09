@@ -5427,6 +5427,195 @@
             margin: 4px 0;
         }
 
+        /* User Dashboard */
+        .user-dashboard {
+            padding: 48px 0 80px;
+            min-height: calc(100vh - 72px);
+            background: var(--bg-secondary);
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .dashboard-welcome h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .dashboard-subtitle {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-bottom: 48px;
+        }
+
+        .dashboard-stat-card {
+            background: var(--bg-primary);
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            border: 1px solid var(--border);
+        }
+
+        .dashboard-stat-number {
+            display: block;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .dashboard-stat-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .dashboard-section {
+            margin-bottom: 48px;
+        }
+
+        .dashboard-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .dashboard-section-header h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .dashboard-section-header a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.875rem;
+        }
+
+        .dashboard-section-header a:hover {
+            text-decoration: underline;
+        }
+
+        .dashboard-portfolios-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .dashboard-portfolio-card {
+            background: var(--bg-primary);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+        }
+
+        .dashboard-portfolio-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-color: var(--primary);
+        }
+
+        .dashboard-portfolio-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .dashboard-portfolio-card-title {
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--text-primary);
+        }
+
+        .dashboard-portfolio-card-date {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .dashboard-portfolio-card-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .dashboard-portfolio-card-holdings {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        .dashboard-empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: var(--bg-primary);
+            border-radius: 12px;
+            border: 2px dashed var(--border);
+        }
+
+        .dashboard-empty-icon {
+            font-size: 3rem;
+            margin-bottom: 16px;
+        }
+
+        .dashboard-empty-state h3 {
+            font-size: 1.125rem;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .dashboard-empty-state p {
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        .dashboard-connected-accounts {
+            display: grid;
+            gap: 12px;
+        }
+
+        .dashboard-no-accounts {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            padding: 24px;
+            background: var(--bg-primary);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-stats {
+                grid-template-columns: 1fr;
+            }
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .dashboard-portfolios-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
         /* Saved Portfolios */
         .saved-portfolios {
             margin-top: 32px;
@@ -12541,6 +12730,67 @@
 
         </div><!-- End landing sections -->
 
+        <!-- User Dashboard (shown when logged in) -->
+        <section id="userDashboard" class="user-dashboard" style="display: none;">
+            <div class="container">
+                <!-- Welcome Header -->
+                <div class="dashboard-header">
+                    <div class="dashboard-welcome">
+                        <h1>Welcome back, <span id="dashboardUserName">User</span></h1>
+                        <p class="dashboard-subtitle">Manage your portfolios and analyze new statements</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="scrollToUpload(); hideUserDashboard();">
+                        + New Analysis
+                    </button>
+                </div>
+
+                <!-- Quick Stats Row -->
+                <div class="dashboard-stats">
+                    <div class="dashboard-stat-card">
+                        <span class="dashboard-stat-number" id="totalPortfoliosCount">0</span>
+                        <span class="dashboard-stat-label">Saved Portfolios</span>
+                    </div>
+                    <div class="dashboard-stat-card">
+                        <span class="dashboard-stat-number" id="connectedAccountsCount">0</span>
+                        <span class="dashboard-stat-label">Connected Accounts</span>
+                    </div>
+                    <div class="dashboard-stat-card">
+                        <span class="dashboard-stat-number" id="lastAnalysisDate">--</span>
+                        <span class="dashboard-stat-label">Last Analysis</span>
+                    </div>
+                </div>
+
+                <!-- Portfolios Grid -->
+                <div class="dashboard-section">
+                    <div class="dashboard-section-header">
+                        <h2>Your Portfolios</h2>
+                        <a href="#" onclick="scrollToUpload(); hideUserDashboard(); return false;">Add New</a>
+                    </div>
+                    <div id="dashboardPortfolios" class="dashboard-portfolios-grid">
+                        <!-- Populated dynamically -->
+                    </div>
+                    <div id="dashboardEmptyState" class="dashboard-empty-state" style="display: none;">
+                        <div class="dashboard-empty-icon">📊</div>
+                        <h3>No portfolios yet</h3>
+                        <p>Upload a brokerage statement to get started</p>
+                        <button class="btn btn-primary" onclick="scrollToUpload(); hideUserDashboard();">
+                            Upload Statement
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Connected Accounts -->
+                <div class="dashboard-section">
+                    <div class="dashboard-section-header">
+                        <h2>Connected Accounts</h2>
+                    </div>
+                    <div id="dashboardPlaidAccounts" class="dashboard-connected-accounts">
+                        <div class="dashboard-no-accounts">No accounts connected yet. Connect your brokerage via Plaid to automatically import holdings.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- Stripe-Style Footer -->
         <footer class="site-footer">
             <div class="footer-container">
@@ -15418,11 +15668,12 @@
                                 ${currentUser.email}
                             </div>
                             <div class="dropdown-divider"></div>
-                            <button class="dropdown-item" onclick="loadSavedPortfolios(); toggleUserDropdown();" role="menuitem">
+                            <button class="dropdown-item" onclick="showUserDashboard(); toggleUserDropdown();" role="menuitem">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;">
-                                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+                                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                                    <polyline points="9 22 9 12 15 12 15 22"/>
                                 </svg>
-                                My Portfolios
+                                Dashboard
                             </button>
                             <button class="dropdown-item" onclick="showSettingsModal(); toggleUserDropdown();" role="menuitem">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;">
@@ -15449,6 +15700,8 @@
                 updatePlaidUI();
                 // Start session timer when logged in
                 startSessionTimer();
+                // Show dashboard instead of marketing page
+                showUserDashboard();
             } else {
                 authSection.innerHTML = `
                     <button class="btn btn-secondary" onclick="showAuthModal()">Sign In</button>
@@ -15456,7 +15709,134 @@
                 saveBtn.style.display = 'none';
                 document.getElementById('savedPortfoliosSection').style.display = 'none';
                 document.getElementById('plaidSection').style.display = 'none';
+                // Hide dashboard and show landing
+                hideUserDashboard();
             }
+        }
+
+        // Dashboard Functions
+        function showUserDashboard() {
+            const dashboard = document.getElementById('userDashboard');
+            const landingSections = document.getElementById('landingSections');
+
+            if (dashboard && landingSections) {
+                landingSections.style.display = 'none';
+                dashboard.style.display = 'block';
+                updateDashboardContent();
+                window.scrollTo(0, 0);
+            }
+        }
+
+        function hideUserDashboard() {
+            const dashboard = document.getElementById('userDashboard');
+            const landingSections = document.getElementById('landingSections');
+
+            if (dashboard && landingSections) {
+                dashboard.style.display = 'none';
+                landingSections.style.display = 'block';
+            }
+        }
+
+        async function updateDashboardContent() {
+            // Update user name
+            const userName = document.getElementById('dashboardUserName');
+            if (userName && currentUser) {
+                const displayName = currentUser.name || currentUser.email.split('@')[0];
+                userName.textContent = displayName;
+            }
+
+            // Load and render portfolios
+            await renderDashboardPortfolios();
+
+            // Update stats
+            updateDashboardStats();
+        }
+
+        async function renderDashboardPortfolios() {
+            const container = document.getElementById('dashboardPortfolios');
+            const emptyState = document.getElementById('dashboardEmptyState');
+
+            if (!container || !authToken) return;
+
+            try {
+                const response = await fetch(`${API_URL}/portfolios`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+
+                if (!response.ok) throw new Error('Failed to load portfolios');
+
+                const portfolios = await response.json();
+
+                if (portfolios.length === 0) {
+                    container.style.display = 'none';
+                    emptyState.style.display = 'block';
+                    document.getElementById('totalPortfoliosCount').textContent = '0';
+                    return;
+                }
+
+                container.style.display = 'grid';
+                emptyState.style.display = 'none';
+
+                container.innerHTML = portfolios.map(p => `
+                    <div class="dashboard-portfolio-card" onclick="loadPortfolioFromDashboard('${p.id}')">
+                        <div class="dashboard-portfolio-card-header">
+                            <span class="dashboard-portfolio-card-title">${escapeHtml(p.name)}</span>
+                            <span class="dashboard-portfolio-card-date">${formatDashboardDate(p.created_at)}</span>
+                        </div>
+                        <div class="dashboard-portfolio-card-value">$${formatNumber(p.total_value || 0)}</div>
+                        <div class="dashboard-portfolio-card-holdings">${p.holdings_count || 0} holdings</div>
+                    </div>
+                `).join('');
+
+                // Update stat
+                document.getElementById('totalPortfoliosCount').textContent = portfolios.length;
+
+            } catch (error) {
+                console.error('Error loading dashboard portfolios:', error);
+                container.innerHTML = '<div class="dashboard-no-accounts">Error loading portfolios. Please try again.</div>';
+            }
+        }
+
+        function loadPortfolioFromDashboard(portfolioId) {
+            // Hide dashboard, then load portfolio
+            hideUserDashboard();
+            loadPortfolio(portfolioId);
+        }
+
+        function updateDashboardStats() {
+            // Connected accounts count (Plaid) - check if any plaid items exist
+            const plaidAccountsCount = document.querySelectorAll('.plaid-account-item').length;
+            const connectedCountEl = document.getElementById('connectedAccountsCount');
+            if (connectedCountEl) {
+                connectedCountEl.textContent = plaidAccountsCount;
+            }
+
+            // Last analysis date
+            const lastAnalysis = localStorage.getItem('lastAnalysisDate');
+            const lastAnalysisEl = document.getElementById('lastAnalysisDate');
+            if (lastAnalysisEl) {
+                lastAnalysisEl.textContent = lastAnalysis
+                    ? formatRelativeDate(lastAnalysis)
+                    : '--';
+            }
+        }
+
+        function formatDashboardDate(dateStr) {
+            if (!dateStr) return '';
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        }
+
+        function formatRelativeDate(dateStr) {
+            const date = new Date(dateStr);
+            const now = new Date();
+            const diffMs = now - date;
+            const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+            if (diffDays === 0) return 'Today';
+            if (diffDays === 1) return 'Yesterday';
+            if (diffDays < 7) return `${diffDays} days ago`;
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
         }
 
         function toggleUserDropdown() {
@@ -17629,6 +18009,9 @@
                 hideError();
                 await showDashboard();
 
+                // Track last analysis date
+                localStorage.setItem('lastAnalysisDate', new Date().toISOString());
+
                 // Complete progress
                 progressManager.complete();
 
@@ -17646,6 +18029,9 @@
             uploadSection.style.display = 'none';
             dashboard.style.display = 'block';
             hideLandingSections(); // Hide landing page when showing results
+            // Also hide user dashboard if visible
+            const userDashboard = document.getElementById('userDashboard');
+            if (userDashboard) userDashboard.style.display = 'none';
             document.getElementById('totalBadge').textContent = formatCurrency(portfolioData.total_value);
 
             // Chunked rendering for better perceived performance
