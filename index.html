@@ -13570,30 +13570,35 @@
 
         async function handleLandingUpload(files) {
             try {
+                // Read all file buffers first (before opening transaction)
+                const fileData = await Promise.all(files.map(async (file) => ({
+                    name: file.name,
+                    buffer: await file.arrayBuffer(),
+                    type: file.type,
+                    timestamp: Date.now()
+                })));
+
+                // Now store all files in IndexedDB
                 const db = await openUploadDB();
                 const tx = db.transaction('files', 'readwrite');
                 const store = tx.objectStore('files');
 
-                for (const file of files) {
-                    const buffer = await file.arrayBuffer();
-                    await new Promise((resolve, reject) => {
-                        const req = store.put({
-                            name: file.name,
-                            buffer: buffer,
-                            type: file.type,
-                            timestamp: Date.now()
-                        });
-                        req.onsuccess = resolve;
-                        req.onerror = reject;
-                    });
+                for (const data of fileData) {
+                    store.put(data);
                 }
+
+                // Wait for transaction to complete
+                await new Promise((resolve, reject) => {
+                    tx.oncomplete = resolve;
+                    tx.onerror = () => reject(tx.error);
+                });
 
                 // Redirect to app page
                 window.location.href = '/app.html';
             } catch (e) {
                 console.error('Error storing files for transfer:', e);
-                // Fall back to processing on this page
-                processFilesLocally(files);
+                // Fall back to redirecting anyway - app will show empty state
+                window.location.href = '/app.html';
             }
         }
 
