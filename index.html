@@ -434,7 +434,7 @@
             color: #8898AA;
         }
 
-        /* Get Started Button */
+        /* Create Account Button */
         .btn-get-started {
             background: #635BFF;
             color: white;
@@ -10464,7 +10464,7 @@
                             Sign In
                         </button>
                     </div>
-                    <button class="btn-get-started" onclick="scrollToUpload()">Get Started</button>
+                    <button class="btn-get-started" onclick="showAuthModal(); switchAuthTab('register');">Create Account</button>
                 </div>
             </div>
         </nav>
@@ -10604,7 +10604,7 @@
                     <!-- Actions -->
                     <div class="mobile-menu-actions">
                         <button class="btn btn-secondary" onclick="showAuthModal(); closeMobileMenu();">Sign In</button>
-                        <button class="btn-get-started" onclick="scrollToUpload(); closeMobileMenu();">Get Started</button>
+                        <button class="btn-get-started" onclick="showAuthModal(); switchAuthTab('register'); closeMobileMenu();">Create Account</button>
                     </div>
                 </div>
             </div>
