@@ -51,12 +51,12 @@
             --gradient-primary: linear-gradient(90deg, #635BFF, #A259FF);
 
             /* Spacing System - 8px base scale */
-            --section-padding-y: 96px;
-            --section-padding-y-sm: 72px;
-            --section-padding-y-lg: 120px;
+            --section-padding-y: 64px;
+            --section-padding-y-sm: 48px;
+            --section-padding-y-lg: 80px;
             --heading-gap: 16px;
             --content-gap: 56px;
-            --section-divider-height: 80px;
+            --section-divider-height: 60px;
         }
 
         @media (max-width: 768px) {
@@ -2679,7 +2679,7 @@
         /* ========== HERO SECTION - STRIPE-INSPIRED ========== */
         .hero-section {
             width: 100%;
-            padding: 80px 0 var(--section-padding-y);
+            padding: 48px 0 32px;
             position: relative;
             background:
                 radial-gradient(ellipse 80% 60% at 15% 45%, rgba(99, 91, 255, 0.1) 0%, transparent 60%),
@@ -2968,7 +2968,7 @@
         /* How It Works Section - Dark Bento Cards */
         .how-it-works {
             background: #0A2540;
-            padding: var(--section-padding-y) 0;
+            padding: 56px 0 64px;
             position: relative;
         }
 
@@ -4101,6 +4101,113 @@
         }
 
         /* Trust Section - Marquee */
+        /* Compact Brokerage Strip (moved above fold) */
+        .brokerage-strip {
+            background: transparent;
+            padding: 16px 24px 20px;
+            text-align: center;
+        }
+
+        .brokerage-strip-label {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #8899AA;
+            margin: 0 0 12px 0;
+        }
+
+        .brokerage-strip-logos {
+            overflow: hidden;
+            position: relative;
+            max-width: 1000px;
+            margin: 0 auto;
+            -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+            mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+        }
+
+        .brokerage-strip-track {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            animation: scrollLogosStrip 30s linear infinite;
+            width: max-content;
+        }
+
+        .brokerage-strip-track:hover {
+            animation-play-state: paused;
+        }
+
+        @keyframes scrollLogosStrip {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        .brokerage-strip-track .brokerage-logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+            opacity: 0.5;
+            transition: opacity 0.2s;
+        }
+
+        .brokerage-strip-track .brokerage-logo:hover {
+            opacity: 0.8;
+        }
+
+        .brokerage-strip-track .brokerage-logo-img {
+            width: 20px;
+            height: 20px;
+            object-fit: contain;
+        }
+
+        .brokerage-strip-track .brokerage-name {
+            font-size: 13px;
+            font-weight: 500;
+            color: #425466;
+            white-space: nowrap;
+        }
+
+        .brokerage-strip-more {
+            font-size: 12px;
+            color: #8899AA;
+            margin: 10px 0 0 0;
+        }
+
+        @media (max-width: 768px) {
+            .brokerage-strip {
+                padding: 12px 16px 16px;
+            }
+
+            .brokerage-strip-label {
+                font-size: 10px;
+                margin-bottom: 10px;
+            }
+
+            .brokerage-strip-track {
+                gap: 28px;
+            }
+
+            .brokerage-strip-track .brokerage-logo-img {
+                width: 18px;
+                height: 18px;
+            }
+
+            .brokerage-strip-track .brokerage-name {
+                font-size: 12px;
+            }
+
+            .brokerage-strip-more {
+                font-size: 11px;
+                margin-top: 8px;
+            }
+
+            .section-divider.hero-to-dark {
+                height: 48px;
+            }
+        }
+
         .trust-section {
             background: var(--bg-primary);
             text-align: center;
@@ -4108,16 +4215,15 @@
             overflow: hidden;
         }
 
-        /* Wave divider: Trust section (white) to How It Works (dark navy) */
-        .section-divider-light-to-dark-trust {
-            height: 80px;
-            margin: 0;
-            padding: 0;
-            background: #FFFFFF;
+        /* Wave divider: Hero area to How It Works (dark navy) */
+        .section-divider.hero-to-dark {
+            height: 60px;
+            background: transparent;
             line-height: 0;
             overflow: hidden;
         }
-        .section-divider-light-to-dark-trust svg {
+
+        .section-divider.hero-to-dark svg {
             width: 100%;
             height: 100%;
             display: block;
@@ -6619,9 +6725,23 @@
         }
 
         /* Light sections in dark mode */
-        :root[data-theme="dark"] .preview-section,
-        :root[data-theme="dark"] .trust-section {
+        :root[data-theme="dark"] .preview-section {
             background: var(--bg-primary);
+        }
+
+        /* Brokerage strip in dark mode */
+        :root[data-theme="dark"] .brokerage-strip-label,
+        :root[data-theme="dark"] .brokerage-strip-more {
+            color: #8899AA;
+        }
+
+        :root[data-theme="dark"] .brokerage-strip-track .brokerage-name {
+            color: var(--text-secondary);
+        }
+
+        :root[data-theme="dark"] .brokerage-strip-logos {
+            -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+            mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
         }
 
         :root[data-theme="dark"] .browser-frame {
@@ -9672,8 +9792,8 @@
             display: flex;
             justify-content: center;
             gap: 12px;
-            padding: 16px 24px;
-            background: var(--bg-primary);
+            padding: 8px 24px 12px;
+            background: transparent;
             border-radius: var(--radius-lg);
             margin-top: 0;
             margin-bottom: 0;
@@ -10287,11 +10407,11 @@
                                     <div class="dropdown-item-desc">Learn how Statement Scan analyzes your portfolio</div>
                                 </div>
                             </a>
-                            <a class="dropdown-item" role="menuitem" onclick="navScrollToSection('trustSection'); closeAllDropdowns();">
+                            <a class="dropdown-item" role="menuitem" onclick="scrollToUpload(); closeAllDropdowns();">
                                 <span class="dropdown-item-icon">🏦</span>
                                 <div class="dropdown-item-content">
                                     <div class="dropdown-item-title">Supported Brokerages</div>
-                                    <div class="dropdown-item-desc">See the full list of supported statement formats</div>
+                                    <div class="dropdown-item-desc">Upload from Schwab, Fidelity, Vanguard & 50+ more</div>
                                 </div>
                             </a>
                             <a class="dropdown-item" role="menuitem" onclick="navScrollToSection('valuePropsSection'); closeAllDropdowns();">
@@ -10443,11 +10563,11 @@
                                     <div class="dropdown-item-desc">Learn about the analysis process</div>
                                 </div>
                             </a>
-                            <a class="mobile-dropdown-item" onclick="navScrollToSection('trustSection'); closeMobileMenu();">
+                            <a class="mobile-dropdown-item" onclick="scrollToUpload(); closeMobileMenu();">
                                 <span class="dropdown-item-icon">🏦</span>
                                 <div class="dropdown-item-content">
                                     <div class="dropdown-item-title">Supported Brokerages</div>
-                                    <div class="dropdown-item-desc">Supported statement formats</div>
+                                    <div class="dropdown-item-desc">Schwab, Fidelity, Vanguard & 50+ more</div>
                                 </div>
                             </a>
                             <a class="mobile-dropdown-item" onclick="navScrollToSection('valuePropsSection'); closeMobileMenu();">
@@ -10787,6 +10907,42 @@
             </div><!-- End hero-grid -->
             </div><!-- End hero-inner -->
         </section><!-- End hero-section -->
+
+        <!-- Brokerage Logo Strip (Social Proof) -->
+        <div class="brokerage-strip">
+            <p class="brokerage-strip-label">Works with statements from</p>
+            <div class="brokerage-strip-logos">
+                <div class="brokerage-strip-track">
+                    <!-- First set -->
+                    <div class="brokerage-logo"><img src="https://logo.clearbit.com/schwab.com" alt="Schwab" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=schwab.com&sz=128';"><span class="brokerage-name">Schwab</span></div>
+                    <div class="brokerage-logo"><img src="https://logo.clearbit.com/fidelity.com" alt="Fidelity" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=fidelity.com&sz=128';"><span class="brokerage-name">Fidelity</span></div>
+                    <div class="brokerage-logo"><img src="https://logo.clearbit.com/vanguard.com" alt="Vanguard" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=vanguard.com&sz=128';"><span class="brokerage-name">Vanguard</span></div>
+                    <div class="brokerage-logo"><img src="https://logo.clearbit.com/etrade.com" alt="E*TRADE" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=etrade.com&sz=128';"><span class="brokerage-name">E*TRADE</span></div>
+                    <div class="brokerage-logo"><img src="https://logo.clearbit.com/tdameritrade.com" alt="TD Ameritrade" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=tdameritrade.com&sz=128';"><span class="brokerage-name">TD Ameritrade</span></div>
+                    <div class="brokerage-logo"><img src="https://logo.clearbit.com/robinhood.com" alt="Robinhood" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=robinhood.com&sz=128';"><span class="brokerage-name">Robinhood</span></div>
+                    <div class="brokerage-logo"><img src="https://logo.clearbit.com/ml.com" alt="Merrill" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=ml.com&sz=128';"><span class="brokerage-name">Merrill</span></div>
+                    <div class="brokerage-logo"><img src="https://logo.clearbit.com/interactivebrokers.com" alt="Interactive Brokers" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=interactivebrokers.com&sz=128';"><span class="brokerage-name">Interactive Brokers</span></div>
+                    <div class="brokerage-logo"><img src="https://logo.clearbit.com/ally.com" alt="Ally Invest" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=ally.com&sz=128';"><span class="brokerage-name">Ally Invest</span></div>
+                    <div class="brokerage-logo"><img src="https://logo.clearbit.com/webull.com" alt="Webull" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=webull.com&sz=128';"><span class="brokerage-name">Webull</span></div>
+                    <div class="brokerage-logo"><img src="https://logo.clearbit.com/sofi.com" alt="SoFi" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=sofi.com&sz=128';"><span class="brokerage-name">SoFi</span></div>
+                    <div class="brokerage-logo"><img src="https://logo.clearbit.com/betterment.com" alt="Betterment" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=betterment.com&sz=128';"><span class="brokerage-name">Betterment</span></div>
+                    <!-- Duplicate for seamless loop -->
+                    <div class="brokerage-logo"><img src="https://logo.clearbit.com/schwab.com" alt="Schwab" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=schwab.com&sz=128';"><span class="brokerage-name">Schwab</span></div>
+                    <div class="brokerage-logo"><img src="https://logo.clearbit.com/fidelity.com" alt="Fidelity" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=fidelity.com&sz=128';"><span class="brokerage-name">Fidelity</span></div>
+                    <div class="brokerage-logo"><img src="https://logo.clearbit.com/vanguard.com" alt="Vanguard" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=vanguard.com&sz=128';"><span class="brokerage-name">Vanguard</span></div>
+                    <div class="brokerage-logo"><img src="https://logo.clearbit.com/etrade.com" alt="E*TRADE" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=etrade.com&sz=128';"><span class="brokerage-name">E*TRADE</span></div>
+                    <div class="brokerage-logo"><img src="https://logo.clearbit.com/tdameritrade.com" alt="TD Ameritrade" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=tdameritrade.com&sz=128';"><span class="brokerage-name">TD Ameritrade</span></div>
+                    <div class="brokerage-logo"><img src="https://logo.clearbit.com/robinhood.com" alt="Robinhood" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=robinhood.com&sz=128';"><span class="brokerage-name">Robinhood</span></div>
+                    <div class="brokerage-logo"><img src="https://logo.clearbit.com/ml.com" alt="Merrill" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=ml.com&sz=128';"><span class="brokerage-name">Merrill</span></div>
+                    <div class="brokerage-logo"><img src="https://logo.clearbit.com/interactivebrokers.com" alt="Interactive Brokers" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=interactivebrokers.com&sz=128';"><span class="brokerage-name">Interactive Brokers</span></div>
+                    <div class="brokerage-logo"><img src="https://logo.clearbit.com/ally.com" alt="Ally Invest" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=ally.com&sz=128';"><span class="brokerage-name">Ally Invest</span></div>
+                    <div class="brokerage-logo"><img src="https://logo.clearbit.com/webull.com" alt="Webull" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=webull.com&sz=128';"><span class="brokerage-name">Webull</span></div>
+                    <div class="brokerage-logo"><img src="https://logo.clearbit.com/sofi.com" alt="SoFi" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=sofi.com&sz=128';"><span class="brokerage-name">SoFi</span></div>
+                    <div class="brokerage-logo"><img src="https://logo.clearbit.com/betterment.com" alt="Betterment" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=betterment.com&sz=128';"><span class="brokerage-name">Betterment</span></div>
+                </div>
+            </div>
+            <p class="brokerage-strip-more">+ 50 more brokerages supported</p>
+        </div>
 
         <!-- Progress -->
         <div class="progress-section" id="progressSection">
@@ -12050,59 +12206,15 @@
 
         </main><!-- End main content -->
 
+        <!-- Wave Divider: Hero area to How It Works -->
+        <div class="section-divider hero-to-dark">
+            <svg viewBox="0 0 1440 80" fill="none" preserveAspectRatio="none">
+                <path d="M0,0 C360,80 1080,80 1440,0 L1440,80 L0,80 Z" fill="#0A2540"/>
+            </svg>
+        </div>
+
         <!-- Landing Page Sections -->
         <div class="landing-sections" id="landingSections">
-
-            <!-- Trust Section - Marquee (Social Proof) -->
-            <section class="landing-section trust-section" id="trustSection">
-                <div class="container">
-                    <p class="trust-label">Works with statements from</p>
-                </div>
-                <div class="marquee-container">
-                    <div class="marquee-track">
-                        <!-- First set of logos -->
-                        <div class="brokerage-logos">
-                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/schwab.com" alt="Schwab" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=schwab.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Schwab</span></div>
-                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/fidelity.com" alt="Fidelity" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=fidelity.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Fidelity</span></div>
-                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/vanguard.com" alt="Vanguard" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=vanguard.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Vanguard</span></div>
-                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/etrade.com" alt="E*TRADE" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=etrade.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">E*TRADE</span></div>
-                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/tdameritrade.com" alt="TD Ameritrade" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=tdameritrade.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">TD Ameritrade</span></div>
-                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/robinhood.com" alt="Robinhood" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=robinhood.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Robinhood</span></div>
-                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/ml.com" alt="Merrill" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=ml.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Merrill</span></div>
-                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/interactivebrokers.com" alt="Interactive Brokers" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=interactivebrokers.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Interactive Brokers</span></div>
-                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/ally.com" alt="Ally Invest" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=ally.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Ally Invest</span></div>
-                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/webull.com" alt="Webull" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=webull.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Webull</span></div>
-                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/sofi.com" alt="SoFi" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=sofi.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">SoFi</span></div>
-                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/betterment.com" alt="Betterment" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=betterment.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Betterment</span></div>
-                        </div>
-                        <!-- Duplicate for seamless loop -->
-                        <div class="brokerage-logos">
-                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/schwab.com" alt="Schwab" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=schwab.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Schwab</span></div>
-                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/fidelity.com" alt="Fidelity" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=fidelity.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Fidelity</span></div>
-                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/vanguard.com" alt="Vanguard" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=vanguard.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Vanguard</span></div>
-                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/etrade.com" alt="E*TRADE" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=etrade.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">E*TRADE</span></div>
-                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/tdameritrade.com" alt="TD Ameritrade" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=tdameritrade.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">TD Ameritrade</span></div>
-                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/robinhood.com" alt="Robinhood" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=robinhood.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Robinhood</span></div>
-                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/ml.com" alt="Merrill" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=ml.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Merrill</span></div>
-                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/interactivebrokers.com" alt="Interactive Brokers" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=interactivebrokers.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Interactive Brokers</span></div>
-                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/ally.com" alt="Ally Invest" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=ally.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Ally Invest</span></div>
-                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/webull.com" alt="Webull" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=webull.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Webull</span></div>
-                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/sofi.com" alt="SoFi" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=sofi.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">SoFi</span></div>
-                            <div class="brokerage-logo"><img src="https://logo.clearbit.com/betterment.com" alt="Betterment" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=betterment.com&sz=128'; this.onerror=function(){this.style.display='none'; this.nextElementSibling.classList.add('fallback-visible')};"><span class="brokerage-name">Betterment</span></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="container">
-                    <p class="trust-note">+ 50 more brokerages supported</p>
-                </div>
-            </section>
-
-            <!-- Wave Divider: Trust (white) to How It Works (dark navy) -->
-            <div class="section-divider section-divider-light-to-dark-trust">
-                <svg viewBox="0 0 1440 80" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
-                    <path d="M0,0 C360,80 1080,80 1440,0 L1440,80 L0,80 Z" fill="#0A2540"/>
-                </svg>
-            </div>
 
             <!-- How It Works Section -->
             <section class="landing-section how-it-works" data-animate>
@@ -12445,7 +12557,7 @@
                         <div class="footer-nav-group">
                             <span class="footer-nav-label">Resources</span>
                             <a href="#" onclick="navScrollToSection('howItWorksSection'); return false;">How It Works</a>
-                            <a href="#" onclick="navScrollToSection('trustSection'); return false;">Supported Brokerages</a>
+                            <a href="#" onclick="scrollToUpload(); return false;">Upload Statement</a>
                         </div>
                         <div class="footer-nav-group">
                             <span class="footer-nav-label">Legal</span>
@@ -13558,7 +13670,6 @@
                 'howItWorksSection': '.how-it-works',
                 'previewSection': '.preview-section',
                 'valuePropsSection': '.value-props',
-                'trustSection': '.trust-section',
                 'ctaSection': '.cta-section'
             };
 
@@ -16772,84 +16883,83 @@
 
         // Brokerage domain mapping for favicon API
         // Client-side brokerage detection from PDF/CSV text content
+        // Helper: word-boundary-aware phrase matching
+        function hasPhrase(text, phrase) {
+            const escaped = phrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            const regex = new RegExp(`\\b${escaped}\\b`, 'i');
+            return regex.test(text);
+        }
+
+        // Helper: count occurrences of a phrase
+        function countPhrase(text, phrase) {
+            const escaped = phrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            const regex = new RegExp(`\\b${escaped}\\b`, 'gi');
+            return (text.match(regex) || []).length;
+        }
+
         function detectBrokerage(text) {
             if (!text) return null;
             const t = text.toLowerCase();
 
-            // [pattern, brokerage_id] - more specific patterns first
-            const patterns = [
-                // Major brokerages
+            // PHASE 1: Exact / highly-specific matches (first-match-wins for these)
+            const exactMatches = [
+                // Major brokerages - multi-word patterns that are unambiguous
                 ['charles schwab', 'schwab'],
                 ['schwab & co', 'schwab'],
                 ['schwab one', 'schwab'],
                 ['td ameritrade', 'td_ameritrade'],
-                ['ameritrade', 'td_ameritrade'],
                 ['fidelity investments', 'fidelity'],
                 ['fidelity brokerage', 'fidelity'],
+                ['fidelity netbenefits', 'fidelity'],
                 ['national financial services', 'fidelity'],
                 ['vanguard group', 'vanguard'],
                 ['vanguard brokerage', 'vanguard'],
                 ['vanguard marketing', 'vanguard'],
-                ['e*trade', 'etrade'],
-                ['e trade', 'etrade'],
+                ['vanguard retirement', 'vanguard'],
+                ['e*trade securities', 'etrade'],
                 ['etrade securities', 'etrade'],
-                ['morgan stanley', 'morgan_stanley'],
                 ['morgan stanley smith barney', 'morgan_stanley'],
                 ['morgan stanley wealth', 'morgan_stanley'],
+                ['morgan stanley', 'morgan_stanley'],
                 ['ms wealth management', 'morgan_stanley'],
-                ['robinhood', 'robinhood'],
                 ['robinhood markets', 'robinhood'],
                 ['robinhood securities', 'robinhood'],
                 ['merrill lynch', 'merrill'],
                 ['merrill edge', 'merrill'],
                 ['merrill, pierce', 'merrill'],
                 ['interactive brokers', 'interactive_brokers'],
-                ['ibkr', 'interactive_brokers'],
-                ['stifel', 'stifel'],
                 ['stifel nicolaus', 'stifel'],
                 ['stifel, nicolaus', 'stifel'],
                 ['stifel financial', 'stifel'],
-
-                // Mid-size / online brokerages
                 ['ally invest', 'ally'],
                 ['ally financial', 'ally'],
-                ['webull', 'webull'],
                 ['webull financial', 'webull'],
                 ['sofi securities', 'sofi'],
                 ['sofi invest', 'sofi'],
                 ['sofi wealth', 'sofi'],
-                ['betterment', 'betterment'],
                 ['betterment securities', 'betterment'],
-                ['wealthfront', 'wealthfront'],
                 ['wealthfront brokerage', 'wealthfront'],
                 ['j.p. morgan', 'jpmorgan'],
                 ['jp morgan', 'jpmorgan'],
                 ['j.p.morgan', 'jpmorgan'],
-                ['jpmorgan', 'jpmorgan'],
                 ['chase investment', 'jpmorgan'],
                 ['wells fargo advisors', 'wells_fargo'],
                 ['wells fargo clearing', 'wells_fargo'],
                 ['wells fargo', 'wells_fargo'],
-                ['usaa', 'usaa'],
-                ['firstrade', 'firstrade'],
                 ['firstrade securities', 'firstrade'],
-                ['tastytrade', 'tastytrade'],
                 ['tastyworks', 'tastytrade'],
                 ['public.com', 'public_com'],
                 ['public holdings', 'public_com'],
                 ['m1 finance', 'm1'],
                 ['m1 holdings', 'm1'],
-
-                // Clearing firms / custodians
-                ['pershing', 'pershing'],
                 ['pershing llc', 'pershing'],
                 ['pershing advisor', 'pershing'],
                 ['apex clearing', 'apex'],
                 ['apex fintech', 'apex'],
                 ['lpl financial', 'lpl'],
                 ['lpl securities', 'lpl'],
-                ['raymond james', 'raymond_james'],
                 ['raymond james financial', 'raymond_james'],
+                ['raymond james', 'raymond_james'],
                 ['edward jones', 'edward_jones'],
                 ['edward d. jones', 'edward_jones'],
                 ['ubs financial', 'ubs'],
@@ -16859,12 +16969,9 @@
                 ['goldman sachs', 'goldman'],
                 ['marcus by goldman', 'goldman'],
                 ['goldman sachs & co', 'goldman'],
-                ['baird', 'baird'],
                 ['robert w. baird', 'baird'],
-                ['tiaa', 'tiaa'],
                 ['tiaa-cref', 'tiaa'],
                 ['teachers insurance', 'tiaa'],
-                ['empower', 'empower'],
                 ['empower retirement', 'empower'],
                 ['empower advisory', 'empower'],
                 ['principal financial', 'principal'],
@@ -16872,73 +16979,159 @@
                 ['principal securities', 'principal'],
                 ['northwestern mutual', 'northwestern'],
                 ['northwestern mutual investment', 'northwestern'],
-                ['ameriprise', 'ameriprise'],
                 ['ameriprise financial', 'ameriprise'],
-                ['janney montgomery', 'janney'],
                 ['janney montgomery scott', 'janney'],
-                ['oppenheimer', 'oppenheimer'],
+                ['janney montgomery', 'janney'],
                 ['oppenheimer & co', 'oppenheimer'],
-                ['citigroup', 'citi'],
                 ['citi personal wealth', 'citi'],
-                ['citibank', 'citi'],
                 ['hilltop securities', 'hilltop'],
                 ['hilltop holdings', 'hilltop'],
                 ['da davidson', 'da_davidson'],
                 ['d.a. davidson', 'da_davidson'],
                 ['piper sandler', 'piper_sandler'],
                 ['siebert williams', 'siebert'],
-                ['siebert', 'siebert'],
-                ['drivewealth', 'drivewealth'],
-                ['tradier', 'tradier'],
-                ['tradestation', 'tradestation'],
-                ['moomoo', 'moomoo'],
-                ['futu', 'moomoo'],
+                ['moomoo financial', 'moomoo'],
+                ['futu securities', 'moomoo'],
+                ['futu inc', 'moomoo'],
                 ['tiger brokers', 'tiger'],
                 ['tigr securities', 'tiger'],
-                ['stake', 'stake'],
-
-                // Retirement / 401k providers
-                ['fidelity netbenefits', 'fidelity'],
-                ['vanguard retirement', 'vanguard'],
-                ['schwab retirement', 'schwab'],
-                ['transamerica', 'transamerica'],
                 ['transamerica retirement', 'transamerica'],
                 ['john hancock', 'john_hancock'],
-                ['manulife', 'john_hancock'],
                 ['t. rowe price', 'troweprice'],
                 ['t rowe price', 'troweprice'],
                 ['american funds', 'american_funds'],
                 ['capital group', 'american_funds'],
-
-                // Canadian
-                ['questrade', 'questrade'],
-                ['wealthsimple', 'wealthsimple'],
                 ['td direct investing', 'td_direct'],
                 ['rbc direct investing', 'rbc'],
                 ['bmo investorline', 'bmo'],
                 ['scotia itrade', 'scotia'],
                 ['national bank direct', 'nbc'],
                 ['cibc investor', 'cibc'],
-                ['desjardins', 'desjardins'],
-
-                // UK / International
                 ['hargreaves lansdown', 'hargreaves'],
                 ['interactive investor', 'ii'],
                 ['aj bell', 'ajbell'],
-                ['freetrade', 'freetrade'],
                 ['trading 212', 'trading212'],
-                ['degiro', 'degiro'],
                 ['saxo bank', 'saxo'],
                 ['ig group', 'ig'],
-                ['etoro', 'etoro'],
-                ['revolut', 'revolut'],
+
+                // Retirement plan recordkeepers - specific phrases
+                ['acropolis investment', 'acropolis'],
+                ['acropolis management', 'acropolis'],
+                ['alight solutions', 'alight'],
+                ['alight financial', 'alight'],
+                ['milliman financial', 'milliman'],
+                ['paychex retirement', 'paychex'],
+                ['paychex 401', 'paychex'],
+                ['adp retirement', 'adp'],
+                ['adp totalsource', 'adp'],
+                ['guideline 401', 'guideline'],
+                ['guideline retirement', 'guideline'],
+                ['human interest', 'human_interest'],
+                ['vestwell retirement', 'vestwell'],
+                ['vestwell 401', 'vestwell'],
+                ['ascensus', 'ascensus'],
+                ['newport group', 'newport'],
             ];
 
-            for (const [pattern, id] of patterns) {
+            for (const [pattern, id] of exactMatches) {
                 if (t.includes(pattern)) {
                     return id;
                 }
             }
+
+            // PHASE 2: Single-word matches with word boundaries (avoid substring matches)
+            const wordMatches = [
+                ['schwab', 'schwab'],
+                ['ameritrade', 'td_ameritrade'],
+                ['fidelity', 'fidelity'],
+                ['vanguard', 'vanguard'],
+                ['robinhood', 'robinhood'],
+                ['webull', 'webull'],
+                ['betterment', 'betterment'],
+                ['wealthfront', 'wealthfront'],
+                ['jpmorgan', 'jpmorgan'],
+                ['usaa', 'usaa'],
+                ['firstrade', 'firstrade'],
+                ['tastytrade', 'tastytrade'],
+                ['pershing', 'pershing'],
+                ['baird', 'baird'],
+                ['tiaa', 'tiaa'],
+                ['ameriprise', 'ameriprise'],
+                ['oppenheimer', 'oppenheimer'],
+                ['citigroup', 'citi'],
+                ['citibank', 'citi'],
+                ['drivewealth', 'drivewealth'],
+                ['tradier', 'tradier'],
+                ['tradestation', 'tradestation'],
+                ['moomoo', 'moomoo'],
+                ['transamerica', 'transamerica'],
+                ['manulife', 'john_hancock'],
+                ['questrade', 'questrade'],
+                ['wealthsimple', 'wealthsimple'],
+                ['desjardins', 'desjardins'],
+                ['freetrade', 'freetrade'],
+                ['degiro', 'degiro'],
+                ['etoro', 'etoro'],
+                ['revolut', 'revolut'],
+                ['stifel', 'stifel'],
+                ['ibkr', 'interactive_brokers'],
+            ];
+
+            for (const [pattern, id] of wordMatches) {
+                if (hasPhrase(t, pattern)) {
+                    return id;
+                }
+            }
+
+            // PHASE 3: Contextual matches - only match if specific context present
+            // These are patterns that could cause false positives without context
+            const contextualMatches = [
+                // 'e*trade' or 'e trade' - needs trade context
+                { patterns: ['e*trade', 'e trade', 'e-trade'], id: 'etrade' },
+                // 'lpl' is common - only if with 'financial' or 'securities'
+                { patterns: ['lpl'], id: 'lpl', requires: ['financial', 'securities', 'advisor'] },
+                // 'ubs' alone is fine, but extra certainty with context
+                { patterns: ['ubs'], id: 'ubs' },
+            ];
+
+            for (const cm of contextualMatches) {
+                for (const p of cm.patterns) {
+                    if (hasPhrase(t, p)) {
+                        if (!cm.requires) return cm.id;
+                        for (const req of cm.requires) {
+                            if (hasPhrase(t, req)) return cm.id;
+                        }
+                    }
+                }
+            }
+
+            // PHASE 4: Retirement plan recordkeepers - detect by plan/recordkeeper language
+            const recordkeeperPatterns = [
+                { id: 'acropolis', patterns: ['acropolis'] },
+                { id: 'alight', patterns: ['alight'] },
+                { id: 'milliman', patterns: ['milliman'] },
+                { id: 'paychex', patterns: ['paychex'] },
+                { id: 'adp', patterns: ['adp'] },
+                { id: 'guideline', patterns: ['guideline'], requires: ['401', 'retirement', 'plan'] },
+                { id: 'human_interest', patterns: ['human interest'] },
+                { id: 'vestwell', patterns: ['vestwell'] },
+                { id: 'ascensus', patterns: ['ascensus'] },
+                { id: 'newport', patterns: ['newport'], requires: ['retirement', '401', 'plan', 'group'] },
+                { id: 'empower', patterns: ['empower'], requires: ['retirement', '401', 'plan'] },
+                { id: 'principal', patterns: ['principal'], requires: ['retirement', '401', 'plan', 'financial'] },
+            ];
+
+            for (const rp of recordkeeperPatterns) {
+                for (const p of rp.patterns) {
+                    if (hasPhrase(t, p)) {
+                        if (!rp.requires) return rp.id;
+                        for (const req of rp.requires) {
+                            if (hasPhrase(t, req)) return rp.id;
+                        }
+                    }
+                }
+            }
+
             return null;
         }
 
@@ -17005,6 +17198,18 @@
             john_hancock: 'johnhancock.com',
             troweprice: 'troweprice.com',
             american_funds: 'americanfunds.com',
+
+            // Recordkeepers / Plan Administrators
+            acropolis: 'acrinv.com',
+            alight: 'alight.com',
+            milliman: 'milliman.com',
+            paychex: 'paychex.com',
+            adp: 'adp.com',
+            guideline: 'guideline.com',
+            human_interest: 'humaninterest.com',
+            vestwell: 'vestwell.com',
+            ascensus: 'ascensus.com',
+            newport: 'newportgroup.com',
 
             // Canadian
             questrade: 'questrade.com',
@@ -17105,6 +17310,17 @@
                 john_hancock: 'John Hancock',
                 troweprice: 'T. Rowe Price',
                 american_funds: 'American Funds',
+                // Recordkeepers / Plan Administrators
+                acropolis: 'Acropolis',
+                alight: 'Alight',
+                milliman: 'Milliman',
+                paychex: 'Paychex',
+                adp: 'ADP',
+                guideline: 'Guideline',
+                human_interest: 'Human Interest',
+                vestwell: 'Vestwell',
+                ascensus: 'Ascensus',
+                newport: 'Newport Group',
                 // Canadian
                 questrade: 'Questrade',
                 wealthsimple: 'Wealthsimple',
