@@ -18891,6 +18891,49 @@
                     }
                 }
             });
+
+            // Update performance stats below chart
+            if (portfolio.length > 0) {
+                const startVal = portfolio[0];
+                const endVal = portfolio[portfolio.length - 1];
+                const periodReturn = endVal - startVal; // Already in percentage points (indexed to 100)
+
+                // Get S&P 500 benchmark data for comparison
+                const sp500Data = filteredData.sp500 ? filteredData.sp500.filter((_, i) => i % step === 0) : null;
+                let benchReturn = 0;
+                if (sp500Data && sp500Data.length > 0) {
+                    benchReturn = sp500Data[sp500Data.length - 1] - sp500Data[0];
+                }
+
+                // Calculate high/low as dollar values based on total portfolio value
+                const totalValue = portfolioData?.total_value || 100000;
+                const highPct = Math.max(...portfolio);
+                const lowPct = Math.min(...portfolio);
+                const periodHigh = totalValue * (highPct / endVal);
+                const periodLow = totalValue * (lowPct / endVal);
+
+                // Update DOM elements
+                const perfReturnEl = document.getElementById('perfReturn');
+                const perfVsBenchmarkEl = document.getElementById('perfVsBenchmark');
+                const perfHighEl = document.getElementById('perfHigh');
+                const perfLowEl = document.getElementById('perfLow');
+
+                if (perfReturnEl) {
+                    perfReturnEl.textContent = `${periodReturn >= 0 ? '+' : ''}${periodReturn.toFixed(2)}%`;
+                    perfReturnEl.className = `perf-stat-value ${periodReturn >= 0 ? 'positive' : 'negative'}`;
+                }
+                if (perfVsBenchmarkEl) {
+                    const vsMarket = periodReturn - benchReturn;
+                    perfVsBenchmarkEl.textContent = `${vsMarket >= 0 ? '+' : ''}${vsMarket.toFixed(2)}%`;
+                    perfVsBenchmarkEl.className = `perf-stat-value ${vsMarket >= 0 ? 'positive' : 'negative'}`;
+                }
+                if (perfHighEl) {
+                    perfHighEl.textContent = '$' + periodHigh.toLocaleString(undefined, {maximumFractionDigits: 0});
+                }
+                if (perfLowEl) {
+                    perfLowEl.textContent = '$' + periodLow.toLocaleString(undefined, {maximumFractionDigits: 0});
+                }
+            }
         }
 
         function renderSectors() {
