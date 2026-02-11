@@ -13102,6 +13102,11 @@
 
                 // Process files using the existing handleFiles function
                 await handleFiles(fileObjects);
+
+                // Auto-analyze if files were successfully parsed
+                if (accounts.length > 0) {
+                    await analyzePortfolio();
+                }
             } else {
                 // Show empty state or dashboard based on saved portfolios
                 showAppEmptyState();
