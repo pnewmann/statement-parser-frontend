@@ -17937,15 +17937,23 @@
 
                 URL.revokeObjectURL(imageUrl);
 
+                // Debug: log OCR text
+                console.log('OCR extracted text:', text);
+
                 // Parse positions from OCR text
                 const positions = parseOcrText(text);
                 const brokerage = detectBrokerage(text);
 
+                console.log('Parsed positions:', positions);
+
                 if (positions.length === 0) {
+                    // Show the OCR text to help debug
+                    console.warn('No positions found. OCR text was:', text);
                     return {
                         error: 'No positions found in image. Try uploading a clearer screenshot or PDF.',
                         positions: [],
-                        brokerage: brokerage || 'unknown'
+                        brokerage: brokerage || 'unknown',
+                        debug_text: text.substring(0, 500) // Include some OCR text for debugging
                     };
                 }
 
@@ -17964,97 +17972,205 @@
         function parseOcrText(text) {
             const positions = [];
             const lines = text.split('\n').filter(l => l.trim());
+            const fullText = text.toLowerCase();
 
-            // Crypto name to symbol mapping
+            // Crypto name to symbol mapping (expanded)
             const cryptoNames = {
-                'bitcoin': 'BTC', 'ethereum': 'ETH', 'solana': 'SOL', 'dogecoin': 'DOGE',
-                'cardano': 'ADA', 'ripple': 'XRP', 'polkadot': 'DOT', 'avalanche': 'AVAX',
-                'polygon': 'MATIC', 'chainlink': 'LINK', 'litecoin': 'LTC', 'uniswap': 'UNI',
-                'shiba': 'SHIB', 'cosmos': 'ATOM', 'stellar': 'XLM', 'tether': 'USDT',
-                'usd coin': 'USDC', 'binance': 'BNB', 'tron': 'TRX', 'wrapped bitcoin': 'WBTC'
+                'bitcoin': 'BTC', 'btc': 'BTC',
+                'ethereum': 'ETH', 'eth': 'ETH',
+                'solana': 'SOL', 'sol': 'SOL',
+                'dogecoin': 'DOGE', 'doge': 'DOGE',
+                'cardano': 'ADA', 'ada': 'ADA',
+                'ripple': 'XRP', 'xrp': 'XRP',
+                'polkadot': 'DOT', 'dot': 'DOT',
+                'avalanche': 'AVAX', 'avax': 'AVAX',
+                'polygon': 'MATIC', 'matic': 'MATIC',
+                'chainlink': 'LINK', 'link': 'LINK',
+                'litecoin': 'LTC', 'ltc': 'LTC',
+                'uniswap': 'UNI', 'uni': 'UNI',
+                'shiba': 'SHIB', 'shib': 'SHIB',
+                'cosmos': 'ATOM', 'atom': 'ATOM',
+                'stellar': 'XLM', 'xlm': 'XLM',
+                'tether': 'USDT', 'usdt': 'USDT',
+                'usd coin': 'USDC', 'usdc': 'USDC',
+                'binance': 'BNB', 'bnb': 'BNB',
+                'tron': 'TRX', 'trx': 'TRX',
+                'pepe': 'PEPE',
+                'bonk': 'BONK',
+                'floki': 'FLOKI',
+                'near': 'NEAR',
+                'aptos': 'APT', 'apt': 'APT',
+                'arbitrum': 'ARB', 'arb': 'ARB',
+                'optimism': 'OP',
+                'sui': 'SUI',
+                'sei': 'SEI',
+                'injective': 'INJ', 'inj': 'INJ',
+                'render': 'RNDR', 'rndr': 'RNDR',
+                'fetch': 'FET', 'fet': 'FET'
             };
-
-            // Stock symbol pattern (1-5 uppercase letters)
-            const stockSymbolPattern = /\b([A-Z]{1,5})\b/g;
 
             // Track found symbols to avoid duplicates
             const foundSymbols = new Set();
 
-            for (const line of lines) {
-                const lineLower = line.toLowerCase();
+            // First pass: Look for dollar amounts with context
+            const dollarPattern = /\$[\d,]+\.?\d*/g;
+            const allDollarAmounts = text.match(dollarPattern) || [];
 
-                // Check for crypto names
-                for (const [name, symbol] of Object.entries(cryptoNames)) {
-                    if (lineLower.includes(name) && !foundSymbols.has(symbol)) {
-                        // Look for quantity and value
-                        const numbers = line.match(/[\d,]+\.?\d*/g) || [];
-                        const dollarMatch = line.match(/\$[\d,]+\.?\d*/);
+            console.log('Found dollar amounts:', allDollarAmounts);
 
-                        if (numbers.length > 0) {
-                            const quantity = parseFloat(numbers[0].replace(/,/g, '')) || 0;
-                            let value = null;
+            // Second pass: Look for crypto by name anywhere in text
+            for (const [name, symbol] of Object.entries(cryptoNames)) {
+                if (foundSymbols.has(symbol)) continue;
 
-                            if (dollarMatch) {
-                                value = parseFloat(dollarMatch[0].replace(/[$,]/g, ''));
-                            } else if (numbers.length >= 2) {
-                                value = parseFloat(numbers[numbers.length - 1].replace(/,/g, ''));
-                            }
+                // Check if crypto name appears in full text
+                const nameRegex = new RegExp(`\\b${name}\\b`, 'i');
+                if (nameRegex.test(text)) {
+                    // Find the line containing this crypto
+                    for (const line of lines) {
+                        if (nameRegex.test(line)) {
+                            const numbers = line.match(/[\d,]+\.?\d+/g) || [];
+                            const dollarMatch = line.match(/\$[\d,]+\.?\d*/);
 
-                            if (quantity > 0 || value > 0) {
-                                positions.push({
-                                    symbol,
-                                    name: name.charAt(0).toUpperCase() + name.slice(1),
-                                    quantity: quantity || 1,
-                                    price: value && quantity ? value / quantity : null,
-                                    value: value || 0
-                                });
-                                foundSymbols.add(symbol);
-                            }
-                        }
-                    }
-                }
-
-                // Check for stock symbols with values
-                const symbolMatches = line.match(stockSymbolPattern);
-                if (symbolMatches) {
-                    for (const symbol of symbolMatches) {
-                        // Skip common non-stock words
-                        if (['THE', 'AND', 'FOR', 'USD', 'INC', 'LLC', 'ETF', 'FUND', 'CORP'].includes(symbol)) continue;
-                        if (foundSymbols.has(symbol)) continue;
-
-                        // Look for associated numbers
-                        const numbers = line.match(/[\d,]+\.?\d*/g) || [];
-                        const dollarMatch = line.match(/\$[\d,]+\.?\d*/);
-
-                        if (numbers.length >= 2 || dollarMatch) {
-                            let quantity = 0, value = 0, price = 0;
+                            let value = 0, quantity = 0;
 
                             if (dollarMatch) {
                                 value = parseFloat(dollarMatch[0].replace(/[$,]/g, ''));
                             }
 
-                            // Try to extract quantity and price
-                            const cleanNumbers = numbers.map(n => parseFloat(n.replace(/,/g, ''))).filter(n => n > 0);
-                            if (cleanNumbers.length >= 2) {
-                                // Heuristic: smaller number is likely quantity, larger is value
-                                cleanNumbers.sort((a, b) => a - b);
-                                if (cleanNumbers[0] < 10000 && cleanNumbers[cleanNumbers.length - 1] > cleanNumbers[0]) {
+                            // Get all numbers from the line
+                            const cleanNumbers = numbers
+                                .map(n => parseFloat(n.replace(/,/g, '')))
+                                .filter(n => n > 0 && !isNaN(n));
+
+                            if (cleanNumbers.length > 0) {
+                                // If we have a dollar value, find quantity
+                                if (value > 0 && cleanNumbers.length >= 1) {
+                                    // Look for a small number (likely quantity)
+                                    quantity = cleanNumbers.find(n => n < 1000000 && n !== value) || 1;
+                                } else if (cleanNumbers.length >= 2) {
+                                    // Assume format: quantity ... value
                                     quantity = cleanNumbers[0];
-                                    value = value || cleanNumbers[cleanNumbers.length - 1];
-                                    price = quantity > 0 ? value / quantity : 0;
+                                    value = cleanNumbers[cleanNumbers.length - 1];
+                                } else if (cleanNumbers.length === 1) {
+                                    value = cleanNumbers[0];
+                                    quantity = 1;
                                 }
                             }
 
                             if (value > 0) {
                                 positions.push({
                                     symbol,
-                                    name: symbol,
+                                    name: name.charAt(0).toUpperCase() + name.slice(1),
                                     quantity: quantity || 1,
-                                    price: price || value,
+                                    price: quantity > 0 ? value / quantity : value,
                                     value
                                 });
                                 foundSymbols.add(symbol);
+                                break;
                             }
+                        }
+                    }
+                }
+            }
+
+            // Third pass: Look for stock ticker patterns (e.g., "AAPL", "MSFT")
+            // Common stock tickers that might appear
+            const commonStocks = ['AAPL', 'MSFT', 'GOOGL', 'GOOG', 'AMZN', 'META', 'TSLA', 'NVDA', 'AMD', 'INTC',
+                'SPY', 'QQQ', 'VOO', 'VTI', 'IVV', 'ARKK', 'ARKW', 'VGT', 'XLK', 'SCHD',
+                'JPM', 'BAC', 'WFC', 'GS', 'MS', 'V', 'MA', 'PYPL', 'SQ', 'COIN',
+                'DIS', 'NFLX', 'ROKU', 'SPOT', 'SNAP', 'PINS', 'TWTR', 'UBER', 'LYFT',
+                'NKE', 'SBUX', 'MCD', 'WMT', 'TGT', 'COST', 'HD', 'LOW', 'CVS', 'WBA'];
+
+            for (const ticker of commonStocks) {
+                if (foundSymbols.has(ticker)) continue;
+
+                const tickerRegex = new RegExp(`\\b${ticker}\\b`, 'i');
+                if (tickerRegex.test(text)) {
+                    for (const line of lines) {
+                        if (tickerRegex.test(line)) {
+                            const numbers = line.match(/[\d,]+\.?\d+/g) || [];
+                            const dollarMatch = line.match(/\$[\d,]+\.?\d*/);
+
+                            let value = 0, quantity = 0;
+
+                            if (dollarMatch) {
+                                value = parseFloat(dollarMatch[0].replace(/[$,]/g, ''));
+                            }
+
+                            const cleanNumbers = numbers
+                                .map(n => parseFloat(n.replace(/,/g, '')))
+                                .filter(n => n > 0 && !isNaN(n));
+
+                            if (cleanNumbers.length >= 2) {
+                                quantity = cleanNumbers[0];
+                                value = value || cleanNumbers[cleanNumbers.length - 1];
+                            } else if (cleanNumbers.length === 1) {
+                                value = value || cleanNumbers[0];
+                                quantity = 1;
+                            }
+
+                            if (value > 0) {
+                                positions.push({
+                                    symbol: ticker,
+                                    name: ticker,
+                                    quantity: quantity || 1,
+                                    price: quantity > 0 ? value / quantity : value,
+                                    value
+                                });
+                                foundSymbols.add(ticker);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Fourth pass: Generic pattern - look for any uppercase 1-5 letter word followed by numbers
+            const stockSymbolPattern = /\b([A-Z]{1,5})\b/g;
+            const skipWords = ['THE', 'AND', 'FOR', 'USD', 'INC', 'LLC', 'ETF', 'FUND', 'CORP', 'LTD',
+                'PLC', 'NYSE', 'NASDAQ', 'CLASS', 'SHARE', 'TOTAL', 'VALUE', 'PRICE', 'QTY'];
+
+            for (const line of lines) {
+                const symbolMatches = line.match(stockSymbolPattern);
+                if (!symbolMatches) continue;
+
+                for (const symbol of symbolMatches) {
+                    if (skipWords.includes(symbol)) continue;
+                    if (foundSymbols.has(symbol)) continue;
+
+                    const numbers = line.match(/[\d,]+\.?\d+/g) || [];
+                    const dollarMatch = line.match(/\$[\d,]+\.?\d*/);
+
+                    if (numbers.length >= 2 || dollarMatch) {
+                        let value = 0, quantity = 0, price = 0;
+
+                        if (dollarMatch) {
+                            value = parseFloat(dollarMatch[0].replace(/[$,]/g, ''));
+                        }
+
+                        const cleanNumbers = numbers
+                            .map(n => parseFloat(n.replace(/,/g, '')))
+                            .filter(n => n > 0 && !isNaN(n));
+
+                        if (cleanNumbers.length >= 2) {
+                            // Heuristic: smaller number is likely quantity, larger is value
+                            cleanNumbers.sort((a, b) => a - b);
+                            if (cleanNumbers[0] < 10000 && cleanNumbers[cleanNumbers.length - 1] > cleanNumbers[0]) {
+                                quantity = cleanNumbers[0];
+                                value = value || cleanNumbers[cleanNumbers.length - 1];
+                                price = quantity > 0 ? value / quantity : 0;
+                            }
+                        }
+
+                        if (value > 0) {
+                            positions.push({
+                                symbol,
+                                name: symbol,
+                                quantity: quantity || 1,
+                                price: price || value,
+                                value
+                            });
+                            foundSymbols.add(symbol);
                         }
                     }
                 }
