@@ -13505,8 +13505,6 @@
             const files = await checkPendingUploads();
             console.log('[App] Retrieved', files.length, 'files from IndexedDB');
             if (files.length > 0) {
-                await clearPendingUploads();
-
                 // Hide empty state, show progress
                 const emptyState = document.getElementById('appEmptyState');
                 if (emptyState) emptyState.style.display = 'none';
@@ -13519,9 +13517,14 @@
                 // Process files using the existing handleFiles function
                 await handleFiles(fileObjects);
 
-                // Auto-analyze if files were successfully parsed
+                // Only clear IndexedDB after successful parsing
                 if (accounts.length > 0) {
+                    await clearPendingUploads();
                     await analyzePortfolio();
+                } else {
+                    // Parsing failed - keep files in IndexedDB for retry
+                    console.log('[App] Parsing failed, keeping files in IndexedDB for retry');
+                    showAppEmptyState();
                 }
             } else {
                 // Show empty state or dashboard based on saved portfolios
