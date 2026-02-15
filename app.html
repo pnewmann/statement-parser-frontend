@@ -2764,6 +2764,30 @@
             font-weight: 600;
         }
 
+        .symbol-link {
+            color: var(--primary);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-weight: 600;
+            transition: color 0.15s ease;
+        }
+
+        .symbol-link:hover {
+            color: var(--primary-hover);
+            text-decoration: underline;
+        }
+
+        .external-link-icon {
+            opacity: 0.5;
+            transition: opacity 0.15s ease;
+        }
+
+        .symbol-link:hover .external-link-icon {
+            opacity: 1;
+        }
+
         .badge {
             display: inline-block;
             padding: 4px 10px;
@@ -14847,16 +14871,21 @@
             // Render holdings table
             document.getElementById('dividendHoldings').innerHTML = dividendHoldings
                 .sort((a, b) => b.annualIncome - a.annualIncome)
-                .map(h => `
+                .map(h => {
+                    const factSheetUrl = getFactSheetUrl(h.symbol, h.name);
+                    const symbolHtml = factSheetUrl
+                        ? `<a href="${factSheetUrl}" target="_blank" rel="noopener noreferrer" class="symbol-link" title="View fact sheet">${h.symbol}<svg class="external-link-icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>`
+                        : h.symbol;
+                    return `
                     <tr>
-                        <td class="symbol-cell">${h.symbol}</td>
+                        <td class="symbol-cell">${symbolHtml}</td>
                         <td>${h.name}</td>
                         <td class="text-right">${(h.yield * 100).toFixed(2)}%</td>
                         <td class="text-right">$${h.annualPerShare}</td>
                         <td class="text-right font-mono">${formatCurrency(h.annualIncome)}</td>
                         <td>${h.frequency}</td>
                     </tr>
-                `).join('') || '<tr><td colspan="6" class="text-center">No dividend-paying holdings</td></tr>';
+                `}).join('') || '<tr><td colspan="6" class="text-center">No dividend-paying holdings</td></tr>';
         }
 
         // =============================================================================
@@ -14921,9 +14950,14 @@
                 '<p style="color: var(--text-muted);">No tax loss harvesting opportunities found.</p>';
 
             // All tax lots table
-            document.getElementById('taxLotsBody').innerHTML = taxLots.map(t => `
+            document.getElementById('taxLotsBody').innerHTML = taxLots.map(t => {
+                const factSheetUrl = getFactSheetUrl(t.symbol);
+                const symbolHtml = factSheetUrl
+                    ? `<a href="${factSheetUrl}" target="_blank" rel="noopener noreferrer" class="symbol-link" title="View fact sheet">${t.symbol}<svg class="external-link-icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>`
+                    : t.symbol;
+                return `
                 <tr>
-                    <td class="symbol-cell">${t.symbol}</td>
+                    <td class="symbol-cell">${symbolHtml}</td>
                     <td>${t.acquired}</td>
                     <td><span class="badge ${t.term === 'Long' ? 'badge-primary' : 'badge-secondary'}">${t.term}</span></td>
                     <td class="text-right font-mono">${t.shares.toFixed(4)}</td>
@@ -14936,7 +14970,7 @@
                         ${t.gainLossPct >= 0 ? '+' : ''}${t.gainLossPct.toFixed(1)}%
                     </td>
                 </tr>
-            `).join('');
+            `}).join('');
         }
 
         // =============================================================================
@@ -19080,9 +19114,13 @@
             document.getElementById('holdingsBody').innerHTML = sorted.map(p => {
                 const cls = p.classification || {};
                 const weight = total > 0 ? (p.value || 0) / total * 100 : 0;
+                const factSheetUrl = getFactSheetUrl(p.symbol, p.description);
+                const symbolHtml = factSheetUrl
+                    ? `<a href="${factSheetUrl}" target="_blank" rel="noopener noreferrer" class="symbol-link" title="View fact sheet">${p.symbol}<svg class="external-link-icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>`
+                    : p.symbol;
                 return `
                     <tr>
-                        <td class="symbol-cell">${p.symbol}</td>
+                        <td class="symbol-cell">${symbolHtml}</td>
                         <td>${p.description || '-'}</td>
                         <td><span class="badge badge-primary">${cls.asset_class || 'Unknown'}</span></td>
                         <td><span class="badge badge-secondary">${cls.sector || 'Unknown'}</span></td>
@@ -19229,6 +19267,85 @@
 
         function formatCurrency(n) {
             return n == null ? '-' : '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        // Get fact sheet or quote URL for a security
+        function getFactSheetUrl(symbol, description = '') {
+            if (!symbol) return null;
+            const sym = symbol.toUpperCase().trim();
+            const desc = (description || '').toLowerCase();
+
+            // Morgan Stanley Money Market Funds
+            if (['MVRXX', 'MOFXX', 'MSMXX', 'MCTXX', 'MISXX', 'MOEXX', 'DVRXX'].includes(sym)) {
+                return `https://www.morganstanley.com/im/en-us/individual-investor/product-and-performance/money-market-funds.html`;
+            }
+
+            // Fidelity Funds (SPAXX, FDRXX, etc.)
+            if (['SPAXX', 'FDRXX', 'FDLXX', 'SPRXX', 'FZFXX', 'FTEXX', 'FMOXX'].includes(sym) ||
+                (sym.length === 5 && sym.startsWith('F') && sym.endsWith('XX'))) {
+                return `https://fundresearch.fidelity.com/mutual-funds/summary/${sym}`;
+            }
+
+            // Vanguard Funds
+            if (['VMFXX', 'VMMXX', 'VUSXX'].includes(sym) || sym.startsWith('V') && sym.endsWith('XX')) {
+                return `https://investor.vanguard.com/investment-products/mutual-funds/profile/${sym.toLowerCase()}`;
+            }
+            // Vanguard ETFs
+            if (['VTI', 'VOO', 'VGT', 'VUG', 'VTV', 'VIG', 'VYM', 'VXUS', 'BND', 'BNDX', 'VNQ', 'VEA', 'VWO'].includes(sym)) {
+                return `https://investor.vanguard.com/investment-products/etfs/profile/${sym.toLowerCase()}`;
+            }
+
+            // Schwab Funds
+            if (['SWVXX', 'SNVXX', 'SNOXX', 'SWRXX'].includes(sym)) {
+                return `https://www.schwabassetmanagement.com/products/${sym.toLowerCase()}`;
+            }
+            // Schwab ETFs
+            if (['SCHD', 'SCHX', 'SCHB', 'SCHG', 'SCHV', 'SCHA', 'SCHF', 'SCHE'].includes(sym)) {
+                return `https://www.schwabassetmanagement.com/products/${sym.toLowerCase()}`;
+            }
+
+            // iShares ETFs (BlackRock)
+            if (sym.startsWith('I') && ['IVV', 'IJH', 'IJR', 'IWM', 'IWF', 'IWD', 'IWB', 'IEMG', 'IEFA', 'ITOT', 'IAU', 'IEF', 'TLT', 'LQD', 'HYG', 'AGG', 'QUAL', 'USMV', 'DGRO', 'DVY'].includes(sym)) {
+                return `https://www.ishares.com/us/products/etf-investments#/?productView=etf&fac=43511%7C43512%7C43513&fc=${sym}`;
+            }
+            // More iShares
+            if (['AGG', 'TLT', 'LQD', 'HYG', 'EMB', 'MUB', 'TIP', 'SHY', 'IEF', 'GOVT'].includes(sym)) {
+                return `https://www.ishares.com/us/products/etf-investments#/?fc=${sym}`;
+            }
+
+            // SPDR ETFs (State Street)
+            if (['SPY', 'GLD', 'XLF', 'XLK', 'XLE', 'XLV', 'XLI', 'XLY', 'XLP', 'XLU', 'XLB', 'XLRE', 'XLC', 'MDY', 'DIA'].includes(sym)) {
+                return `https://www.ssga.com/us/en/intermediary/etfs/funds/${sym.toLowerCase()}`;
+            }
+
+            // Invesco ETFs
+            if (['QQQ', 'QQQM', 'RSP', 'SPLG'].includes(sym)) {
+                return `https://www.invesco.com/us/financial-products/etfs/product-detail?audienceType=Investor&ticker=${sym}`;
+            }
+
+            // ARK ETFs
+            if (['ARKK', 'ARKW', 'ARKG', 'ARKF', 'ARKQ', 'ARKX'].includes(sym)) {
+                return `https://ark-funds.com/funds/${sym.toLowerCase()}/`;
+            }
+
+            // Money Market pattern (ends in XX, 5 chars) - generic Morningstar
+            if (sym.length === 5 && sym.endsWith('XX')) {
+                return `https://www.morningstar.com/funds/xnas/${sym.toLowerCase()}/quote`;
+            }
+
+            // ETFs (3-4 letter symbols) - link to ETF.com
+            if (sym.length <= 4 && !sym.includes('.')) {
+                // Check if it's likely an ETF vs stock
+                const etfKeywords = ['etf', 'fund', 'trust', 'index', 'ishares', 'vanguard', 'spdr', 'schwab'];
+                const isLikelyEtf = etfKeywords.some(kw => desc.includes(kw));
+
+                if (isLikelyEtf) {
+                    return `https://www.etf.com/${sym}`;
+                }
+            }
+
+            // Default: Yahoo Finance for stocks and other securities
+            return `https://finance.yahoo.com/quote/${sym}`;
         }
 
         // Entry Method Switching
