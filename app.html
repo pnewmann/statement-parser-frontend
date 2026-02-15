@@ -18060,8 +18060,8 @@
                             if (value > 0) {
                                 positions.push({
                                     symbol,
-                                    name: name.charAt(0).toUpperCase() + name.slice(1),
-                                    quantity: quantity || 1,
+                                    description: name.charAt(0).toUpperCase() + name.slice(1),
+                                    shares: quantity || 1,
                                     price: quantity > 0 ? value / quantity : value,
                                     value
                                 });
@@ -18112,8 +18112,8 @@
                             if (value > 0) {
                                 positions.push({
                                     symbol: ticker,
-                                    name: ticker,
-                                    quantity: quantity || 1,
+                                    description: ticker,
+                                    shares: quantity || 1,
                                     price: quantity > 0 ? value / quantity : value,
                                     value
                                 });
@@ -18165,8 +18165,8 @@
                         if (value > 0) {
                             positions.push({
                                 symbol,
-                                name: symbol,
-                                quantity: quantity || 1,
+                                description: symbol,
+                                shares: quantity || 1,
                                 price: price || value,
                                 value
                             });
