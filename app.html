@@ -1862,6 +1862,82 @@
             min-height: calc(100vh - 72px);
             padding: 48px 24px 80px;
             background: var(--bg-secondary);
+            animation: fadeInUp 0.4s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Dashboard loading skeleton */
+        .dashboard-skeleton {
+            padding: 24px;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .dashboard-skeleton .skeleton-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .dashboard-skeleton .skeleton-title {
+            width: 200px;
+            height: 32px;
+        }
+
+        .dashboard-skeleton .skeleton-badge {
+            width: 120px;
+            height: 40px;
+            border-radius: 20px;
+        }
+
+        .dashboard-skeleton .skeleton-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        .dashboard-skeleton .skeleton-tab {
+            width: 80px;
+            height: 36px;
+            border-radius: 8px;
+        }
+
+        .dashboard-skeleton .skeleton-cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .dashboard-skeleton .skeleton-stat-card {
+            height: 100px;
+            border-radius: 12px;
+        }
+
+        .dashboard-skeleton .skeleton-chart {
+            height: 300px;
+            border-radius: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-skeleton .skeleton-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
 
         .app-empty-state .empty-state-content {
@@ -1878,6 +1954,12 @@
         .app-empty-state .empty-state-icon-large svg {
             color: var(--primary);
             opacity: 0.8;
+            animation: empty-state-pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes empty-state-pulse {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.05); opacity: 1; }
         }
 
         .app-empty-state .empty-state-title {
@@ -1926,6 +2008,71 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             gap: 16px;
+        }
+
+        /* Sample Portfolio Section */
+        .sample-portfolio-section {
+            margin-top: 32px;
+        }
+
+        .sample-portfolio-btn {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 20px;
+            background: linear-gradient(135deg, rgba(99, 91, 255, 0.08) 0%, rgba(162, 89, 255, 0.08) 100%);
+            border: 1px dashed var(--primary);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+        }
+
+        .sample-portfolio-btn:hover {
+            background: linear-gradient(135deg, rgba(99, 91, 255, 0.15) 0%, rgba(162, 89, 255, 0.15) 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(99, 91, 255, 0.2);
+        }
+
+        .sample-portfolio-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--primary);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .sample-portfolio-text {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .sample-portfolio-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+        }
+
+        .sample-portfolio-desc {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .sample-portfolio-arrow {
+            color: var(--primary);
+            flex-shrink: 0;
+            transition: transform 0.2s ease;
+        }
+
+        .sample-portfolio-btn:hover .sample-portfolio-arrow {
+            transform: translateX(4px);
         }
 
         /* Dashboard (Portfolio Analysis) */
@@ -10537,6 +10684,211 @@
                 grid-template-columns: repeat(3, 1fr);
             }
         }
+
+        /* ========== TOOLTIP SYSTEM ========== */
+
+        .has-tooltip {
+            position: relative;
+            cursor: help;
+        }
+
+        .has-tooltip::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1a1a2e;
+            color: #ffffff;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 0.8125rem;
+            font-weight: 400;
+            line-height: 1.5;
+            white-space: normal;
+            width: max-content;
+            max-width: 280px;
+            text-align: left;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s ease, visibility 0.2s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            pointer-events: none;
+        }
+
+        .has-tooltip::before {
+            content: '';
+            position: absolute;
+            bottom: calc(100% + 2px);
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: #1a1a2e;
+            z-index: 1001;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s ease, visibility 0.2s ease;
+        }
+
+        .has-tooltip:hover::after,
+        .has-tooltip:hover::before,
+        .has-tooltip:focus::after,
+        .has-tooltip:focus::before {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Tooltip below variant */
+        .has-tooltip.tooltip-below::after {
+            bottom: auto;
+            top: calc(100% + 8px);
+        }
+
+        .has-tooltip.tooltip-below::before {
+            bottom: auto;
+            top: calc(100% + 2px);
+            border-top-color: transparent;
+            border-bottom-color: #1a1a2e;
+        }
+
+        /* Info icon for terms */
+        .term-info {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .term-info-icon {
+            width: 14px;
+            height: 14px;
+            color: var(--text-tertiary);
+            opacity: 0.6;
+            transition: opacity 0.2s ease;
+        }
+
+        .term-info:hover .term-info-icon {
+            opacity: 1;
+            color: var(--primary);
+        }
+
+        /* ========== KEYBOARD SHORTCUTS MODAL ========== */
+
+        .shortcuts-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .shortcuts-modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .shortcuts-modal {
+            background: var(--bg-primary);
+            border-radius: 16px;
+            padding: 24px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            transform: scale(0.95);
+            transition: transform 0.2s ease;
+        }
+
+        .shortcuts-modal-overlay.active .shortcuts-modal {
+            transform: scale(1);
+        }
+
+        .shortcuts-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .shortcuts-modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .shortcuts-modal-close {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 6px;
+            transition: background 0.2s ease;
+        }
+
+        .shortcuts-modal-close:hover {
+            background: var(--bg-secondary);
+        }
+
+        .shortcuts-group {
+            margin-bottom: 20px;
+        }
+
+        .shortcuts-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .shortcuts-group-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 12px;
+        }
+
+        .shortcut-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+        }
+
+        .shortcut-label {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .shortcut-keys {
+            display: flex;
+            gap: 4px;
+        }
+
+        .shortcut-key {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 4px 8px;
+            font-size: 0.75rem;
+            font-family: var(--font-mono);
+            color: var(--text-primary);
+            min-width: 24px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -10940,6 +11292,27 @@
                         <!-- Populated dynamically -->
                     </div>
                 </div>
+
+                <!-- Try Sample Portfolio Section -->
+                <div class="sample-portfolio-section">
+                    <div class="divider-text">or explore with sample data</div>
+                    <button class="sample-portfolio-btn" onclick="loadSamplePortfolio()">
+                        <div class="sample-portfolio-icon">
+                            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                                <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                                <line x1="12" y1="22.08" x2="12" y2="12"/>
+                            </svg>
+                        </div>
+                        <div class="sample-portfolio-text">
+                            <span class="sample-portfolio-title">Load Sample Portfolio</span>
+                            <span class="sample-portfolio-desc">Explore all features with example data</span>
+                        </div>
+                        <svg class="sample-portfolio-arrow" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="9 18 15 12 9 6"/>
+                        </svg>
+                    </button>
+                </div>
                 </div><!-- End app-upload-card -->
             </div><!-- End empty-state-content -->
         </div><!-- End appEmptyState -->
@@ -11151,22 +11524,22 @@
             <div class="tab-content active" id="tab-allocation">
                 <div class="stats-grid">
                     <div class="stat-card">
-                        <div class="stat-label">Stocks</div>
+                        <div class="stat-label has-tooltip tooltip-below" data-tooltip="Equities represent ownership in companies. Stocks typically offer higher growth potential but with more volatility than bonds or cash.">Stocks</div>
                         <div class="stat-value" id="stocksPct">0%</div>
                         <div class="stat-subtitle" id="stocksVal">$0</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-label">Bonds</div>
+                        <div class="stat-label has-tooltip tooltip-below" data-tooltip="Fixed-income securities that pay interest. Bonds are generally less volatile than stocks and provide regular income, but with lower long-term growth potential.">Bonds</div>
                         <div class="stat-value" id="bondsPct">0%</div>
                         <div class="stat-subtitle" id="bondsVal">$0</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-label">Cash</div>
+                        <div class="stat-label has-tooltip tooltip-below" data-tooltip="Liquid assets including money market funds and short-term deposits. Cash provides stability and liquidity but typically earns minimal returns.">Cash</div>
                         <div class="stat-value" id="cashPct">0%</div>
                         <div class="stat-subtitle" id="cashVal">$0</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-label">Alternatives</div>
+                        <div class="stat-label has-tooltip tooltip-below" data-tooltip="Non-traditional investments including real estate (REITs), commodities, and cryptocurrency. These can provide diversification benefits but may carry unique risks.">Alternatives</div>
                         <div class="stat-value" id="altsPct">0%</div>
                         <div class="stat-subtitle" id="altsVal">$0</div>
                     </div>
@@ -11576,22 +11949,22 @@
                 <div class="risk-grid">
                     <div class="card risk-card">
                         <div class="risk-value" id="volatilityVal">--</div>
-                        <div class="risk-label">Volatility</div>
+                        <div class="risk-label has-tooltip" data-tooltip="Measures how much your portfolio's returns fluctuate over time. Higher volatility means more unpredictable returns. A volatility of 15% means returns typically vary within a 15% range.">Volatility</div>
                         <div class="risk-desc">Annualized standard deviation</div>
                     </div>
                     <div class="card risk-card">
                         <div class="risk-value" id="betaVal">--</div>
-                        <div class="risk-label">Beta</div>
+                        <div class="risk-label has-tooltip" data-tooltip="Measures how your portfolio moves relative to the market (S&P 500). Beta of 1.0 = moves with market. Beta > 1 = more volatile than market. Beta < 1 = less volatile than market.">Beta</div>
                         <div class="risk-desc">Sensitivity to market</div>
                     </div>
                     <div class="card risk-card">
                         <div class="risk-value" id="sharpeVal">--</div>
-                        <div class="risk-label">Sharpe Ratio</div>
+                        <div class="risk-label has-tooltip" data-tooltip="Measures return per unit of risk. Higher is better. A Sharpe ratio above 1.0 is considered good, above 2.0 is very good. It shows how much extra return you're getting for the risk you're taking.">Sharpe Ratio</div>
                         <div class="risk-desc">Risk-adjusted return</div>
                     </div>
                     <div class="card risk-card">
                         <div class="risk-value negative" id="maxDdVal">--</div>
-                        <div class="risk-label">Max Drawdown</div>
+                        <div class="risk-label has-tooltip" data-tooltip="The largest percentage drop from a peak to a trough before a new peak is reached. A -20% drawdown means your portfolio fell 20% from its highest point. Lower (less negative) is better.">Max Drawdown</div>
                         <div class="risk-desc">Largest peak-to-trough</div>
                     </div>
                 </div>
@@ -20391,14 +20764,47 @@
         // =============================================================================
 
         function updateRiskGauge() {
-            // Calculate risk score based on portfolio metrics
-            const volatility = portfolioData?.risk_metrics?.volatility || 15;
-            const beta = portfolioData?.risk_metrics?.beta || 1.0;
-            const maxDrawdown = Math.abs(portfolioData?.risk_metrics?.max_drawdown || 20);
+            // Calculate risk score based on portfolio composition and metrics
+            const allocation = portfolioData?.asset_allocation || {};
+            const totalValue = portfolioData?.total_value || 0;
+
+            // Calculate allocation percentages
+            const cashPct = ((allocation['Cash'] || 0) / totalValue) * 100 || 0;
+            const bondPct = ((allocation['Bonds'] || 0) / totalValue) * 100 || 0;
+            const stockPct = ((allocation['Stocks'] || 0) / totalValue) * 100 || 0;
+
+            // Risk multiplier based on asset allocation (cash/bonds reduce risk)
+            // 100% cash = 0.05 multiplier, 100% stocks = 1.0 multiplier
+            const riskMultiplier = Math.max(0.05, (stockPct * 1.0 + bondPct * 0.3 + cashPct * 0.02) / 100);
+
+            // Base risk metrics with asset-class appropriate defaults
+            let baseVolatility, baseBeta, baseDrawdown;
+
+            if (cashPct >= 90) {
+                // Nearly all cash/money market - extremely low risk
+                baseVolatility = portfolioData?.risk_metrics?.volatility || 0.5;
+                baseBeta = portfolioData?.risk_metrics?.beta || 0.01;
+                baseDrawdown = Math.abs(portfolioData?.risk_metrics?.max_drawdown || 0.1);
+            } else if (bondPct >= 70) {
+                // Bond-heavy portfolio
+                baseVolatility = portfolioData?.risk_metrics?.volatility || 5;
+                baseBeta = portfolioData?.risk_metrics?.beta || 0.2;
+                baseDrawdown = Math.abs(portfolioData?.risk_metrics?.max_drawdown || 5);
+            } else {
+                // Mixed or equity-heavy portfolio
+                baseVolatility = portfolioData?.risk_metrics?.volatility || 15;
+                baseBeta = portfolioData?.risk_metrics?.beta || 1.0;
+                baseDrawdown = Math.abs(portfolioData?.risk_metrics?.max_drawdown || 20);
+            }
+
+            // Apply risk multiplier
+            const volatility = baseVolatility * riskMultiplier;
+            const beta = baseBeta * riskMultiplier;
+            const maxDrawdown = baseDrawdown * riskMultiplier;
 
             // Composite risk score (0-100)
             const volScore = Math.min(volatility / 30 * 50, 50);
-            const betaScore = Math.min((beta - 0.5) / 1.5 * 25, 25);
+            const betaScore = Math.min(Math.max(beta - 0.5, 0) / 1.5 * 25, 25);
             const ddScore = Math.min(maxDrawdown / 40 * 25, 25);
             const riskScore = Math.round(volScore + betaScore + ddScore);
 
@@ -20426,33 +20832,111 @@
         // =============================================================================
 
         function updateFactorExposure() {
-            // Mock factor exposures - in production, this would come from the API
-            const factors = {
-                value: Math.random() * 60 + 20,
-                growth: Math.random() * 60 + 20,
-                momentum: Math.random() * 50 + 10,
-                quality: Math.random() * 70 + 20,
-                size: Math.random() * 40,
-                volatility: Math.random() * 50 + 10
+            // Calculate factor exposure based on actual portfolio holdings
+            const holdings = portfolioData?.holdings || [];
+            const totalValue = portfolioData?.total_value || 0;
+            const allocation = portfolioData?.asset_allocation || {};
+
+            // Calculate allocation percentages
+            const cashPct = totalValue > 0 ? ((allocation['Cash'] || 0) / totalValue) * 100 : 0;
+            const bondPct = totalValue > 0 ? ((allocation['Bonds'] || 0) / totalValue) * 100 : 0;
+            const stockPct = totalValue > 0 ? ((allocation['Stocks'] || 0) / totalValue) * 100 : 0;
+
+            // Factor profiles by asset class
+            // Cash/Money Market: minimal exposure to all factors
+            // Bonds: low volatility, quality tilt, no growth/momentum
+            // Stocks: full factor exposure depending on sector composition
+
+            let factors = {
+                value: 0,
+                growth: 0,
+                momentum: 0,
+                quality: 0,
+                size: 0,        // 0 = large cap, 100 = small cap
+                volatility: 0
             };
 
+            // Cash contribution (minimal factor exposure)
+            if (cashPct > 0) {
+                factors.quality += cashPct * 0.8;  // Cash is high quality
+                factors.volatility += cashPct * 0.02; // Near-zero volatility
+            }
+
+            // Bond contribution
+            if (bondPct > 0) {
+                factors.quality += bondPct * 0.6;
+                factors.value += bondPct * 0.2;
+                factors.volatility += bondPct * 0.15;
+            }
+
+            // Stock contribution - analyze by sector
+            if (stockPct > 0 && holdings.length > 0) {
+                const sectorWeights = {};
+                let equityValue = 0;
+
+                holdings.forEach(h => {
+                    if (h.asset_class === 'Stocks' || h.asset_class === 'Equity') {
+                        const sector = h.sector || 'Unknown';
+                        sectorWeights[sector] = (sectorWeights[sector] || 0) + (h.current_value || 0);
+                        equityValue += (h.current_value || 0);
+                    }
+                });
+
+                // Sector-based factor tilts
+                const sectorFactors = {
+                    'Technology': { growth: 80, momentum: 70, value: 20, quality: 60, size: 30, volatility: 65 },
+                    'Healthcare': { growth: 60, momentum: 50, value: 40, quality: 65, size: 35, volatility: 50 },
+                    'Financial Services': { growth: 30, momentum: 40, value: 70, quality: 55, size: 25, volatility: 55 },
+                    'Consumer Cyclical': { growth: 55, momentum: 60, value: 45, quality: 50, size: 40, volatility: 60 },
+                    'Industrials': { growth: 40, momentum: 45, value: 55, quality: 55, size: 35, volatility: 45 },
+                    'Energy': { growth: 20, momentum: 55, value: 75, quality: 40, size: 30, volatility: 70 },
+                    'Utilities': { growth: 15, momentum: 25, value: 65, quality: 60, size: 20, volatility: 25 },
+                    'Real Estate': { growth: 25, momentum: 35, value: 60, quality: 50, size: 40, volatility: 45 },
+                    'Consumer Defensive': { growth: 25, momentum: 30, value: 55, quality: 70, size: 25, volatility: 30 },
+                    'Communication Services': { growth: 65, momentum: 55, value: 35, quality: 50, size: 30, volatility: 55 },
+                    'Basic Materials': { growth: 30, momentum: 50, value: 60, quality: 45, size: 35, volatility: 60 }
+                };
+
+                // Default for unknown sectors
+                const defaultFactors = { growth: 40, momentum: 40, value: 50, quality: 50, size: 35, volatility: 50 };
+
+                // Weight factors by sector allocation
+                if (equityValue > 0) {
+                    Object.entries(sectorWeights).forEach(([sector, value]) => {
+                        const weight = (value / equityValue) * (stockPct / 100);
+                        const sf = sectorFactors[sector] || defaultFactors;
+                        factors.value += sf.value * weight;
+                        factors.growth += sf.growth * weight;
+                        factors.momentum += sf.momentum * weight;
+                        factors.quality += sf.quality * weight;
+                        factors.size += sf.size * weight;
+                        factors.volatility += sf.volatility * weight;
+                    });
+                }
+            }
+
+            // Clamp all values to 0-100
+            Object.keys(factors).forEach(key => {
+                factors[key] = Math.min(100, Math.max(0, Math.round(factors[key])));
+            });
+
             // Update UI
-            document.getElementById('factorValue').textContent = factors.value.toFixed(0) + '%';
+            document.getElementById('factorValue').textContent = factors.value + '%';
             document.getElementById('factorValueBar').style.width = factors.value + '%';
 
-            document.getElementById('factorGrowth').textContent = factors.growth.toFixed(0) + '%';
+            document.getElementById('factorGrowth').textContent = factors.growth + '%';
             document.getElementById('factorGrowthBar').style.width = factors.growth + '%';
 
-            document.getElementById('factorMomentum').textContent = factors.momentum.toFixed(0) + '%';
+            document.getElementById('factorMomentum').textContent = factors.momentum + '%';
             document.getElementById('factorMomentumBar').style.width = factors.momentum + '%';
 
-            document.getElementById('factorQuality').textContent = factors.quality.toFixed(0) + '%';
+            document.getElementById('factorQuality').textContent = factors.quality + '%';
             document.getElementById('factorQualityBar').style.width = factors.quality + '%';
 
-            document.getElementById('factorSize').textContent = factors.size.toFixed(0) + '%';
+            document.getElementById('factorSize').textContent = factors.size + '%';
             document.getElementById('factorSizeBar').style.width = factors.size + '%';
 
-            document.getElementById('factorVol').textContent = factors.volatility.toFixed(0) + '%';
+            document.getElementById('factorVol').textContent = factors.volatility + '%';
             document.getElementById('factorVolBar').style.width = factors.volatility + '%';
         }
 
@@ -20944,6 +21428,11 @@
             // Helper to get value with fallback (handles 0, null, undefined)
             const getVal = (val, fallback) => (val !== undefined && val !== null && val !== 0) ? val : fallback;
             const getValAllowZero = (val, fallback) => (val !== undefined && val !== null) ? val : fallback;
+
+            // Page layout constants (in mm)
+            const PAGE_WIDTH = 160;  // A4 width minus margins
+            const PAGE_CONTENT_HEIGHT = 220;  // A4 height minus margins, header/footer
+            const HOLDINGS_PER_PAGE = 20;  // Max holdings rows per page
 
             // Known mutual fund names database
             const fundNames = {
@@ -21487,6 +21976,51 @@
             const top10Value = topHoldings.reduce((sum, p) => sum + (p.value || p.shares * p.price || 0), 0);
             const top10Concentration = totalValue > 0 ? (top10Value / totalValue * 100) : 0;
 
+            // Paginate holdings table
+            function paginateHoldings(holdings, perPage) {
+                const pages = [];
+                for (let i = 0; i < holdings.length; i += perPage) {
+                    pages.push({
+                        rows: holdings.slice(i, i + perPage),
+                        startIndex: i,
+                        isFirstPage: i === 0,
+                        isLastPage: i + perPage >= holdings.length
+                    });
+                }
+                return pages;
+            }
+
+            const sortedHoldings = enrichedPositions.slice().sort((a, b) => (b.value || b.shares * b.price || 0) - (a.value || a.shares * a.price || 0));
+            const holdingsPages = paginateHoldings(sortedHoldings, HOLDINGS_PER_PAGE);
+
+            // Calculate total pages: 1 cover + 1 exec summary + 1 allocation + 1 performance + 1 risk + holdings pages + 1 sector/geo + 1 dividend + 1 disclosures
+            const totalPages = 1 + 1 + 1 + 1 + 1 + holdingsPages.length + 1 + 1 + 1;
+
+            // Helper to generate page header
+            function getPageHeader(date) {
+                return '<div class="page-header"><div class="header-left"><div class="header-logo-icon">SS</div><span class="header-title">Portfolio Analysis Report</span></div><div class="header-date">' + date + '</div></div>';
+            }
+
+            // Helper to generate page footer
+            function getPageFooter(pageNum, total) {
+                return '<div class="page-footer"><span class="footer-brand">Statement Scan</span><span class="footer-page">Page ' + pageNum + ' of ' + total + '</span></div>';
+            }
+
+            // Generate holdings pages HTML
+            function generateHoldingsPages(pages, totalVal, fundNamesMap, startPageNum, totalPagesCount, date) {
+                return pages.map((page, idx) => {
+                    const pageNum = startPageNum + idx;
+                    const rowsHtml = page.rows.map((pos, rowIdx) => {
+                        const globalIdx = page.startIndex + rowIdx + 1;
+                        const value = pos.value || (pos.shares * pos.price);
+                        const weight = totalVal > 0 ? (value / totalVal * 100) : 0;
+                        return '<tr><td class="text-center">' + globalIdx + '</td><td class="symbol">' + pos.symbol + '</td><td class="name-cell">' + (pos.name || fundNamesMap[pos.symbol] || pos.symbol).substring(0, 25) + '</td><td>' + (pos.category || 'Diversified') + '</td><td class="text-right">' + (pos.shares?.toLocaleString(undefined, {maximumFractionDigits: 3}) || '-') + '</td><td class="text-right">$' + (pos.price?.toFixed(2) || '-') + '</td><td class="text-right">$' + value.toLocaleString(undefined, {maximumFractionDigits: 0}) + '</td><td class="text-right"><span class="weight-value">' + weight.toFixed(1) + '%</span><div class="weight-bar"><div class="weight-bar-fill" style="width: ' + Math.min(weight * 2, 100) + '%"></div></div></td></tr>';
+                    }).join('');
+
+                    return '<div class="page">' + getPageHeader(date) + '<h1 class="page-title">Holdings Detail' + (pages.length > 1 ? ' (' + (idx + 1) + ' of ' + pages.length + ')' : '') + '</h1><div class="section"><table class="holdings-table"><thead><tr><th class="text-center">#</th><th>Symbol</th><th>Name</th><th>Sector</th><th class="text-right">Shares</th><th class="text-right">Price</th><th class="text-right">Value</th><th class="text-right">Weight</th></tr></thead><tbody>' + rowsHtml + '</tbody></table>' + (page.isLastPage ? '<div class="holdings-summary"><div class="summary-row"><span>Total Holdings:</span><strong>' + sortedHoldings.length + '</strong></div><div class="summary-row"><span>Total Value:</span><strong>$' + totalVal.toLocaleString(undefined, {maximumFractionDigits: 0}) + '</strong></div></div>' : '') + '</div>' + getPageFooter(pageNum, totalPagesCount) + '</div>';
+                }).join('');
+            }
+
             // Create report HTML
             const reportHTML = `
 <!DOCTYPE html>
@@ -21495,36 +22029,97 @@
     <meta charset="UTF-8">
     <title>Portfolio Analysis Report - ${reportDate}</title>
     <style>
-        @page { size: A4; margin: 0; }
+        @page {
+            size: A4;
+            margin: 25mm 25mm 30mm 25mm;
+        }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: 'Helvetica Neue', Arial, sans-serif;
+            font-size: 10pt;
             color: #1a1a2e;
-            line-height: 1.6;
+            line-height: 1.4;
             background: white;
         }
+
+        /* Page Layout */
         .page {
             width: 210mm;
             min-height: 297mm;
-            padding: 20mm;
+            padding: 25mm 25mm 30mm 25mm;
             margin: 0 auto;
             background: white;
             page-break-after: always;
+            page-break-inside: avoid;
             position: relative;
+            box-sizing: border-box;
         }
         .page:last-child { page-break-after: auto; }
+
+        /* Page Header */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #635bff;
+            margin-bottom: 20px;
+            height: 15mm;
+        }
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .header-logo-icon {
+            width: 28px;
+            height: 28px;
+            background: #635bff;
+            border-radius: 6px;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .header-title {
+            font-size: 14pt;
+            font-weight: 600;
+            color: #635bff;
+        }
+        .header-date { font-size: 10pt; color: #6b7280; }
+
+        /* Page Footer */
+        .page-footer {
+            position: absolute;
+            bottom: 15mm;
+            left: 25mm;
+            right: 25mm;
+            padding-top: 10px;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            font-size: 9pt;
+            color: #6b7280;
+            height: 12mm;
+        }
+        .footer-brand { font-weight: 500; }
+        .footer-page { color: #635bff; font-weight: 500; }
 
         /* Cover Page */
         .cover {
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            min-height: 257mm;
+            min-height: 247mm;
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
             color: white;
             padding: 30mm;
+            margin: -25mm -25mm -30mm -25mm;
+            width: calc(100% + 50mm);
         }
-        .cover-header { text-align: center; margin-top: 30mm; }
+        .cover-header { text-align: center; margin-top: 40mm; }
         .cover-logo {
             width: 80px;
             height: 80px;
@@ -21537,458 +22132,470 @@
             font-size: 36px;
             font-weight: bold;
         }
-        .cover-title { font-size: 42px; font-weight: 300; margin-bottom: 10px; letter-spacing: -1px; }
-        .cover-subtitle { font-size: 18px; opacity: 0.8; font-weight: 300; }
-        .cover-value {
-            text-align: center;
-            margin-top: 50px;
-        }
-        .cover-value-label { font-size: 14px; opacity: 0.7; text-transform: uppercase; letter-spacing: 2px; }
-        .cover-value-amount { font-size: 56px; font-weight: 600; margin-top: 10px; }
+        .cover-title { font-size: 36pt; font-weight: 300; margin-bottom: 10px; letter-spacing: -1px; }
+        .cover-subtitle { font-size: 14pt; opacity: 0.8; font-weight: 300; }
+        .cover-value { text-align: center; margin-top: 40px; }
+        .cover-value-label { font-size: 11pt; opacity: 0.7; text-transform: uppercase; letter-spacing: 2px; }
+        .cover-value-amount { font-size: 48pt; font-weight: 600; margin-top: 10px; }
         .cover-stats {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 30px;
-            margin-top: 50px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-top: 40px;
             text-align: center;
         }
-        .cover-stat-value { font-size: 28px; font-weight: 600; }
-        .cover-stat-label { font-size: 12px; opacity: 0.7; margin-top: 5px; }
+        .cover-stat { background: rgba(255,255,255,0.1); padding: 20px 15px; border-radius: 12px; }
+        .cover-stat-value { font-size: 24pt; font-weight: 600; }
+        .cover-stat-label { font-size: 9pt; opacity: 0.7; margin-top: 5px; }
         .cover-footer {
             text-align: center;
-            padding-top: 40px;
+            padding-top: 30px;
             border-top: 1px solid rgba(255,255,255,0.2);
         }
-        .cover-date { font-size: 14px; opacity: 0.7; }
-        .cover-prepared { font-size: 12px; opacity: 0.5; margin-top: 10px; }
+        .cover-date { font-size: 12pt; opacity: 0.8; }
+        .cover-prepared { font-size: 10pt; opacity: 0.5; margin-top: 10px; }
 
-        /* Content Pages */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #635bff;
-            margin-bottom: 25px;
-        }
-        .header-logo {
-            font-size: 18px;
-            font-weight: 600;
-            color: #635bff;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .header-logo-icon {
-            width: 32px;
-            height: 32px;
-            background: #635bff;
-            border-radius: 8px;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-        }
-        .header-date { font-size: 12px; color: #666; }
-        .page-title { font-size: 24px; font-weight: 600; color: #1a1a2e; margin-bottom: 20px; }
-
-        .section { margin-bottom: 25px; }
+        /* Typography */
+        .page-title { font-size: 18pt; font-weight: 600; color: #1a1a2e; margin-bottom: 15px; }
+        .section { margin-bottom: 20px; }
         .section-title {
-            font-size: 18px;
+            font-size: 14pt;
             font-weight: 600;
             color: #1a1a2e;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             padding-bottom: 8px;
-            border-bottom: 1px solid #e0e0e0;
+            border-bottom: 1px solid #e5e7eb;
         }
+        .section-subtitle { font-size: 12pt; font-weight: 600; color: #374151; margin-bottom: 10px; }
 
+        /* Summary Cards */
         .summary-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-            margin-bottom: 25px;
+            gap: 12px;
+            margin-bottom: 20px;
         }
-        .summary-grid-3 { grid-template-columns: repeat(3, 1fr); }
+        .summary-grid-2 { grid-template-columns: repeat(2, 1fr); }
         .summary-card {
             background: #f8f9fa;
-            padding: 18px;
-            border-radius: 12px;
+            padding: 15px;
+            border-radius: 10px;
             text-align: center;
+            border: 1px solid #e5e7eb;
         }
         .summary-card-value {
-            font-size: 22px;
+            font-size: 18pt;
             font-weight: 600;
             color: #1a1a2e;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
         }
         .summary-card-label {
-            font-size: 10px;
-            color: #666;
+            font-size: 8pt;
+            color: #6b7280;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
         .summary-card-value.positive { color: #10b981; }
         .summary-card-value.negative { color: #ef4444; }
-        .summary-card-subtitle { font-size: 11px; color: #999; margin-top: 4px; }
 
-        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+        /* Two Column Layout */
+        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
 
-        .allocation-chart {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-        .allocation-bar {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .allocation-bar-label {
-            width: 70px;
-            font-size: 12px;
-            font-weight: 500;
-        }
-        .allocation-bar-track {
-            flex: 1;
-            height: 22px;
-            background: #f0f0f0;
-            border-radius: 4px;
-            overflow: hidden;
-        }
-        .allocation-bar-fill {
-            height: 100%;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            padding-right: 8px;
-            font-size: 10px;
-            font-weight: 600;
-            color: white;
-            min-width: 35px;
-        }
-        .allocation-bar-fill.stocks { background: #635bff; }
-        .allocation-bar-fill.bonds { background: #10b981; }
-        .allocation-bar-fill.cash { background: #f59e0b; }
-        .allocation-bar-fill.other { background: #6b7280; }
-        .allocation-bar-value { width: 80px; text-align: right; font-size: 11px; color: #666; }
-
-        .allocation-summary {
+        /* Allocation Components */
+        .allocation-breakdown {
             background: #f8f9fa;
-            padding: 20px;
-            border-radius: 12px;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
         }
-        .allocation-summary-item {
+        .allocation-row {
             display: flex;
             justify-content: space-between;
-            padding: 10px 0;
+            padding: 8px 0;
             border-bottom: 1px solid #e5e7eb;
+            font-size: 10pt;
         }
-        .allocation-summary-item:last-child { border-bottom: none; }
-        .allocation-summary-label { font-weight: 500; }
-        .allocation-summary-value { color: #635bff; font-weight: 600; }
+        .allocation-row:last-child { border-bottom: none; font-weight: 600; }
+        .allocation-row .value { font-weight: 600; color: #635bff; }
 
+        /* Holdings Table */
         .holdings-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 10px;
+            font-size: 9pt;
+            line-height: 1.2;
         }
         .holdings-table th {
             background: #f8f9fa;
-            padding: 10px 8px;
+            padding: 8px 6px;
             text-align: left;
             font-weight: 600;
-            color: #374151;
+            color: #1a1a2e;
             border-bottom: 2px solid #e5e7eb;
             text-transform: uppercase;
-            font-size: 9px;
-            letter-spacing: 0.5px;
+            font-size: 8pt;
+            letter-spacing: 0.3px;
         }
         .holdings-table td {
-            padding: 8px;
+            padding: 6px;
             border-bottom: 1px solid #f0f0f0;
             vertical-align: middle;
+            height: 28px;
         }
         .holdings-table tr:nth-child(even) { background: #fafafa; }
         .holdings-table .text-right { text-align: right; }
+        .holdings-table .text-center { text-align: center; }
         .holdings-table .symbol { font-weight: 600; color: #635bff; }
-        .holdings-table .weight-bar {
-            width: 50px;
-            height: 5px;
+        .holdings-table .name-cell { max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .weight-value { display: inline-block; width: 35px; }
+        .weight-bar {
+            width: 40px;
+            height: 4px;
             background: #e5e7eb;
-            border-radius: 3px;
+            border-radius: 2px;
             overflow: hidden;
             display: inline-block;
             vertical-align: middle;
-            margin-left: 6px;
+            margin-left: 4px;
         }
-        .holdings-table .weight-bar-fill {
+        .weight-bar-fill {
             height: 100%;
             background: #635bff;
-            border-radius: 3px;
+            border-radius: 2px;
         }
-
-        .risk-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-        }
-        .risk-metric {
-            text-align: center;
-            padding: 18px;
-            background: #f8f9fa;
-            border-radius: 12px;
-        }
-        .risk-metric-value {
-            font-size: 24px;
-            font-weight: 600;
-            margin-bottom: 6px;
-        }
-        .risk-metric-label {
-            font-size: 10px;
-            color: #666;
-            text-transform: uppercase;
-        }
-        .risk-metric-desc { font-size: 9px; color: #999; margin-top: 4px; }
-
-        .sector-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
-        }
-        .sector-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 14px;
+        .holdings-summary {
+            margin-top: 15px;
+            padding: 12px;
             background: #f8f9fa;
             border-radius: 8px;
-            font-size: 12px;
-        }
-        .sector-name { font-weight: 500; }
-        .sector-pct { color: #635bff; font-weight: 600; }
-        .sector-bar {
-            width: 60px;
-            height: 6px;
-            background: #e5e7eb;
-            border-radius: 3px;
-            overflow: hidden;
-            margin-left: 10px;
-        }
-        .sector-bar-fill { height: 100%; background: #635bff; border-radius: 3px; }
-
-        .geo-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
-        }
-        .geo-item {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            padding: 12px 14px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            font-size: 12px;
+            font-size: 10pt;
         }
-        .geo-flag { font-size: 18px; margin-right: 10px; }
-        .geo-name { font-weight: 500; flex: 1; }
-        .geo-pct { color: #635bff; font-weight: 600; }
+        .summary-row { display: flex; gap: 8px; }
+        .summary-row strong { color: #635bff; }
 
+        /* Performance Table */
         .perf-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
+            font-size: 10pt;
+            margin-bottom: 15px;
         }
         .perf-table th, .perf-table td {
-            padding: 12px;
+            padding: 10px 8px;
             text-align: center;
             border-bottom: 1px solid #e5e7eb;
         }
         .perf-table th {
             background: #f8f9fa;
             font-weight: 600;
-            font-size: 11px;
+            font-size: 9pt;
             text-transform: uppercase;
         }
-        .perf-table td { font-size: 14px; font-weight: 500; }
+        .perf-table td { font-size: 11pt; font-weight: 500; }
+        .perf-table td:first-child { text-align: left; font-weight: 600; }
         .perf-positive { color: #10b981; }
         .perf-negative { color: #ef4444; }
 
-        .dividend-grid {
+        /* Risk Metrics Grid */
+        .risk-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-        .dividend-card {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: white;
-            padding: 20px;
-            border-radius: 12px;
-            text-align: center;
-        }
-        .dividend-card-value { font-size: 28px; font-weight: 600; }
-        .dividend-card-label { font-size: 11px; opacity: 0.9; margin-top: 5px; }
-
-        .insights-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        .insight-item {
-            display: flex;
+            grid-template-columns: repeat(4, 1fr);
             gap: 12px;
+        }
+        .risk-metric {
+            text-align: center;
             padding: 14px;
             background: #f8f9fa;
             border-radius: 10px;
-            border-left: 4px solid #635bff;
+            border: 1px solid #e5e7eb;
         }
-        .insight-item.warning { border-left-color: #f59e0b; background: #fffbeb; }
-        .insight-item.positive { border-left-color: #10b981; background: #ecfdf5; }
-        .insight-item.negative { border-left-color: #ef4444; background: #fef2f2; }
-        .insight-icon { font-size: 18px; }
-        .insight-content { flex: 1; }
-        .insight-title { font-weight: 600; margin-bottom: 3px; font-size: 13px; }
-        .insight-text { font-size: 11px; color: #666; }
+        .risk-metric-value {
+            font-size: 18pt;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .risk-metric-label {
+            font-size: 8pt;
+            color: #6b7280;
+            text-transform: uppercase;
+        }
+        .risk-metric-desc { font-size: 7pt; color: #9ca3af; margin-top: 3px; }
 
-        .top-holdings {
+        /* Sector & Geography */
+        .sector-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 6px;
+        }
+        .sector-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 10px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            font-size: 10pt;
+        }
+        .sector-name { font-weight: 500; }
+        .sector-pct { color: #635bff; font-weight: 600; }
+        .sector-bar {
+            width: 50px;
+            height: 5px;
+            background: #e5e7eb;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-left: 8px;
+        }
+        .sector-bar-fill { height: 100%; background: #635bff; border-radius: 2px; }
+
+        /* Geography */
+        .geo-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 6px;
+        }
+        .geo-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 10px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            font-size: 10pt;
+        }
+        .geo-flag { font-size: 14pt; margin-right: 8px; }
+        .geo-name { font-weight: 500; flex: 1; }
+        .geo-pct { color: #635bff; font-weight: 600; }
+
+        /* Dividend */
+        .dividend-highlight {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 18px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .dividend-highlight-value { font-size: 24pt; font-weight: 600; }
+        .dividend-highlight-label { font-size: 9pt; opacity: 0.9; margin-top: 5px; }
+        .dividend-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 10px;
         }
+        .dividend-stat {
+            background: #f0fdf4;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #bbf7d0;
+        }
+        .dividend-stat-value { font-size: 16pt; font-weight: 600; color: #166534; }
+        .dividend-stat-label { font-size: 8pt; color: #15803d; margin-top: 3px; }
+
+        /* Top Holdings */
+        .top-holdings {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
         .top-holding {
             display: flex;
             align-items: center;
-            padding: 12px;
+            padding: 10px;
             background: #f8f9fa;
-            border-radius: 10px;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
         }
         .top-holding-rank {
-            width: 28px;
-            height: 28px;
+            width: 24px;
+            height: 24px;
             background: #635bff;
             color: white;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 12px;
+            font-size: 10pt;
             font-weight: 600;
-            margin-right: 12px;
+            margin-right: 10px;
+            flex-shrink: 0;
         }
-        .top-holding-info { flex: 1; }
-        .top-holding-symbol { font-weight: 600; font-size: 13px; }
-        .top-holding-name { font-size: 10px; color: #666; }
-        .top-holding-value { text-align: right; }
-        .top-holding-amount { font-weight: 600; font-size: 13px; }
-        .top-holding-weight { font-size: 10px; color: #635bff; }
+        .top-holding-info { flex: 1; min-width: 0; }
+        .top-holding-symbol { font-weight: 600; font-size: 10pt; }
+        .top-holding-name { font-size: 8pt; color: #6b7280; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .top-holding-value { text-align: right; flex-shrink: 0; }
+        .top-holding-amount { font-weight: 600; font-size: 10pt; }
+        .top-holding-weight { font-size: 8pt; color: #635bff; }
 
-        .footer {
-            position: absolute;
-            bottom: 20mm;
-            left: 20mm;
-            right: 20mm;
-            padding-top: 15px;
-            border-top: 1px solid #e0e0e0;
+        /* Insights */
+        .insights-list {
             display: flex;
-            justify-content: space-between;
-            font-size: 9px;
-            color: #999;
+            flex-direction: column;
+            gap: 8px;
         }
-
-        .disclaimer {
-            padding: 20px;
+        .insight-item {
+            display: flex;
+            gap: 10px;
+            padding: 10px 12px;
             background: #f8f9fa;
-            border-radius: 10px;
-            font-size: 9px;
-            color: #666;
-            line-height: 1.5;
+            border-radius: 8px;
+            border-left: 3px solid #635bff;
+            page-break-inside: avoid;
+        }
+        .insight-item.warning { border-left-color: #f59e0b; background: #fffbeb; }
+        .insight-item.positive { border-left-color: #10b981; background: #ecfdf5; }
+        .insight-item.negative { border-left-color: #ef4444; background: #fef2f2; }
+        .insight-icon { font-size: 14pt; }
+        .insight-content { flex: 1; }
+        .insight-title { font-weight: 600; margin-bottom: 2px; font-size: 10pt; }
+        .insight-text { font-size: 9pt; color: #4b5563; line-height: 1.4; }
+
+        /* Disclaimer */
+        .disclaimer {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
         }
         .disclaimer-title {
             font-weight: 600;
             margin-bottom: 8px;
-            color: #374151;
-            font-size: 11px;
+            color: #1a1a2e;
+            font-size: 11pt;
         }
+        .disclaimer p {
+            font-size: 9pt;
+            color: #4b5563;
+            line-height: 1.5;
+            margin-bottom: 8px;
+        }
+        .disclaimer p:last-child { margin-bottom: 0; }
 
-        .toc-item {
+        /* Chart Containers - Limit sizes */
+        .chart-container {
+            max-width: 100mm;
+            max-height: 65mm;
             display: flex;
-            justify-content: space-between;
-            padding: 12px 0;
-            border-bottom: 1px dashed #e5e7eb;
-            font-size: 14px;
+            justify-content: center;
+            align-items: center;
         }
-        .toc-item:last-child { border-bottom: none; }
-        .toc-page { color: #635bff; font-weight: 600; }
+        .chart-container-lg {
+            max-width: 150mm;
+            max-height: 65mm;
+        }
 
+        /* Print styles */
         @media print {
             body { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
             .page { margin: 0; box-shadow: none; }
+            .page-header, .page-footer { position: fixed; }
+            thead { display: table-header-group; }
+            tr { page-break-inside: avoid; }
         }
+
+        /* Prevent page breaks inside elements */
+        .no-break { page-break-inside: avoid; }
     </style>
 </head>
 <body>
     <!-- Page 1: Cover -->
-    <div class="page cover">
-        <div></div>
-        <div class="cover-header">
-            <div class="cover-logo">SS</div>
-            <h1 class="cover-title">Portfolio Analysis Report</h1>
-            <p class="cover-subtitle">Comprehensive Investment Review & Analytics</p>
-            <div class="cover-value">
-                <div class="cover-value-label">Total Portfolio Value</div>
-                <div class="cover-value-amount">$${totalValue.toLocaleString(undefined, {maximumFractionDigits: 0})}</div>
+    <div class="page">
+        <div class="cover">
+            <div></div>
+            <div class="cover-header">
+                <div class="cover-logo">SS</div>
+                <h1 class="cover-title">Portfolio Analysis Report</h1>
+                <p class="cover-subtitle">Comprehensive Investment Review & Analytics</p>
+                <div class="cover-value">
+                    <div class="cover-value-label">Total Portfolio Value</div>
+                    <div class="cover-value-amount">$${totalValue.toLocaleString(undefined, {maximumFractionDigits: 0})}</div>
+                </div>
+                <div class="cover-stats">
+                    <div class="cover-stat">
+                        <div class="cover-stat-value">${positions.length}</div>
+                        <div class="cover-stat-label">Holdings</div>
+                    </div>
+                    <div class="cover-stat">
+                        <div class="cover-stat-value">${Object.keys(sectors).length}</div>
+                        <div class="cover-stat-label">Sectors</div>
+                    </div>
+                    <div class="cover-stat">
+                        <div class="cover-stat-value">${avgDividendYield.toFixed(2)}%</div>
+                        <div class="cover-stat-label">Dividend Yield</div>
+                    </div>
+                    <div class="cover-stat">
+                        <div class="cover-stat-value ${safePerf.returns_ytd >= 0 ? 'positive' : 'negative'}">${safePerf.returns_ytd >= 0 ? '+' : ''}${safePerf.returns_ytd.toFixed(1)}%</div>
+                        <div class="cover-stat-label">YTD Return</div>
+                    </div>
+                </div>
             </div>
-            <div class="cover-stats">
-                <div>
-                    <div class="cover-stat-value">${positions.length}</div>
-                    <div class="cover-stat-label">Holdings</div>
-                </div>
-                <div>
-                    <div class="cover-stat-value">${Object.keys(sectors).length}</div>
-                    <div class="cover-stat-label">Sectors</div>
-                </div>
-                <div>
-                    <div class="cover-stat-value">${avgDividendYield.toFixed(2)}%</div>
-                    <div class="cover-stat-label">Dividend Yield</div>
-                </div>
+            <div class="cover-footer">
+                <div class="cover-date">${reportDate}</div>
+                <div class="cover-prepared">Prepared by Statement Scan</div>
             </div>
-        </div>
-        <div class="cover-footer">
-            <div class="cover-date">${reportDate}</div>
-            <div class="cover-prepared">Generated by Statement Scan • Professional Portfolio Analytics</div>
         </div>
     </div>
 
-    <!-- Page 2: Table of Contents & Executive Summary -->
+    <!-- Page 2: Executive Summary -->
     <div class="page">
-        <div class="header">
-            <div class="header-logo"><div class="header-logo-icon">SS</div>Statement Scan</div>
-            <div class="header-date">${reportDate}</div>
-        </div>
-
-        <h1 class="page-title">Table of Contents</h1>
-        <div style="margin-bottom: 30px;">
-            <div class="toc-item"><span>Executive Summary</span><span class="toc-page">2</span></div>
-            <div class="toc-item"><span>Asset Allocation</span><span class="toc-page">3</span></div>
-            <div class="toc-item"><span>Performance Analysis</span><span class="toc-page">4</span></div>
-            <div class="toc-item"><span>Risk Analysis</span><span class="toc-page">5</span></div>
-            <div class="toc-item"><span>Sector & Industry Breakdown</span><span class="toc-page">6</span></div>
-            <div class="toc-item"><span>Holdings Detail</span><span class="toc-page">7</span></div>
-            <div class="toc-item"><span>Dividend Analysis</span><span class="toc-page">8</span></div>
-            <div class="toc-item"><span>Geographic Exposure</span><span class="toc-page">9</span></div>
-            <div class="toc-item"><span>Insights & Recommendations</span><span class="toc-page">10</span></div>
-        </div>
+        ${getPageHeader(reportDate)}
+        <h1 class="page-title">Executive Summary</h1>
 
         <div class="section">
-            <h2 class="section-title">Executive Summary</h2>
+            <h2 class="section-title">Performance Highlights</h2>
             <div class="summary-grid">
                 <div class="summary-card">
                     <div class="summary-card-value">$${totalValue.toLocaleString(undefined, {maximumFractionDigits: 0})}</div>
                     <div class="summary-card-label">Portfolio Value</div>
                 </div>
+                <div class="summary-card">
+                    <div class="summary-card-value ${safePerf.returns_ytd >= 0 ? 'positive' : 'negative'}">${safePerf.returns_ytd >= 0 ? '+' : ''}${safePerf.returns_ytd.toFixed(2)}%</div>
+                    <div class="summary-card-label">YTD Return</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-card-value">${safeRisk.sharpe_ratio.toFixed(2)}</div>
+                    <div class="summary-card-label">Sharpe Ratio</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-card-value">${avgDividendYield.toFixed(2)}%</div>
+                    <div class="summary-card-label">Dividend Yield</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="two-col">
+            <div class="section">
+                <h2 class="section-title">Asset Allocation Overview</h2>
+                <div class="chart-container">
+                    ${generatePieChart({
+                        'Equities': stocksValue,
+                        'Fixed Income': bondsValue,
+                        'Cash': cashValue,
+                        'Other': totalValue * (allocation.other || 0) / 100
+                    }, 140, ['#635bff', '#10b981', '#f59e0b', '#8b5cf6'])}
+                </div>
+            </div>
+            <div class="section">
+                <h2 class="section-title">Top 5 Holdings</h2>
+                <table class="holdings-table">
+                    <thead>
+                        <tr><th>Symbol</th><th>Name</th><th class="text-right">Value</th><th class="text-right">Weight</th></tr>
+                    </thead>
+                    <tbody>
+                        ${topHoldings.slice(0, 5).map(pos => {
+                            const value = pos.value || (pos.shares * pos.price);
+                            const weight = totalValue > 0 ? (value / totalValue * 100) : 0;
+                            return '<tr><td class="symbol">' + pos.symbol + '</td><td class="name-cell">' + (pos.name || fundNames[pos.symbol] || pos.symbol).substring(0, 20) + '</td><td class="text-right">$' + value.toLocaleString(undefined, {maximumFractionDigits: 0}) + '</td><td class="text-right">' + weight.toFixed(1) + '%</td></tr>';
+                        }).join('')}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Key Metrics</h2>
+            <div class="summary-grid">
                 <div class="summary-card">
                     <div class="summary-card-value">${positions.length}</div>
                     <div class="summary-card-label">Total Holdings</div>
@@ -21998,104 +22605,78 @@
                     <div class="summary-card-label">Equity Exposure</div>
                 </div>
                 <div class="summary-card">
-                    <div class="summary-card-value">${safeRisk.sharpe_ratio.toFixed(2)}</div>
-                    <div class="summary-card-label">Sharpe Ratio</div>
+                    <div class="summary-card-value">${safeRisk.volatility.toFixed(1)}%</div>
+                    <div class="summary-card-label">Volatility</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-card-value">$${annualDividendIncome.toLocaleString(undefined, {maximumFractionDigits: 0})}</div>
+                    <div class="summary-card-label">Annual Income</div>
                 </div>
             </div>
         </div>
 
-        <div class="section">
-            <h2 class="section-title">Top 10 Holdings</h2>
-            <div class="top-holdings">
-                ${topHoldings.map((pos, i) => {
-                    const value = pos.value || (pos.shares * pos.price);
-                    const weight = (value / totalValue * 100);
-                    return `
-                    <div class="top-holding">
-                        <div class="top-holding-rank">${i + 1}</div>
-                        <div class="top-holding-info">
-                            <div class="top-holding-symbol">${pos.symbol}</div>
-                            <div class="top-holding-name">${pos.name || fundNames[pos.symbol] || pos.category || pos.symbol}</div>
-                        </div>
-                        <div class="top-holding-value">
-                            <div class="top-holding-amount">$${value.toLocaleString(undefined, {maximumFractionDigits: 0})}</div>
-                            <div class="top-holding-weight">${weight.toFixed(1)}%</div>
-                        </div>
-                    </div>`;
-                }).join('')}
-            </div>
-        </div>
-
-        <div class="footer"><span>Statement Scan Portfolio Analysis</span><span>Page 2 of 10</span></div>
+        ${getPageFooter(2, totalPages)}
     </div>
 
     <!-- Page 3: Asset Allocation -->
     <div class="page">
-        <div class="header">
-            <div class="header-logo"><div class="header-logo-icon">SS</div>Statement Scan</div>
-            <div class="header-date">${reportDate}</div>
-        </div>
-
+        ${getPageHeader(reportDate)}
         <h1 class="page-title">Asset Allocation</h1>
 
-        <div class="section">
-            <h2 class="section-title">Portfolio Composition</h2>
-            <div style="display: flex; gap: 40px; align-items: flex-start;">
-                <div style="flex: 1;">
+        <div class="two-col">
+            <div class="section">
+                <h2 class="section-title">Portfolio Composition</h2>
+                <div class="chart-container">
                     ${generatePieChart({
                         'Equities': stocksValue,
                         'Fixed Income': bondsValue,
                         'Cash': cashValue,
-                        'Alternatives': totalValue * (allocation.other + allocation.realEstate + allocation.crypto) / 100
-                    }, 180, ['#635bff', '#10b981', '#f59e0b', '#8b5cf6'])}
+                        'Other': totalValue * (allocation.other || 0) / 100
+                    }, 140, ['#635bff', '#10b981', '#f59e0b', '#8b5cf6'])}
                 </div>
-                <div style="flex: 1;">
-                    <div style="background:#f8f9fa;padding:20px;border-radius:12px;">
-                        <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #e5e7eb;">
-                            <span style="color:#374151;">Total Equity</span>
-                            <span style="font-weight:600;color:#635bff;">$${stocksValue.toLocaleString(undefined, {maximumFractionDigits: 0})}</span>
-                        </div>
-                        <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #e5e7eb;">
-                            <span style="color:#374151;">Fixed Income</span>
-                            <span style="font-weight:600;color:#10b981;">$${bondsValue.toLocaleString(undefined, {maximumFractionDigits: 0})}</span>
-                        </div>
-                        <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #e5e7eb;">
-                            <span style="color:#374151;">Cash & Equivalents</span>
-                            <span style="font-weight:600;color:#f59e0b;">$${cashValue.toLocaleString(undefined, {maximumFractionDigits: 0})}</span>
-                        </div>
-                        <div style="display:flex;justify-content:space-between;padding:12px 0;font-size:14px;">
-                            <span style="font-weight:600;color:#1a1a2e;">Total Portfolio</span>
-                            <span style="font-weight:700;color:#1a1a2e;">$${totalValue.toLocaleString(undefined, {maximumFractionDigits: 0})}</span>
-                        </div>
+            </div>
+            <div class="section">
+                <h2 class="section-title">Allocation Breakdown</h2>
+                <div class="allocation-breakdown">
+                    <div class="allocation-row">
+                        <span>Equities</span>
+                        <span class="value">${allocation.stocks.toFixed(1)}% - $${stocksValue.toLocaleString(undefined, {maximumFractionDigits: 0})}</span>
+                    </div>
+                    <div class="allocation-row">
+                        <span>Fixed Income</span>
+                        <span class="value">${allocation.bonds.toFixed(1)}% - $${bondsValue.toLocaleString(undefined, {maximumFractionDigits: 0})}</span>
+                    </div>
+                    <div class="allocation-row">
+                        <span>Cash</span>
+                        <span class="value">${allocation.cash.toFixed(1)}% - $${cashValue.toLocaleString(undefined, {maximumFractionDigits: 0})}</span>
+                    </div>
+                    <div class="allocation-row">
+                        <span>Total</span>
+                        <span class="value">$${totalValue.toLocaleString(undefined, {maximumFractionDigits: 0})}</span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="section" style="margin-top:25px;">
-            <h2 class="section-title">Investment Category Breakdown</h2>
-            <div style="display: flex; gap: 40px; align-items: flex-start;">
-                <div style="flex: 1;">
-                    ${generatePieChart(sectors, 180, ['#635bff', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#ec4899', '#14b8a6'])}
+        <div class="section">
+            <h2 class="section-title">Sector Allocation</h2>
+            <div class="two-col">
+                <div class="chart-container">
+                    ${generatePieChart(sectors, 140, ['#635bff', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#ec4899', '#14b8a6'])}
                 </div>
-                <div style="flex: 1;">
-                    <h3 style="font-size:13px;color:#374151;margin-bottom:12px;">Top Holdings by Weight</h3>
-                    ${topHoldings.slice(0, 5).map((pos, i) => {
-                        const weight = totalValue > 0 ? ((pos.value || pos.shares * pos.price) / totalValue * 100) : 0;
-                        return '<div style="margin-bottom:10px;"><div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="font-size:11px;color:#374151;">' + pos.symbol + '</span><span style="font-size:11px;font-weight:600;color:#1a1a2e;">' + weight.toFixed(1) + '%</span></div><div style="height:8px;background:#e5e7eb;border-radius:4px;overflow:hidden;"><div style="height:100%;width:' + Math.min(weight * 2, 100) + '%;background:#635bff;border-radius:4px;"></div></div></div>';
-                    }).join('')}
+                <div>
+                    <div class="sector-grid">
+                        ${Object.entries(sectors).sort((a, b) => b[1] - a[1]).slice(0, 6).map(([name, pct]) =>
+                            '<div class="sector-item"><span class="sector-name">' + name + '</span><div style="display:flex;align-items:center;"><div class="sector-bar"><div class="sector-bar-fill" style="width:' + Math.min(pct * 2, 100) + '%"></div></div><span class="sector-pct">' + pct.toFixed(1) + '%</span></div></div>'
+                        ).join('')}
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="section" style="margin-top:20px;">
-            <h2 class="section-title">Performance Heat Map</h2>
-            ${generateHeatMap(enrichedPositions, 12)}
-        </div>
-
-        <div class="section" style="margin-top:16px;background:#f8f9fa;padding:14px;border-radius:10px;">
-            <h2 style="font-size:12px;font-weight:600;color:#1a1a2e;margin-bottom:6px;">Allocation Analysis</h2>
-            <p style="font-size: 10px; line-height: 1.6; color: #444; margin:0;">
+        <div class="section no-break" style="background:#f8f9fa;padding:12px;border-radius:8px;">
+            <h2 style="font-size:11pt;font-weight:600;color:#1a1a2e;margin-bottom:6px;">Allocation Analysis</h2>
+            <p style="font-size:9pt;line-height:1.5;color:#4b5563;margin:0;">
                 Your portfolio is <strong>${allocation.stocks >= 70 ? 'aggressively' : allocation.stocks >= 50 ? 'moderately' : 'conservatively'}</strong> positioned
                 with ${(allocation.stocks || 0).toFixed(0)}% in equities and ${(allocation.bonds || 0).toFixed(0)}% in fixed income.
                 ${allocation.stocks >= 80 ? 'This high equity allocation suggests a growth-oriented strategy suitable for investors with longer time horizons.' :
@@ -22104,16 +22685,12 @@
             </p>
         </div>
 
-        <div class="footer"><span>Statement Scan Portfolio Analysis</span><span>Page 3 of 10</span></div>
+        ${getPageFooter(3, totalPages)}
     </div>
 
     <!-- Page 4: Performance Analysis -->
     <div class="page">
-        <div class="header">
-            <div class="header-logo"><div class="header-logo-icon">SS</div>Statement Scan</div>
-            <div class="header-date">${reportDate}</div>
-        </div>
-
+        ${getPageHeader(reportDate)}
         <h1 class="page-title">Performance Analysis</h1>
 
         <div class="section">
@@ -22134,35 +22711,35 @@
                         <td class="${safePerf.returns_1m >= 0 ? 'perf-positive' : 'perf-negative'}">${safePerf.returns_1m.toFixed(2)}%</td>
                         <td>${safePerf.sp500_1m.toFixed(2)}%</td>
                         <td>${safePerf.blend_1m.toFixed(2)}%</td>
-                        <td class="${(safePerf.returns_1m - safePerf.sp500_1m) >= 0 ? 'perf-positive' : 'perf-negative'}">${(safePerf.returns_1m - safePerf.sp500_1m).toFixed(2)}%</td>
+                        <td class="${(safePerf.returns_1m - safePerf.sp500_1m) >= 0 ? 'perf-positive' : 'perf-negative'}">${(safePerf.returns_1m - safePerf.sp500_1m) >= 0 ? '+' : ''}${(safePerf.returns_1m - safePerf.sp500_1m).toFixed(2)}%</td>
                     </tr>
                     <tr>
                         <td>3 Months</td>
                         <td class="${safePerf.returns_3m >= 0 ? 'perf-positive' : 'perf-negative'}">${safePerf.returns_3m.toFixed(2)}%</td>
                         <td>${safePerf.sp500_3m.toFixed(2)}%</td>
                         <td>${safePerf.blend_3m.toFixed(2)}%</td>
-                        <td class="${(safePerf.returns_3m - safePerf.sp500_3m) >= 0 ? 'perf-positive' : 'perf-negative'}">${(safePerf.returns_3m - safePerf.sp500_3m).toFixed(2)}%</td>
+                        <td class="${(safePerf.returns_3m - safePerf.sp500_3m) >= 0 ? 'perf-positive' : 'perf-negative'}">${(safePerf.returns_3m - safePerf.sp500_3m) >= 0 ? '+' : ''}${(safePerf.returns_3m - safePerf.sp500_3m).toFixed(2)}%</td>
                     </tr>
                     <tr>
                         <td>YTD</td>
                         <td class="${safePerf.returns_ytd >= 0 ? 'perf-positive' : 'perf-negative'}">${safePerf.returns_ytd.toFixed(2)}%</td>
                         <td>${safePerf.sp500_ytd.toFixed(2)}%</td>
                         <td>${safePerf.blend_ytd.toFixed(2)}%</td>
-                        <td class="${(safePerf.returns_ytd - safePerf.sp500_ytd) >= 0 ? 'perf-positive' : 'perf-negative'}">${(safePerf.returns_ytd - safePerf.sp500_ytd).toFixed(2)}%</td>
+                        <td class="${(safePerf.returns_ytd - safePerf.sp500_ytd) >= 0 ? 'perf-positive' : 'perf-negative'}">${(safePerf.returns_ytd - safePerf.sp500_ytd) >= 0 ? '+' : ''}${(safePerf.returns_ytd - safePerf.sp500_ytd).toFixed(2)}%</td>
                     </tr>
                     <tr>
                         <td>1 Year</td>
                         <td class="${safePerf.returns_1y >= 0 ? 'perf-positive' : 'perf-negative'}">${safePerf.returns_1y.toFixed(2)}%</td>
                         <td>${safePerf.sp500_1y.toFixed(2)}%</td>
                         <td>${safePerf.blend_1y.toFixed(2)}%</td>
-                        <td class="${(safePerf.returns_1y - safePerf.sp500_1y) >= 0 ? 'perf-positive' : 'perf-negative'}">${(safePerf.returns_1y - safePerf.sp500_1y).toFixed(2)}%</td>
+                        <td class="${(safePerf.returns_1y - safePerf.sp500_1y) >= 0 ? 'perf-positive' : 'perf-negative'}">${(safePerf.returns_1y - safePerf.sp500_1y) >= 0 ? '+' : ''}${(safePerf.returns_1y - safePerf.sp500_1y).toFixed(2)}%</td>
                     </tr>
                     <tr>
                         <td>3 Years (Ann.)</td>
                         <td class="${safePerf.returns_3y >= 0 ? 'perf-positive' : 'perf-negative'}">${safePerf.returns_3y.toFixed(2)}%</td>
                         <td>${safePerf.sp500_3y.toFixed(2)}%</td>
                         <td>${safePerf.blend_3y.toFixed(2)}%</td>
-                        <td class="${(safePerf.returns_3y - safePerf.sp500_3y) >= 0 ? 'perf-positive' : 'perf-negative'}">${(safePerf.returns_3y - safePerf.sp500_3y).toFixed(2)}%</td>
+                        <td class="${(safePerf.returns_3y - safePerf.sp500_3y) >= 0 ? 'perf-positive' : 'perf-negative'}">${(safePerf.returns_3y - safePerf.sp500_3y) >= 0 ? '+' : ''}${(safePerf.returns_3y - safePerf.sp500_3y).toFixed(2)}%</td>
                     </tr>
                 </tbody>
             </table>
@@ -22170,63 +22747,45 @@
 
         <div class="section">
             <h2 class="section-title">Performance Chart - Trailing 12 Months</h2>
-            <div style="display:flex;justify-content:center;padding:10px 0;">
-                ${generateLineChart(safePerf.returns_1y, safePerf.sp500_1y, 500, 180)}
+            <div class="chart-container-lg" style="margin:0 auto;">
+                ${generateLineChart(safePerf.returns_1y, safePerf.sp500_1y, 400, 150)}
             </div>
-            <div style="display:flex;gap:24px;justify-content:center;font-size:10px;margin-top:8px;">
-                <span><span style="display:inline-block;width:16px;height:3px;background:#635bff;border-radius:2px;margin-right:6px;vertical-align:middle;"></span>Portfolio</span>
-                <span><span style="display:inline-block;width:16px;height:3px;background:#94a3b8;border-radius:2px;margin-right:6px;vertical-align:middle;"></span>S&P 500</span>
+            <div style="display:flex;gap:20px;justify-content:center;font-size:9pt;margin-top:8px;">
+                <span><span style="display:inline-block;width:14px;height:2px;background:#635bff;margin-right:5px;vertical-align:middle;"></span>Portfolio</span>
+                <span><span style="display:inline-block;width:14px;height:2px;background:#94a3b8;margin-right:5px;vertical-align:middle;"></span>S&P 500</span>
             </div>
         </div>
 
-        <div class="two-col">
-            <div class="section">
-                <h2 class="section-title">Performance vs Benchmark</h2>
-                <div style="padding: 10px 0;">
-                    ${generatePerfComparison(safePerf.returns_ytd, safePerf.sp500_ytd, 'YTD')}
-                    ${generatePerfComparison(safePerf.returns_1y, safePerf.sp500_1y, '1 Year')}
-                    ${generatePerfComparison(safePerf.returns_3y, safePerf.sp500_3y, '3 Year')}
+        <div class="section">
+            <h2 class="section-title">Key Performance Metrics</h2>
+            <div class="summary-grid">
+                <div class="summary-card">
+                    <div class="summary-card-value ${safePerf.returns_ytd >= 0 ? 'positive' : 'negative'}">${safePerf.returns_ytd.toFixed(2)}%</div>
+                    <div class="summary-card-label">YTD Return</div>
                 </div>
-                <div style="display:flex;gap:20px;justify-content:center;margin-top:10px;font-size:10px;">
-                    <span><span style="display:inline-block;width:12px;height:12px;background:#635bff;border-radius:2px;margin-right:4px;vertical-align:middle;"></span>Portfolio</span>
-                    <span><span style="display:inline-block;width:12px;height:12px;background:#94a3b8;border-radius:2px;margin-right:4px;vertical-align:middle;"></span>S&P 500</span>
+                <div class="summary-card">
+                    <div class="summary-card-value ${safeRisk.alpha >= 0 ? 'positive' : 'negative'}">${safeRisk.alpha.toFixed(2)}%</div>
+                    <div class="summary-card-label">Alpha</div>
                 </div>
-            </div>
-            <div class="section">
-                <h2 class="section-title">Performance Metrics</h2>
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-                    <div style="background:#f8fafc;padding:12px;border-radius:8px;text-align:center;">
-                        <div style="font-size:22px;font-weight:700;color:${safePerf.returns_ytd >= 0 ? '#10b981' : '#ef4444'};">${safePerf.returns_ytd.toFixed(2)}%</div>
-                        <div style="font-size:10px;color:#64748b;margin-top:4px;">YTD Return</div>
-                    </div>
-                    <div style="background:#f8fafc;padding:12px;border-radius:8px;text-align:center;">
-                        <div style="font-size:22px;font-weight:700;color:${safeRisk.alpha >= 0 ? '#10b981' : '#ef4444'};">${safeRisk.alpha.toFixed(2)}%</div>
-                        <div style="font-size:10px;color:#64748b;margin-top:4px;">Alpha vs S&P 500</div>
-                    </div>
-                    <div style="background:#f8fafc;padding:12px;border-radius:8px;text-align:center;">
-                        <div style="font-size:22px;font-weight:700;color:#1a1a2e;">${safeRisk.information_ratio.toFixed(2)}</div>
-                        <div style="font-size:10px;color:#64748b;margin-top:4px;">Info Ratio</div>
-                    </div>
-                    <div style="background:#f8fafc;padding:12px;border-radius:8px;text-align:center;">
-                        <div style="font-size:22px;font-weight:700;color:#1a1a2e;">${safeRisk.tracking_error.toFixed(2)}%</div>
-                        <div style="font-size:10px;color:#64748b;margin-top:4px;">Tracking Error</div>
-                    </div>
+                <div class="summary-card">
+                    <div class="summary-card-value">${safeRisk.beta.toFixed(2)}</div>
+                    <div class="summary-card-label">Beta</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-card-value">${safeRisk.tracking_error.toFixed(2)}%</div>
+                    <div class="summary-card-label">Tracking Error</div>
                 </div>
             </div>
         </div>
 
-        ${!hasPerformanceData ? '<p style="font-size: 10px; color: #999; margin-top: 10px; font-style: italic;">* Performance data is estimated. Actual returns may vary.</p>' : ''}
+        ${!hasPerformanceData ? '<p style="font-size:9pt;color:#6b7280;margin-top:8px;font-style:italic;">* Performance data is estimated. Actual returns may vary.</p>' : ''}
 
-        <div class="footer"><span>Statement Scan Portfolio Analysis</span><span>Page 4 of 10</span></div>
+        ${getPageFooter(4, totalPages)}
     </div>
 
     <!-- Page 5: Risk Analysis -->
     <div class="page">
-        <div class="header">
-            <div class="header-logo"><div class="header-logo-icon">SS</div>Statement Scan</div>
-            <div class="header-date">${reportDate}</div>
-        </div>
-
+        ${getPageHeader(reportDate)}
         <h1 class="page-title">Risk Analysis</h1>
 
         <div class="two-col">
@@ -22272,252 +22831,156 @@
 
         <div class="section">
             <h2 class="section-title">Additional Risk Measures</h2>
-            <div style="display:grid;grid-template-columns:repeat(4, 1fr);gap:12px;">
-                <div style="background:linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);padding:14px;border-radius:10px;text-align:center;">
-                    <div style="font-size:20px;font-weight:700;color:#166534;">${safeRisk.sortino_ratio.toFixed(2)}</div>
-                    <div style="font-size:10px;color:#15803d;font-weight:500;margin-top:4px;">Sortino Ratio</div>
+            <div class="risk-grid">
+                <div class="risk-metric" style="background:linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);border:none;">
+                    <div class="risk-metric-value" style="color:#166534;">${safeRisk.sortino_ratio.toFixed(2)}</div>
+                    <div class="risk-metric-label" style="color:#15803d;">Sortino Ratio</div>
                 </div>
-                <div style="background:linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);padding:14px;border-radius:10px;text-align:center;">
-                    <div style="font-size:20px;font-weight:700;color:#92400e;">${safeRisk.var_95.toFixed(1)}%</div>
-                    <div style="font-size:10px;color:#a16207;font-weight:500;margin-top:4px;">VaR (95%)</div>
+                <div class="risk-metric" style="background:linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);border:none;">
+                    <div class="risk-metric-value" style="color:#92400e;">${safeRisk.var_95.toFixed(1)}%</div>
+                    <div class="risk-metric-label" style="color:#a16207;">VaR (95%)</div>
                 </div>
-                <div style="background:linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);padding:14px;border-radius:10px;text-align:center;">
-                    <div style="font-size:20px;font-weight:700;color:#5b21b6;">${safeRisk.r_squared.toFixed(2)}</div>
-                    <div style="font-size:10px;color:#6d28d9;font-weight:500;margin-top:4px;">R-Squared</div>
+                <div class="risk-metric" style="background:linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);border:none;">
+                    <div class="risk-metric-value" style="color:#5b21b6;">${safeRisk.r_squared.toFixed(2)}</div>
+                    <div class="risk-metric-label" style="color:#6d28d9;">R-Squared</div>
                 </div>
-                <div style="background:linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);padding:14px;border-radius:10px;text-align:center;">
-                    <div style="font-size:20px;font-weight:700;color:#0369a1;">${safeRisk.treynor_ratio.toFixed(2)}</div>
-                    <div style="font-size:10px;color:#0284c7;font-weight:500;margin-top:4px;">Treynor Ratio</div>
+                <div class="risk-metric" style="background:linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);border:none;">
+                    <div class="risk-metric-value" style="color:#0369a1;">${safeRisk.treynor_ratio.toFixed(2)}</div>
+                    <div class="risk-metric-label" style="color:#0284c7;">Treynor Ratio</div>
                 </div>
             </div>
         </div>
 
-        <div class="section">
-            <h2 class="section-title">Risk Assessment</h2>
-            <p style="font-size: 12px; line-height: 1.8; color: #444;">
+        <div class="section no-break" style="background:#f8f9fa;padding:12px;border-radius:8px;">
+            <h2 style="font-size:11pt;font-weight:600;color:#1a1a2e;margin-bottom:6px;">Risk Assessment</h2>
+            <p style="font-size:9pt;line-height:1.5;color:#4b5563;margin:0;">
                 ${safeRisk.volatility > 20 ? 'Your portfolio exhibits higher than average volatility, suggesting significant price fluctuations.' :
                   safeRisk.volatility > 12 ? 'Your portfolio shows moderate volatility, typical of a diversified equity portfolio.' :
                   'Your portfolio demonstrates relatively low volatility, indicating a more conservative risk profile.'}
-                ${safeRisk.beta > 1.1 ? ` With a beta of ${safeRisk.beta.toFixed(2)}, the portfolio is more sensitive to market movements than the benchmark.` :
-                  safeRisk.beta < 0.9 ? ` The beta of ${safeRisk.beta.toFixed(2)} indicates lower sensitivity to market movements.` :
-                  ` The beta of ${safeRisk.beta.toFixed(2)} suggests the portfolio moves largely in line with the market.`}
+                ${safeRisk.beta > 1.1 ? ' With a beta of ' + safeRisk.beta.toFixed(2) + ', the portfolio is more sensitive to market movements than the benchmark.' :
+                  safeRisk.beta < 0.9 ? ' The beta of ' + safeRisk.beta.toFixed(2) + ' indicates lower sensitivity to market movements.' :
+                  ' The beta of ' + safeRisk.beta.toFixed(2) + ' suggests the portfolio moves largely in line with the market.'}
                 ${safeRisk.sharpe_ratio > 1 ? ' The Sharpe ratio indicates favorable risk-adjusted returns.' :
                   safeRisk.sharpe_ratio > 0.5 ? ' The Sharpe ratio suggests adequate compensation for risk taken.' :
                   ' Consider reviewing the risk-return profile of your holdings.'}
             </p>
         </div>
 
-        <div class="footer"><span>Statement Scan Portfolio Analysis</span><span>Page 5 of 10</span></div>
+        ${getPageFooter(5, totalPages)}
     </div>
 
-    <!-- Page 6: Sector & Industry -->
-    <div class="page">
-        <div class="header">
-            <div class="header-logo"><div class="header-logo-icon">SS</div>Statement Scan</div>
-            <div class="header-date">${reportDate}</div>
-        </div>
+    <!-- Holdings Detail Pages (dynamically paginated) -->
+    ${generateHoldingsPages(holdingsPages, totalValue, fundNames, 6, totalPages, reportDate)}
 
-        <h1 class="page-title">Sector & Industry Breakdown</h1>
+    <!-- Sector & Geography Page -->
+    <div class="page">
+        ${getPageHeader(reportDate)}
+        <h1 class="page-title">Sector & Geographic Exposure</h1>
 
         <div class="two-col">
             <div class="section">
-                <h2 class="section-title">Sector Distribution</h2>
-                <div style="display: flex; justify-content: center; margin-bottom: 15px;">
-                    ${generatePieChart(sectors, 150, ['#635bff', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#ec4899', '#84cc16'])}
+                <h2 class="section-title">Sector Allocation</h2>
+                <div class="chart-container">
+                    ${generatePieChart(sectors, 130, ['#635bff', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#ec4899', '#84cc16'])}
+                </div>
+                <div class="sector-grid" style="margin-top:10px;">
+                    ${Object.entries(sectors).sort((a, b) => b[1] - a[1]).slice(0, 6).map(([name, pct]) =>
+                        '<div class="sector-item"><span class="sector-name">' + name.substring(0, 15) + '</span><span class="sector-pct">' + pct.toFixed(1) + '%</span></div>'
+                    ).join('')}
                 </div>
             </div>
             <div class="section">
-                <h2 class="section-title">Top Holdings Concentration</h2>
-                <div style="display: flex; flex-direction: column; gap: 8px;">
-                    ${concentrationData.map((item, i) => `
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <span style="width: 60px; font-weight: 600; font-size: 11px; color: #635bff;">${item.symbol}</span>
-                            <div style="flex: 1; height: 18px; background: #f0f0f0; border-radius: 4px; overflow: hidden;">
-                                <div style="height: 100%; width: ${Math.min(item.weight * 2, 100)}%; background: ${i === 0 ? '#635bff' : i === 1 ? '#818cf8' : '#a5b4fc'}; border-radius: 4px;"></div>
-                            </div>
-                            <span style="width: 45px; text-align: right; font-size: 11px; font-weight: 500;">${item.weight.toFixed(1)}%</span>
-                        </div>
-                    `).join('')}
-                    <p style="font-size: 10px; color: #666; margin-top: 8px;">Top 5 holdings represent ${concentrationData.reduce((a, b) => a + b.weight, 0).toFixed(1)}% of portfolio</p>
+                <h2 class="section-title">Geographic Distribution</h2>
+                <div class="chart-container">
+                    ${Object.keys(geography).length > 0 ?
+                        generatePieChart(geography, 130, ['#635bff', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4']) :
+                        generatePieChart({'United States': 85, 'International': 15}, 130, ['#635bff', '#10b981'])
+                    }
+                </div>
+                <div class="geo-grid" style="margin-top:10px;">
+                    ${Object.keys(geography).length > 0 ?
+                        Object.entries(geography).sort((a, b) => b[1] - a[1]).slice(0, 4).map(([region, pct]) => {
+                            const flags = { 'United States': '🇺🇸', 'US': '🇺🇸', 'Europe': '🇪🇺', 'UK': '🇬🇧', 'Japan': '🇯🇵', 'China': '🇨🇳', 'Emerging Markets': '🌍', 'Asia Pacific': '🌏', 'International': '🌐' };
+                            return '<div class="geo-item"><span class="geo-flag">' + (flags[region] || '🌐') + '</span><span class="geo-name">' + region + '</span><span class="geo-pct">' + pct.toFixed(1) + '%</span></div>';
+                        }).join('') :
+                        '<div class="geo-item"><span class="geo-flag">🇺🇸</span><span class="geo-name">United States</span><span class="geo-pct">85.0%</span></div><div class="geo-item"><span class="geo-flag">🌐</span><span class="geo-name">International</span><span class="geo-pct">15.0%</span></div>'
+                    }
                 </div>
             </div>
         </div>
 
         <div class="section">
-            <h2 class="section-title">Sector Allocation</h2>
-            <div class="sector-grid">
-                ${Object.entries(sectors).length > 0 ? Object.entries(sectors).sort((a, b) => b[1] - a[1]).map(([name, pct]) => `
-                    <div class="sector-item">
-                        <span class="sector-name">${name}</span>
-                        <div style="display: flex; align-items: center;">
-                            <div class="sector-bar"><div class="sector-bar-fill" style="width: ${Math.min(pct * 2, 100)}%"></div></div>
-                            <span class="sector-pct">${pct.toFixed(1)}%</span>
-                        </div>
-                    </div>
-                `).join('') : '<div class="sector-item"><span class="sector-name">Technology</span><span class="sector-pct">100%</span></div>'}
+            <h2 class="section-title">Concentration Analysis</h2>
+            <div class="two-col">
+                <div>
+                    <p style="font-size:9pt;margin-bottom:8px;color:#4b5563;">Top 5 Holdings Concentration</p>
+                    ${concentrationData.map((item, i) =>
+                        '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><span style="width:50px;font-size:9pt;font-weight:600;color:#635bff;">' + item.symbol + '</span><div style="flex:1;height:14px;background:#f0f0f0;border-radius:3px;overflow:hidden;"><div style="height:100%;width:' + Math.min(item.weight * 2.5, 100) + '%;background:' + (i === 0 ? '#635bff' : i === 1 ? '#818cf8' : '#a5b4fc') + ';border-radius:3px;"></div></div><span style="width:40px;text-align:right;font-size:9pt;font-weight:500;">' + item.weight.toFixed(1) + '%</span></div>'
+                    ).join('')}
+                    <p style="font-size:8pt;color:#6b7280;margin-top:6px;">Top 5 = ${concentrationData.reduce((a, b) => a + b.weight, 0).toFixed(1)}% of portfolio</p>
+                </div>
+                <div class="allocation-breakdown">
+                    <div class="allocation-row"><span>Top 10 Concentration</span><span class="value">${top10Concentration.toFixed(1)}%</span></div>
+                    <div class="allocation-row"><span>Sector Count</span><span class="value">${Object.keys(sectors).length}</span></div>
+                    <div class="allocation-row"><span>Largest Sector</span><span class="value">${Object.entries(sectors).sort((a, b) => b[1] - a[1])[0]?.[0] || 'N/A'}</span></div>
+                    <div class="allocation-row"><span>Total Holdings</span><span class="value">${positions.length}</span></div>
+                </div>
             </div>
         </div>
 
-        <div class="section">
-            <h2 class="section-title">Sector vs S&P 500 Benchmark</h2>
-            ${generateSectorBenchmark(sectors)}
-        </div>
-
-        <div class="section">
-            <h2 class="section-title">Sector Analysis</h2>
-            <p style="font-size: 12px; line-height: 1.8; color: #444;">
-                ${Object.keys(sectors).length > 0 ? `
-                    Your portfolio is diversified across ${Object.keys(sectors).length} sectors.
-                    The largest sector exposure is ${Object.entries(sectors).sort((a, b) => b[1] - a[1])[0]?.[0] || 'N/A'}
-                    at ${Object.entries(sectors).sort((a, b) => b[1] - a[1])[0]?.[1]?.toFixed(1) || 0}%.
-                    ${Object.entries(sectors).sort((a, b) => b[1] - a[1])[0]?.[1] > 30 ? ' This concentration may increase sector-specific risk.' : ''}
-                ` : 'Sector data not available for analysis.'}
-            </p>
-        </div>
-
-        <div class="footer"><span>Statement Scan Portfolio Analysis</span><span>Page 6 of 10</span></div>
+        ${getPageFooter(6 + holdingsPages.length, totalPages)}
     </div>
 
-    <!-- Page 7: Holdings Detail -->
+    <!-- Dividend Analysis Page -->
     <div class="page">
-        <div class="header">
-            <div class="header-logo"><div class="header-logo-icon">SS</div>Statement Scan</div>
-            <div class="header-date">${reportDate}</div>
-        </div>
-
-        <h1 class="page-title">Holdings Detail</h1>
-
-        <div class="section">
-            <table class="holdings-table">
-                <thead>
-                    <tr>
-                        <th>Symbol</th>
-                        <th>Name</th>
-                        <th>Sector</th>
-                        <th class="text-right">Shares</th>
-                        <th class="text-right">Price</th>
-                        <th class="text-right">Value</th>
-                        <th class="text-right">Weight</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${enrichedPositions.slice(0, 25).map(pos => {
-                        const value = pos.value || (pos.shares * pos.price);
-                        const weight = totalValue > 0 ? (value / totalValue * 100) : 0;
-                        return `
-                            <tr>
-                                <td class="symbol">${pos.symbol}</td>
-                                <td>${pos.name || fundNames[pos.symbol] || pos.symbol}</td>
-                                <td>${pos.category || 'Diversified'}</td>
-                                <td class="text-right">${pos.shares?.toLocaleString(undefined, {maximumFractionDigits: 3}) || '-'}</td>
-                                <td class="text-right">$${pos.price?.toFixed(2) || '-'}</td>
-                                <td class="text-right">$${value.toLocaleString(undefined, {maximumFractionDigits: 0})}</td>
-                                <td class="text-right">
-                                    ${weight.toFixed(1)}%
-                                    <div class="weight-bar"><div class="weight-bar-fill" style="width: ${Math.min(weight * 2, 100)}%"></div></div>
-                                </td>
-                            </tr>
-                        `;
-                    }).join('')}
-                </tbody>
-            </table>
-            ${positions.length > 25 ? `<p style="margin-top: 15px; font-size: 11px; color: #666; text-align: center;">Showing top 25 of ${positions.length} holdings by value</p>` : ''}
-        </div>
-
-        <div class="footer"><span>Statement Scan Portfolio Analysis</span><span>Page 7 of 10</span></div>
-    </div>
-
-    <!-- Page 8: Dividend Analysis -->
-    <div class="page">
-        <div class="header">
-            <div class="header-logo"><div class="header-logo-icon">SS</div>Statement Scan</div>
-            <div class="header-date">${reportDate}</div>
-        </div>
-
+        ${getPageHeader(reportDate)}
         <h1 class="page-title">Dividend Analysis</h1>
 
         <div class="two-col">
             <div class="section">
                 <h2 class="section-title">Income Overview</h2>
-                <div style="display:flex;flex-direction:column;gap:12px;">
-                    <div style="background:linear-gradient(135deg, #10b981 0%, #059669 100%);color:white;padding:20px;border-radius:12px;text-align:center;">
-                        <div style="font-size:32px;font-weight:700;">$${annualDividendIncome.toLocaleString(undefined, {maximumFractionDigits: 0})}</div>
-                        <div style="font-size:11px;opacity:0.9;margin-top:5px;">Est. Annual Income</div>
+                <div class="dividend-highlight">
+                    <div class="dividend-highlight-value">$${annualDividendIncome.toLocaleString(undefined, {maximumFractionDigits: 0})}</div>
+                    <div class="dividend-highlight-label">Estimated Annual Income</div>
+                </div>
+                <div class="dividend-grid" style="margin-top:12px;">
+                    <div class="dividend-stat">
+                        <div class="dividend-stat-value">${avgDividendYield.toFixed(2)}%</div>
+                        <div class="dividend-stat-label">Portfolio Yield</div>
                     </div>
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-                        <div style="background:#f0fdf4;padding:14px;border-radius:10px;text-align:center;border:1px solid #bbf7d0;">
-                            <div style="font-size:22px;font-weight:700;color:#166534;">${avgDividendYield.toFixed(2)}%</div>
-                            <div style="font-size:10px;color:#15803d;margin-top:4px;">Portfolio Yield</div>
-                        </div>
-                        <div style="background:#f0fdf4;padding:14px;border-radius:10px;text-align:center;border:1px solid #bbf7d0;">
-                            <div style="font-size:22px;font-weight:700;color:#166534;">$${(annualDividendIncome / 12).toLocaleString(undefined, {maximumFractionDigits: 0})}</div>
-                            <div style="font-size:10px;color:#15803d;margin-top:4px;">Monthly Income</div>
-                        </div>
+                    <div class="dividend-stat">
+                        <div class="dividend-stat-value">$${(annualDividendIncome / 12).toLocaleString(undefined, {maximumFractionDigits: 0})}</div>
+                        <div class="dividend-stat-label">Monthly Income</div>
                     </div>
                 </div>
             </div>
-            <div class="section">
-                <h2 class="section-title">Income by Category</h2>
-                <div style="display:flex;flex-direction:column;gap:8px;">
-                    ${(() => {
-                        // Calculate income by category
-                        const incomeByCategory = {};
-                        enrichedPositions.slice(0, 15).forEach(pos => {
-                            const value = pos.value || (pos.shares * pos.price);
-                            let estYield = pos.dividend_yield || 0;
-                            if (estYield === 0) {
-                                if (pos.category === 'Fixed Income') estYield = 4.5;
-                                else if (pos.category === 'Value') estYield = 2.5;
-                                else if (pos.category === 'Index/Passive') estYield = 1.5;
-                                else if (pos.category === 'Growth') estYield = 0.8;
-                                else if (pos.category === 'International') estYield = 2.2;
-                                else estYield = 1.8;
-                            }
-                            const cat = pos.category || 'Other';
-                            incomeByCategory[cat] = (incomeByCategory[cat] || 0) + (value * estYield / 100);
-                        });
-                        const maxIncome = Math.max(...Object.values(incomeByCategory), 1);
-                        const catColors = {'Fixed Income': '#10b981', 'Value': '#635bff', 'Growth': '#f59e0b', 'Index/Passive': '#8b5cf6', 'International': '#06b6d4', 'Other': '#94a3b8', 'Equity': '#ec4899'};
-                        return Object.entries(incomeByCategory).sort((a, b) => b[1] - a[1]).map(([cat, income]) => `
-                            <div style="display:flex;align-items:center;gap:10px;">
-                                <span style="width:80px;font-size:10px;color:#374151;font-weight:500;">${cat}</span>
-                                <div style="flex:1;height:16px;background:#f1f5f9;border-radius:4px;overflow:hidden;">
-                                    <div style="height:100%;width:${(income/maxIncome*100).toFixed(1)}%;background:${catColors[cat] || '#635bff'};border-radius:4px;"></div>
-                                </div>
-                                <span style="width:55px;text-align:right;font-size:10px;font-weight:600;color:#1a1a2e;">$${income.toLocaleString(undefined, {maximumFractionDigits: 0})}</span>
-                            </div>
-                        `).join('');
-                    })()}
-                </div>
-            </div>
-        </div>
-
-        <div class="two-col" style="margin-top: 20px;">
             <div class="section">
                 <h2 class="section-title">Monthly Dividend Calendar</h2>
                 ${generateDividendCalendar(annualDividendIncome)}
             </div>
-            <div class="section">
-                <h2 class="section-title">10-Year Income Projection</h2>
-                ${generateDividendProjection(annualDividendIncome, 10, 0.05)}
-                <p style="font-size: 9px; color: #666; margin-top: 8px; text-align: center;">Assumes 5% annual dividend growth rate</p>
-            </div>
         </div>
 
         <div class="section">
-            <h2 class="section-title">Estimated Income by Holding</h2>
+            <h2 class="section-title">10-Year Income Projection</h2>
+            <div class="chart-container-lg" style="margin:0 auto;">
+                ${generateDividendProjection(annualDividendIncome, 10, 0.05)}
+            </div>
+            <p style="font-size:8pt;color:#6b7280;text-align:center;margin-top:6px;">Assumes 5% annual dividend growth rate</p>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Top Dividend Contributors</h2>
             <table class="holdings-table">
                 <thead>
                     <tr>
                         <th>Symbol</th>
                         <th>Name</th>
-                        <th>Category</th>
                         <th class="text-right">Est. Yield</th>
                         <th class="text-right">Est. Annual Income</th>
                     </tr>
                 </thead>
                 <tbody>
-                    ${enrichedPositions.slice(0, 8).map(pos => {
+                    ${enrichedPositions.slice(0, 6).map(pos => {
                         const value = pos.value || (pos.shares * pos.price);
                         let estYield = pos.dividend_yield || 0;
                         if (estYield === 0) {
@@ -22529,101 +22992,24 @@
                             else estYield = 1.8;
                         }
                         const estIncome = value * estYield / 100;
-                        return '<tr><td class="symbol">' + pos.symbol + '</td><td>' + (pos.name || fundNames[pos.symbol] || pos.symbol) + '</td><td>' + (pos.category || 'Diversified') + '</td><td class="text-right">' + estYield.toFixed(2) + '%</td><td class="text-right">$' + estIncome.toLocaleString(undefined, {maximumFractionDigits: 0}) + '</td></tr>';
+                        return '<tr><td class="symbol">' + pos.symbol + '</td><td class="name-cell">' + (pos.name || fundNames[pos.symbol] || pos.symbol).substring(0, 22) + '</td><td class="text-right">' + estYield.toFixed(2) + '%</td><td class="text-right">$' + estIncome.toLocaleString(undefined, {maximumFractionDigits: 0}) + '</td></tr>';
                     }).join('')}
                 </tbody>
             </table>
-            <p style="margin-top: 12px; font-size: 10px; color: #666; font-style: italic;">* Yields are estimated based on fund category when actual yield data is unavailable.</p>
+            <p style="font-size:8pt;color:#6b7280;margin-top:8px;font-style:italic;">* Yields estimated based on fund category when actual data unavailable.</p>
         </div>
 
-        <div class="footer"><span>Statement Scan Portfolio Analysis</span><span>Page 8 of 10</span></div>
+        ${getPageFooter(7 + holdingsPages.length, totalPages)}
     </div>
 
-    <!-- Page 9: Geographic Exposure -->
+    <!-- Disclosures Page -->
     <div class="page">
-        <div class="header">
-            <div class="header-logo"><div class="header-logo-icon">SS</div>Statement Scan</div>
-            <div class="header-date">${reportDate}</div>
-        </div>
-
-        <h1 class="page-title">Geographic Exposure</h1>
-
-        <div class="two-col">
-            <div class="section">
-                <h2 class="section-title">Regional Distribution</h2>
-                <div style="display: flex; justify-content: center;">
-                    ${Object.keys(geography).length > 0 ?
-                        generatePieChart(geography, 160, ['#635bff', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4']) :
-                        generatePieChart({'United States': allocation.stocks || 70, 'International': 100 - (allocation.stocks || 70)}, 160, ['#635bff', '#10b981'])
-                    }
-                </div>
-            </div>
-            <div class="section">
-                <h2 class="section-title">Regional Breakdown</h2>
-                <div class="geo-grid" style="gap: 8px;">
-                    ${Object.keys(geography).length > 0 ?
-                        Object.entries(geography).sort((a, b) => b[1] - a[1]).map(([region, pct]) => {
-                            const flags = { 'United States': '🇺🇸', 'US': '🇺🇸', 'Europe': '🇪🇺', 'UK': '🇬🇧', 'Japan': '🇯🇵', 'China': '🇨🇳', 'Emerging Markets': '🌍', 'International': '🌐' };
-                            return `
-                                <div class="geo-item">
-                                    <span class="geo-flag">${flags[region] || '🌐'}</span>
-                                    <span class="geo-name">${region}</span>
-                                    <span class="geo-pct">${pct.toFixed(1)}%</span>
-                                </div>
-                            `;
-                        }).join('') :
-                        `<div class="geo-item"><span class="geo-flag">🇺🇸</span><span class="geo-name">United States</span><span class="geo-pct">${(allocation.stocks || 70).toFixed(1)}%</span></div>
-                         <div class="geo-item"><span class="geo-flag">🌐</span><span class="geo-name">International</span><span class="geo-pct">${(100 - (allocation.stocks || 70)).toFixed(1)}%</span></div>`
-                    }
-                </div>
-            </div>
-        </div>
-
-        <div class="section">
-            <h2 class="section-title">Geographic Analysis</h2>
-            <p style="font-size: 12px; line-height: 1.8; color: #444;">
-                ${Object.keys(geography).length > 0 ?
-                    `Your portfolio has exposure to ${Object.keys(geography).length} geographic regions. Consider the currency risk and geopolitical factors associated with international investments.` :
-                    'Geographic data is estimated based on holding characteristics. US equities typically dominate most portfolios. Consider adding international exposure for additional diversification benefits.'
-                }
-            </p>
-        </div>
-
-        <div class="section">
-            <h2 class="section-title">10-Year Portfolio Projection (Monte Carlo)</h2>
-            <div style="display:flex;justify-content:center;">
-                ${generateProjectionChart(totalValue, 10, 480, 200)}
-            </div>
-            <p style="font-size: 10px; color: #666; text-align: center; margin-top: 12px; font-style: italic;">
-                Projections based on historical market patterns. Shaded area represents 25th-75th percentile range. Actual results may vary significantly.
-            </p>
-        </div>
-
-        <div class="footer"><span>Statement Scan Portfolio Analysis</span><span>Page 9 of 10</span></div>
-    </div>
-
-    <!-- Page 10: Insights & Disclaimer -->
-    <div class="page">
-        <div class="header">
-            <div class="header-logo"><div class="header-logo-icon">SS</div>Statement Scan</div>
-            <div class="header-date">${reportDate}</div>
-        </div>
-
-        <h1 class="page-title">Insights & Recommendations</h1>
+        ${getPageHeader(reportDate)}
+        <h1 class="page-title">Disclosures</h1>
 
         <div class="section">
             <h2 class="section-title">Key Insights</h2>
             <div class="insights-list">
-                ${insights.length > 0 ? insights.slice(0, 8).map(insight => `
-                    <div class="insight-item ${insight.type || ''}">
-                        <div class="insight-icon">${insight.type === 'warning' ? '⚠️' : insight.type === 'positive' ? '✅' : insight.type === 'negative' ? '❌' : 'ℹ️'}</div>
-                        <div class="insight-content">
-                            <div class="insight-title">${insight.title || insight.category || 'Insight'}</div>
-                            <div class="insight-text">${insight.message || insight.text || ''}</div>
-                        </div>
-                    </div>
-                `).join('') : ''}
-
                 <div class="insight-item">
                     <div class="insight-icon">ℹ️</div>
                     <div class="insight-content">
@@ -22635,32 +23021,8 @@
                 <div class="insight-item ${top10Concentration > 70 ? 'warning' : 'positive'}">
                     <div class="insight-icon">${top10Concentration > 70 ? '⚠️' : '✅'}</div>
                     <div class="insight-content">
-                        <div class="insight-title">Concentration Analysis</div>
-                        <div class="insight-text">Your top 10 holdings represent ${top10Concentration.toFixed(1)}% of your portfolio. ${top10Concentration > 80 ? 'High concentration - consider spreading investments across more holdings.' : top10Concentration > 60 ? 'Moderate concentration level.' : 'Well-diversified holdings distribution.'}</div>
-                    </div>
-                </div>
-
-                <div class="insight-item ${allocation.stocks > 80 ? 'warning' : ''}">
-                    <div class="insight-icon">${allocation.stocks > 80 ? '⚠️' : 'ℹ️'}</div>
-                    <div class="insight-content">
-                        <div class="insight-title">Asset Allocation</div>
-                        <div class="insight-text">${allocation.stocks > 80 ? 'Your portfolio is heavily weighted in equities at ' + allocation.stocks.toFixed(0) + '%. Consider adding bonds or other assets for stability, especially if approaching retirement.' : 'Your allocation appears balanced for your risk profile with ' + allocation.stocks.toFixed(0) + '% in equities.'}</div>
-                    </div>
-                </div>
-
-                <div class="insight-item">
-                    <div class="insight-icon">ℹ️</div>
-                    <div class="insight-content">
-                        <div class="insight-title">Category Diversification</div>
-                        <div class="insight-text">Portfolio spans ${Object.keys(sectors).length} investment categories: ${Object.keys(sectors).slice(0, 4).join(', ')}${Object.keys(sectors).length > 4 ? ', and more' : ''}. ${Object.keys(sectors).length < 3 ? 'Consider adding exposure to additional investment styles.' : 'Good diversification across investment categories.'}</div>
-                    </div>
-                </div>
-
-                <div class="insight-item ${safeRisk.volatility > 20 ? 'warning' : 'positive'}">
-                    <div class="insight-icon">${safeRisk.volatility > 20 ? '⚠️' : '✅'}</div>
-                    <div class="insight-content">
-                        <div class="insight-title">Risk Profile</div>
-                        <div class="insight-text">Portfolio volatility of ${safeRisk.volatility.toFixed(1)}% ${safeRisk.volatility > 20 ? 'is above average, suggesting higher risk' : safeRisk.volatility < 12 ? 'is relatively low, suggesting conservative positioning' : 'is in the moderate range'}. Beta of ${safeRisk.beta.toFixed(2)} indicates ${safeRisk.beta > 1.1 ? 'higher' : safeRisk.beta < 0.9 ? 'lower' : 'similar'} market sensitivity compared to S&P 500.</div>
+                        <div class="insight-title">Concentration</div>
+                        <div class="insight-text">Top 10 holdings represent ${top10Concentration.toFixed(1)}% of portfolio. ${top10Concentration > 80 ? 'High concentration - consider diversifying.' : 'Reasonable concentration level.'}</div>
                     </div>
                 </div>
 
@@ -22668,28 +23030,40 @@
                     <div class="insight-icon">${safeRisk.sharpe_ratio > 1 ? '✅' : 'ℹ️'}</div>
                     <div class="insight-content">
                         <div class="insight-title">Risk-Adjusted Returns</div>
-                        <div class="insight-text">Sharpe ratio of ${safeRisk.sharpe_ratio.toFixed(2)} indicates ${safeRisk.sharpe_ratio > 1.5 ? 'excellent' : safeRisk.sharpe_ratio > 1 ? 'good' : safeRisk.sharpe_ratio > 0.5 ? 'acceptable' : 'below average'} risk-adjusted performance. ${safeRisk.sharpe_ratio > 1 ? 'Your portfolio is generating solid returns relative to risk.' : 'Consider rebalancing to improve risk-adjusted returns.'}</div>
+                        <div class="insight-text">Sharpe ratio of ${safeRisk.sharpe_ratio.toFixed(2)} indicates ${safeRisk.sharpe_ratio > 1 ? 'good' : 'moderate'} risk-adjusted performance.</div>
                     </div>
                 </div>
 
                 <div class="insight-item">
                     <div class="insight-icon">💰</div>
                     <div class="insight-content">
-                        <div class="insight-title">Income Generation</div>
-                        <div class="insight-text">Estimated portfolio yield of ${avgDividendYield.toFixed(2)}% provides approximately $${annualDividendIncome.toLocaleString(undefined, {maximumFractionDigits: 0})} in annual income ($${(annualDividendIncome/12).toLocaleString(undefined, {maximumFractionDigits: 0})}/month). ${avgDividendYield > 3 ? 'Good income generation.' : 'Consider adding income-producing investments if current income is a priority.'}</div>
+                        <div class="insight-title">Income</div>
+                        <div class="insight-text">Estimated yield of ${avgDividendYield.toFixed(2)}% provides ~$${annualDividendIncome.toLocaleString(undefined, {maximumFractionDigits: 0})} annually.</div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="disclaimer" style="margin-top: auto;">
+        <div class="disclaimer">
             <div class="disclaimer-title">Important Disclosures</div>
-            <p style="margin-bottom: 10px;">This report is provided for informational purposes only and does not constitute investment advice, an offer or solicitation to buy or sell any securities, or a recommendation regarding any investment strategy. Past performance is not indicative of future results.</p>
-            <p style="margin-bottom: 10px;">The information contained herein is believed to be accurate but is not guaranteed. Investment values may fluctuate and you may receive back less than originally invested. All investments involve risk, including the possible loss of principal.</p>
+            <p>This report is provided for informational purposes only and does not constitute investment advice, an offer or solicitation to buy or sell any securities, or a recommendation regarding any investment strategy. Past performance is not indicative of future results.</p>
+            <p>The information contained herein is believed to be accurate but is not guaranteed. Investment values may fluctuate and you may receive back less than originally invested. All investments involve risk, including the possible loss of principal.</p>
             <p>Please consult with a qualified financial advisor before making any investment decisions. This report was generated automatically and should be reviewed for accuracy. Statement Scan is not a registered investment advisor.</p>
         </div>
 
-        <div class="footer"><span>Statement Scan Portfolio Analysis</span><span>Page 10 of 10</span></div>
+        <div class="section" style="margin-top:15px;">
+            <h2 class="section-title">Data Sources & Methodology</h2>
+            <p style="font-size:9pt;color:#4b5563;line-height:1.5;">
+                Portfolio data extracted from uploaded statements. Performance benchmarks based on S&P 500 Total Return Index and 60/40 blended portfolio. Risk metrics calculated using standard financial formulas. Dividend projections assume 5% annual growth rate. Geographic and sector classifications based on fund prospectus or inferred from holdings.
+            </p>
+        </div>
+
+        <div class="section" style="margin-top:15px;text-align:center;">
+            <p style="font-size:9pt;color:#6b7280;">Report generated on ${reportDate}</p>
+            <p style="font-size:9pt;color:#635bff;font-weight:500;margin-top:5px;">Statement Scan - Professional Portfolio Analytics</p>
+        </div>
+
+        ${getPageFooter(totalPages, totalPages)}
     </div>
 </body>
 </html>
@@ -22714,6 +23088,159 @@
 
         // Expose report generator globally
         window.generateProfessionalReport = generateProfessionalReport;
+
+        // Expose setter for testing
+        window.setPortfolioData = function(data) {
+            portfolioData = data;
+        };
+
+        // =============================================================================
+        // SAMPLE PORTFOLIO LOADER
+        // =============================================================================
+
+        async function loadSamplePortfolio() {
+            showToast('Loading sample portfolio...', 'info', { duration: 2000 });
+
+            // Realistic diversified sample portfolio (~$285,000)
+            const samplePositions = [
+                // Large Cap US Stocks
+                { symbol: 'VTI', name: 'Vanguard Total Stock Market ETF', shares: 150, value: 42000, costBasis: 35000, sector: 'Broad Market', price: 280, expense_ratio: 0.03 },
+                { symbol: 'VOO', name: 'Vanguard S&P 500 ETF', shares: 80, value: 38400, costBasis: 32000, sector: 'Large Cap', price: 480, expense_ratio: 0.03 },
+                { symbol: 'AAPL', name: 'Apple Inc.', shares: 100, value: 19000, costBasis: 14500, sector: 'Technology', price: 190, dividend_yield: 0.5 },
+                { symbol: 'MSFT', name: 'Microsoft Corporation', shares: 45, value: 18900, costBasis: 12000, sector: 'Technology', price: 420, dividend_yield: 0.7 },
+                { symbol: 'GOOGL', name: 'Alphabet Inc.', shares: 60, value: 9000, costBasis: 8000, sector: 'Technology', price: 150 },
+
+                // Growth & Tech (including high-fee example)
+                { symbol: 'ARKK', name: 'ARK Innovation ETF', shares: 200, value: 9400, costBasis: 14000, sector: 'Growth', price: 47, expense_ratio: 0.75 }, // High fee!
+                { symbol: 'QQQ', name: 'Invesco QQQ Trust', shares: 25, value: 12500, costBasis: 10000, sector: 'Technology', price: 500, expense_ratio: 0.20 },
+
+                // International
+                { symbol: 'VXUS', name: 'Vanguard Total International Stock ETF', shares: 200, value: 12400, costBasis: 11000, sector: 'International', price: 62, expense_ratio: 0.07 },
+                { symbol: 'EFA', name: 'iShares MSCI EAFE ETF', shares: 100, value: 8200, costBasis: 7500, sector: 'International Developed', price: 82, expense_ratio: 0.32 },
+
+                // Bonds
+                { symbol: 'BND', name: 'Vanguard Total Bond Market ETF', shares: 150, value: 11100, costBasis: 11500, sector: 'Bonds', price: 74, expense_ratio: 0.03, dividend_yield: 3.2 },
+                { symbol: 'VTIP', name: 'Vanguard Short-Term Inflation-Protected Securities ETF', shares: 100, value: 4900, costBasis: 4800, sector: 'TIPS', price: 49, expense_ratio: 0.04, dividend_yield: 2.8 },
+
+                // High-fee mutual fund example
+                { symbol: 'GFFFX', name: 'Growth Fund of America Class F', shares: 300, value: 19500, costBasis: 16000, sector: 'Large Cap Growth', price: 65, expense_ratio: 0.61 }, // High fee!
+
+                // REITs
+                { symbol: 'VNQ', name: 'Vanguard Real Estate ETF', shares: 80, value: 7200, costBasis: 6800, sector: 'Real Estate', price: 90, expense_ratio: 0.12, dividend_yield: 3.8 },
+
+                // Dividend stocks
+                { symbol: 'JNJ', name: 'Johnson & Johnson', shares: 50, value: 8000, costBasis: 7000, sector: 'Healthcare', price: 160, dividend_yield: 2.9 },
+                { symbol: 'PG', name: 'Procter & Gamble', shares: 40, value: 6400, costBasis: 5500, sector: 'Consumer Defensive', price: 160, dividend_yield: 2.4 },
+                { symbol: 'KO', name: 'Coca-Cola Company', shares: 100, value: 6000, costBasis: 5200, sector: 'Consumer Defensive', price: 60, dividend_yield: 3.0 },
+
+                // Small/Mid Cap
+                { symbol: 'VB', name: 'Vanguard Small-Cap ETF', shares: 50, value: 11000, costBasis: 9500, sector: 'Small Cap', price: 220, expense_ratio: 0.05 },
+                { symbol: 'VO', name: 'Vanguard Mid-Cap ETF', shares: 40, value: 10400, costBasis: 9000, sector: 'Mid Cap', price: 260, expense_ratio: 0.04 },
+
+                // Energy
+                { symbol: 'XOM', name: 'Exxon Mobil Corporation', shares: 60, value: 6600, costBasis: 5000, sector: 'Energy', price: 110, dividend_yield: 3.3 },
+
+                // Cash equivalent
+                { symbol: 'VMFXX', name: 'Vanguard Federal Money Market Fund', shares: 5000, value: 5000, costBasis: 5000, sector: 'Cash', price: 1, expense_ratio: 0.11, dividend_yield: 5.2 }
+            ];
+
+            const totalValue = samplePositions.reduce((sum, p) => sum + p.value, 0);
+            const totalCost = samplePositions.reduce((sum, p) => sum + p.costBasis, 0);
+
+            // Calculate sector allocation
+            const sectorMap = {};
+            samplePositions.forEach(p => {
+                const sector = p.sector || 'Other';
+                sectorMap[sector] = (sectorMap[sector] || 0) + p.value;
+            });
+            const sectorAllocation = {};
+            Object.keys(sectorMap).forEach(s => {
+                sectorAllocation[s] = Math.round((sectorMap[s] / totalValue) * 1000) / 10;
+            });
+
+            // Calculate asset allocation values and percentages
+            const stocksValue = samplePositions.filter(p =>
+                !['Bonds', 'TIPS', 'Cash', 'Real Estate'].includes(p.sector)
+            ).reduce((sum, p) => sum + p.value, 0);
+            const bondsValue = samplePositions.filter(p =>
+                ['Bonds', 'TIPS'].includes(p.sector)
+            ).reduce((sum, p) => sum + p.value, 0);
+            const cashValue = samplePositions.filter(p =>
+                p.sector === 'Cash'
+            ).reduce((sum, p) => sum + p.value, 0);
+            const realEstateValue = samplePositions.filter(p =>
+                p.sector === 'Real Estate'
+            ).reduce((sum, p) => sum + p.value, 0);
+
+            // Set portfolio data
+            portfolioData = {
+                total_value: totalValue,
+                total_cost_basis: totalCost,
+                positions: samplePositions,
+                asset_allocation: {
+                    'Stocks': Math.round((stocksValue / totalValue) * 1000) / 10,
+                    'Bonds': Math.round((bondsValue / totalValue) * 1000) / 10,
+                    'Cash': Math.round((cashValue / totalValue) * 1000) / 10,
+                    'Real Estate': Math.round((realEstateValue / totalValue) * 1000) / 10
+                },
+                asset_allocation_values: {
+                    'Stocks': stocksValue,
+                    'Bonds': bondsValue,
+                    'Cash': cashValue,
+                    'Real Estate': realEstateValue
+                },
+                sector_allocation: sectorAllocation,
+                performance: {
+                    ytd_return: 8.7,
+                    one_year: 15.2,
+                    three_year: 28.4,
+                    five_year: 52.1
+                },
+                risk_metrics: {
+                    volatility: 14.8,
+                    sharpe_ratio: 0.92,
+                    beta: 1.02,
+                    max_drawdown: -15.3,
+                    var_95: -2.1
+                },
+                dividend_yield: 1.9,
+                total_annual_fees: 847,
+                weighted_expense_ratio: 0.18,
+                _isSampleData: true
+            };
+
+            // Hide empty state and show dashboard
+            try {
+                // Hide the app empty state
+                const appEmptyState = document.getElementById('appEmptyState');
+                if (appEmptyState) appEmptyState.style.display = 'none';
+
+                // Show the dashboard
+                const dashboardEl = document.getElementById('dashboard');
+                if (dashboardEl) dashboardEl.style.display = 'block';
+
+                // Update total value badge
+                const totalBadge = document.getElementById('totalBadge');
+                if (totalBadge) totalBadge.textContent = formatCurrency(portfolioData.total_value);
+
+                // Render all dashboard sections
+                renderAllocation();
+                renderInsights();
+                renderPerformance();
+                renderSectors();
+                renderGeography();
+                renderRisk();
+                renderHoldings();
+
+                showToast('Sample portfolio loaded! Explore the dashboard to see all features.', 'success', { duration: 4000 });
+            } catch (err) {
+                console.error('Error showing dashboard:', err);
+                showToast('Error loading sample portfolio: ' + err.message, 'error');
+            }
+        }
+
+        // Expose globally
+        window.loadSamplePortfolio = loadSamplePortfolio;
 
         // =============================================================================
         // SERVICE WORKER REGISTRATION
@@ -22771,6 +23298,200 @@
                     updateHash(tabName);
                 };
             }
+        });
+
+        // =============================================================================
+        // KEYBOARD SHORTCUTS SYSTEM
+        // =============================================================================
+
+        function createShortcutsModal() {
+            const modal = document.createElement('div');
+            modal.className = 'shortcuts-modal-overlay';
+            modal.id = 'shortcutsModal';
+            modal.innerHTML = `
+                <div class="shortcuts-modal">
+                    <div class="shortcuts-modal-header">
+                        <div class="shortcuts-modal-title">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="2" y="4" width="20" height="16" rx="2"/>
+                                <path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M6 12h.01M10 12h.01M14 12h.01M18 12h.01M6 16h12"/>
+                            </svg>
+                            Keyboard Shortcuts
+                        </div>
+                        <button class="shortcuts-modal-close" onclick="closeShortcutsModal()">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="18" y1="6" x2="6" y2="18"/>
+                                <line x1="6" y1="6" x2="18" y2="18"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="shortcuts-group">
+                        <div class="shortcuts-group-title">Navigation</div>
+                        <div class="shortcut-row">
+                            <span class="shortcut-label">Go to Allocation tab</span>
+                            <div class="shortcut-keys"><span class="shortcut-key">1</span></div>
+                        </div>
+                        <div class="shortcut-row">
+                            <span class="shortcut-label">Go to Insights tab</span>
+                            <div class="shortcut-keys"><span class="shortcut-key">2</span></div>
+                        </div>
+                        <div class="shortcut-row">
+                            <span class="shortcut-label">Go to Performance tab</span>
+                            <div class="shortcut-keys"><span class="shortcut-key">3</span></div>
+                        </div>
+                        <div class="shortcut-row">
+                            <span class="shortcut-label">Go to Risk tab</span>
+                            <div class="shortcut-keys"><span class="shortcut-key">4</span></div>
+                        </div>
+                        <div class="shortcut-row">
+                            <span class="shortcut-label">Go to Holdings tab</span>
+                            <div class="shortcut-keys"><span class="shortcut-key">5</span></div>
+                        </div>
+                    </div>
+                    <div class="shortcuts-group">
+                        <div class="shortcuts-group-title">Actions</div>
+                        <div class="shortcut-row">
+                            <span class="shortcut-label">New Analysis</span>
+                            <div class="shortcut-keys"><span class="shortcut-key">Ctrl</span><span class="shortcut-key">N</span></div>
+                        </div>
+                        <div class="shortcut-row">
+                            <span class="shortcut-label">Export Data</span>
+                            <div class="shortcut-keys"><span class="shortcut-key">Ctrl</span><span class="shortcut-key">E</span></div>
+                        </div>
+                        <div class="shortcut-row">
+                            <span class="shortcut-label">Generate Report</span>
+                            <div class="shortcut-keys"><span class="shortcut-key">Ctrl</span><span class="shortcut-key">P</span></div>
+                        </div>
+                    </div>
+                    <div class="shortcuts-group">
+                        <div class="shortcuts-group-title">General</div>
+                        <div class="shortcut-row">
+                            <span class="shortcut-label">Show shortcuts</span>
+                            <div class="shortcut-keys"><span class="shortcut-key">?</span></div>
+                        </div>
+                        <div class="shortcut-row">
+                            <span class="shortcut-label">Close modal / Cancel</span>
+                            <div class="shortcut-keys"><span class="shortcut-key">Esc</span></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+
+            // Close on overlay click
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeShortcutsModal();
+                }
+            });
+        }
+
+        function openShortcutsModal() {
+            let modal = document.getElementById('shortcutsModal');
+            if (!modal) {
+                createShortcutsModal();
+                modal = document.getElementById('shortcutsModal');
+            }
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeShortcutsModal() {
+            const modal = document.getElementById('shortcutsModal');
+            if (modal) {
+                modal.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        }
+
+        // Tab name mappings for keyboard shortcuts
+        const tabShortcuts = {
+            '1': 'allocation',
+            '2': 'insights',
+            '3': 'performance',
+            '4': 'risk',
+            '5': 'holdings',
+            '6': 'sectors',
+            '7': 'dividends',
+            '8': 'geography'
+        };
+
+        // Global keyboard shortcut handler
+        document.addEventListener('keydown', (e) => {
+            // Ignore if user is typing in an input field
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable) {
+                return;
+            }
+
+            // Check if dashboard is visible
+            const dashboard = document.getElementById('dashboard');
+            const isDashboardVisible = dashboard && dashboard.style.display !== 'none';
+
+            // ? - Show shortcuts modal
+            if (e.key === '?' || (e.shiftKey && e.key === '/')) {
+                e.preventDefault();
+                openShortcutsModal();
+                return;
+            }
+
+            // Escape - Close any open modal
+            if (e.key === 'Escape') {
+                closeShortcutsModal();
+                return;
+            }
+
+            // Only handle dashboard shortcuts if dashboard is visible
+            if (!isDashboardVisible) return;
+
+            // Number keys 1-8 for tab switching
+            if (tabShortcuts[e.key] && !e.ctrlKey && !e.metaKey && !e.altKey) {
+                e.preventDefault();
+                if (typeof switchTab === 'function') {
+                    switchTab(tabShortcuts[e.key]);
+                }
+                return;
+            }
+
+            // Ctrl/Cmd + N - New Analysis
+            if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
+                e.preventDefault();
+                // Reset to upload state
+                if (typeof showEmptyState === 'function') {
+                    showEmptyState();
+                } else {
+                    const emptyState = document.getElementById('appEmptyState');
+                    const dashboardEl = document.getElementById('dashboard');
+                    if (emptyState) emptyState.style.display = 'flex';
+                    if (dashboardEl) dashboardEl.style.display = 'none';
+                }
+                showToast('Ready for new analysis', 'info');
+                return;
+            }
+
+            // Ctrl/Cmd + E - Export
+            if ((e.ctrlKey || e.metaKey) && e.key === 'e') {
+                e.preventDefault();
+                if (typeof exportToCSV === 'function') {
+                    exportToCSV();
+                }
+                return;
+            }
+
+            // Ctrl/Cmd + P - Generate Report (prevent default print)
+            if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+                e.preventDefault();
+                if (typeof generateProfessionalReport === 'function') {
+                    generateProfessionalReport();
+                } else {
+                    showToast('Report generation not available', 'error');
+                }
+                return;
+            }
+        });
+
+        // Initialize shortcuts modal on load
+        document.addEventListener('DOMContentLoaded', () => {
+            createShortcutsModal();
         });
     </script>
 </body>
