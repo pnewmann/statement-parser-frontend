@@ -1,5 +1,5 @@
 // Statement Scan Service Worker
-const CACHE_NAME = 'statement-scan-v40';
+const CACHE_NAME = 'statement-scan-v44';
 const ASSETS_TO_CACHE = [
     '/',
     '/index.html',
@@ -7,7 +7,8 @@ const ASSETS_TO_CACHE = [
     'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap',
     'https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js',
     'https://d3js.org/d3.v7.min.js',
-    'https://d3js.org/topojson.v3.min.js'
+    'https://d3js.org/topojson.v3.min.js',
+    'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js'
 ];
 
 // Install event - cache assets

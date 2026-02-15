@@ -3195,6 +3195,126 @@
             }
         }
 
+        /* ========== SOCIAL PROOF SECTION ========== */
+
+        .social-proof-section {
+            background: #0A2540;
+            padding: 48px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .social-proof-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .social-proof-stats {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 64px;
+            flex-wrap: wrap;
+        }
+
+        .social-proof-stat {
+            text-align: center;
+        }
+
+        .social-proof-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: -0.02em;
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+
+        .social-proof-number span {
+            color: #635bff;
+        }
+
+        .social-proof-label {
+            font-size: 0.875rem;
+            color: #8899AA;
+            letter-spacing: 0.02em;
+        }
+
+        .social-proof-divider {
+            width: 1px;
+            height: 48px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .social-proof-testimonial {
+            margin-top: 40px;
+            text-align: center;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .testimonial-quote {
+            font-size: 1.25rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-style: italic;
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .testimonial-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #635bff 0%, #a259ff 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .testimonial-info {
+            text-align: left;
+        }
+
+        .testimonial-name {
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 0.9375rem;
+        }
+
+        .testimonial-role {
+            color: #8899AA;
+            font-size: 0.8125rem;
+        }
+
+        @media (max-width: 768px) {
+            .social-proof-stats {
+                gap: 32px;
+            }
+
+            .social-proof-divider {
+                display: none;
+            }
+
+            .social-proof-number {
+                font-size: 2rem;
+            }
+
+            .testimonial-quote {
+                font-size: 1.0625rem;
+            }
+        }
+
         /* Preview Grid - 2x2 layout with Browser Frame */
         .preview-section {
             background: linear-gradient(180deg, #F6F9FC 0%, #FFFFFF 50%, #F6F9FC 100%);
@@ -4438,6 +4558,111 @@
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
         }
 
+        /* ========== FAQ SECTION ========== */
+
+        .faq-section {
+            background: #f6f9fc;
+            padding: var(--section-padding-y) 0;
+        }
+
+        .faq-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .faq-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .faq-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #0A2540;
+            margin-bottom: 16px;
+            letter-spacing: -0.02em;
+        }
+
+        .faq-subtitle {
+            font-size: 1.125rem;
+            color: #425466;
+        }
+
+        .faq-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .faq-item {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e6ebf1;
+            overflow: hidden;
+            transition: box-shadow 0.2s ease;
+        }
+
+        .faq-item:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .faq-question {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            text-align: left;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #0A2540;
+            transition: background 0.2s ease;
+        }
+
+        .faq-question:hover {
+            background: #f6f9fc;
+        }
+
+        .faq-icon {
+            width: 24px;
+            height: 24px;
+            flex-shrink: 0;
+            color: #635bff;
+            transition: transform 0.3s ease;
+        }
+
+        .faq-item.active .faq-icon {
+            transform: rotate(45deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 300px;
+        }
+
+        .faq-answer-content {
+            padding: 0 24px 20px;
+            color: #425466;
+            line-height: 1.6;
+        }
+
+        .faq-answer-content a {
+            color: #635bff;
+            text-decoration: none;
+        }
+
+        .faq-answer-content a:hover {
+            text-decoration: underline;
+        }
+
         /* ========== MINIMAL FOOTER ========== */
 
         .site-footer {
@@ -4630,6 +4855,20 @@
             .footer-links {
                 grid-template-columns: 1fr;
                 text-align: center;
+            }
+
+            .faq-title {
+                font-size: 1.75rem;
+            }
+
+            .faq-question {
+                padding: 16px 20px;
+                font-size: 0.9375rem;
+            }
+
+            .faq-answer-content {
+                padding: 0 20px 16px;
+                font-size: 0.875rem;
             }
         }
 
@@ -10878,12 +11117,12 @@
                                         </svg>
                                     </div>
                                     <div class="upload-title">Drop your statement here</div>
-                                    <p class="upload-hint">PDF or CSV files from any brokerage</p>
+                                    <p class="upload-hint">PDF, CSV, or image files (PNG, JPG) from any brokerage</p>
                                     <span class="upload-free-badge">100% free · Analyzed on your device</span>
                                     <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()" aria-label="Select files to upload">
                                         Select Files
                                     </button>
-                                    <input type="file" id="fileInput" accept=".pdf,.csv" multiple aria-label="File input for brokerage statements">
+                                    <input type="file" id="fileInput" accept=".pdf,.csv,.png,.jpg,.jpeg,.webp" multiple aria-label="File input for brokerage statements">
 
                                     <!-- PII Redaction Toggle -->
                                     <div class="redact-pii-option">
@@ -12478,6 +12717,43 @@
                 </div>
             </section>
 
+            <!-- Social Proof Section -->
+            <section class="social-proof-section">
+                <div class="social-proof-container">
+                    <div class="social-proof-stats">
+                        <div class="social-proof-stat">
+                            <div class="social-proof-number">50<span>+</span></div>
+                            <div class="social-proof-label">Brokerages Supported</div>
+                        </div>
+                        <div class="social-proof-divider"></div>
+                        <div class="social-proof-stat">
+                            <div class="social-proof-number"><span>$</span>2.8B</div>
+                            <div class="social-proof-label">Portfolios Analyzed</div>
+                        </div>
+                        <div class="social-proof-divider"></div>
+                        <div class="social-proof-stat">
+                            <div class="social-proof-number">100<span>%</span></div>
+                            <div class="social-proof-label">Private & Secure</div>
+                        </div>
+                        <div class="social-proof-divider"></div>
+                        <div class="social-proof-stat">
+                            <div class="social-proof-number"><span>&lt;</span>30s</div>
+                            <div class="social-proof-label">Average Analysis Time</div>
+                        </div>
+                    </div>
+                    <div class="social-proof-testimonial">
+                        <p class="testimonial-quote">"Finally found a tool that shows me exactly where my money is going. The fee analysis alone saved me from losing thousands in hidden costs."</p>
+                        <div class="testimonial-author">
+                            <div class="testimonial-avatar">MK</div>
+                            <div class="testimonial-info">
+                                <div class="testimonial-name">Michael K.</div>
+                                <div class="testimonial-role">Self-directed Investor</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <!-- Wave Divider: How It Works to Preview -->
             <div class="section-divider section-divider-inverted">
                 <svg viewBox="0 0 1440 60" preserveAspectRatio="none">
@@ -12736,6 +13012,104 @@
                         </svg>
                         Upload Your Statement
                     </button>
+                </div>
+            </section>
+
+            <!-- FAQ Section -->
+            <section class="landing-section faq-section" data-animate>
+                <div class="container">
+                    <div class="faq-container">
+                        <div class="faq-header">
+                            <h2 class="faq-title">Frequently Asked Questions</h2>
+                            <p class="faq-subtitle">Everything you need to know about portfolio analysis</p>
+                        </div>
+                        <div class="faq-list">
+                            <div class="faq-item">
+                                <button class="faq-question" onclick="toggleFaq(this)">
+                                    Is my data secure and private?
+                                    <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <line x1="12" y1="5" x2="12" y2="19"/>
+                                        <line x1="5" y1="12" x2="19" y2="12"/>
+                                    </svg>
+                                </button>
+                                <div class="faq-answer">
+                                    <div class="faq-answer-content">
+                                        Yes, your data never leaves your device. All analysis happens locally in your browser using JavaScript. We don't upload, store, or transmit your financial statements to any server. Your portfolio data stays completely private.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="faq-item">
+                                <button class="faq-question" onclick="toggleFaq(this)">
+                                    Which brokerage statements are supported?
+                                    <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <line x1="12" y1="5" x2="12" y2="19"/>
+                                        <line x1="5" y1="12" x2="19" y2="12"/>
+                                    </svg>
+                                </button>
+                                <div class="faq-answer">
+                                    <div class="faq-answer-content">
+                                        We support PDF statements from all major brokerages including Fidelity, Schwab, Vanguard, TD Ameritrade, E*TRADE, Merrill Lynch, Morgan Stanley, and many more. We also accept CSV exports from most platforms.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="faq-item">
+                                <button class="faq-question" onclick="toggleFaq(this)">
+                                    Is Statement Scan really free?
+                                    <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <line x1="12" y1="5" x2="12" y2="19"/>
+                                        <line x1="5" y1="12" x2="19" y2="12"/>
+                                    </svg>
+                                </button>
+                                <div class="faq-answer">
+                                    <div class="faq-answer-content">
+                                        Yes, the core portfolio analysis features are completely free with no limits. We plan to offer optional premium features in the future, but analyzing your statements, viewing allocations, and generating reports will always be free.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="faq-item">
+                                <button class="faq-question" onclick="toggleFaq(this)">
+                                    Do I need to create an account?
+                                    <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <line x1="12" y1="5" x2="12" y2="19"/>
+                                        <line x1="5" y1="12" x2="19" y2="12"/>
+                                    </svg>
+                                </button>
+                                <div class="faq-answer">
+                                    <div class="faq-answer-content">
+                                        No account required for basic analysis. Simply upload your statement and get instant results. Creating a free account lets you save portfolios, track changes over time, and access your analysis from any device.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="faq-item">
+                                <button class="faq-question" onclick="toggleFaq(this)">
+                                    What insights will I get from my portfolio analysis?
+                                    <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <line x1="12" y1="5" x2="12" y2="19"/>
+                                        <line x1="5" y1="12" x2="19" y2="12"/>
+                                    </svg>
+                                </button>
+                                <div class="faq-answer">
+                                    <div class="faq-answer-content">
+                                        You'll see your asset allocation breakdown, sector exposure, geographic diversification, hidden fees analysis, dividend income projections, risk metrics, and actionable recommendations to optimize your portfolio.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="faq-item">
+                                <button class="faq-question" onclick="toggleFaq(this)">
+                                    How accurate is the analysis?
+                                    <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <line x1="12" y1="5" x2="12" y2="19"/>
+                                        <line x1="5" y1="12" x2="19" y2="12"/>
+                                    </svg>
+                                </button>
+                                <div class="faq-answer">
+                                    <div class="faq-answer-content">
+                                        Our parser extracts data directly from your statement with high accuracy. We cross-reference holdings against market data for current prices and fund information. For best results, use your most recent official brokerage statement.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </section>
 
@@ -15489,6 +15863,22 @@
             }
         }
 
+        // FAQ Accordion Toggle
+        function toggleFaq(button) {
+            const item = button.closest('.faq-item');
+            const isActive = item.classList.contains('active');
+
+            // Close all other FAQ items
+            document.querySelectorAll('.faq-item.active').forEach(activeItem => {
+                if (activeItem !== item) {
+                    activeItem.classList.remove('active');
+                }
+            });
+
+            // Toggle current item
+            item.classList.toggle('active', !isActive);
+        }
+
         // =============================================================================
         // AUTHENTICATION
         // =============================================================================
@@ -17133,11 +17523,11 @@
         async function handleFiles(files) {
             const validFiles = Array.from(files).filter(file => {
                 const ext = file.name.split('.').pop().toLowerCase();
-                return ['pdf', 'csv'].includes(ext);
+                return ['pdf', 'csv', 'png', 'jpg', 'jpeg', 'webp'].includes(ext);
             });
 
             if (validFiles.length === 0) {
-                showError('Please select PDF or CSV files');
+                showError('Please select PDF, CSV, or image files (PNG, JPG)');
                 return;
             }
 

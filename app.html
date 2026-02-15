@@ -11,6 +11,12 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Statement Scan">
+    <!-- iOS Splash Screens -->
+    <link rel="apple-touch-startup-image" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)">
+    <link rel="apple-touch-startup-image" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)">
+    <link rel="apple-touch-startup-image" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)">
+    <link rel="apple-touch-startup-image" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)">
+    <link rel="apple-touch-startup-image" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -20,6 +26,7 @@
     <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
     <style>
         :root {
             --primary: #635bff;
@@ -17875,7 +17882,14 @@
         async function parseFile(file) {
             const formData = new FormData();
             const redactPii = document.getElementById('redactPiiToggle')?.checked ?? true;
-            const isPdf = file.name.toLowerCase().endsWith('.pdf');
+            const ext = file.name.split('.').pop().toLowerCase();
+            const isPdf = ext === 'pdf';
+            const isImage = ['png', 'jpg', 'jpeg', 'webp'].includes(ext);
+
+            // Handle images with client-side OCR (Tesseract.js)
+            if (isImage) {
+                return await parseImageClientSide(file);
+            }
 
             // Store original file for redaction
             if (isPdf && redactPii) {
@@ -17899,6 +17913,154 @@
 
             const res = await fetch(`${API_URL}/parse`, { method: 'POST', body: formData });
             return res.json();
+        }
+
+        // Client-side OCR for images using Tesseract.js
+        async function parseImageClientSide(file) {
+            if (typeof Tesseract === 'undefined') {
+                return { error: 'OCR not available. Please upload a PDF or CSV file.' };
+            }
+
+            try {
+                // Create image URL from file
+                const imageUrl = URL.createObjectURL(file);
+
+                // Run OCR with Tesseract.js
+                const { data: { text } } = await Tesseract.recognize(imageUrl, 'eng', {
+                    logger: m => {
+                        if (m.status === 'recognizing text') {
+                            const pct = Math.round(m.progress * 100);
+                            progressManager?.setStage('parse', `OCR processing: ${pct}%`);
+                        }
+                    }
+                });
+
+                URL.revokeObjectURL(imageUrl);
+
+                // Parse positions from OCR text
+                const positions = parseOcrText(text);
+                const brokerage = detectBrokerage(text);
+
+                if (positions.length === 0) {
+                    return {
+                        error: 'No positions found in image. Try uploading a clearer screenshot or PDF.',
+                        positions: [],
+                        brokerage: brokerage || 'unknown'
+                    };
+                }
+
+                return {
+                    positions,
+                    count: positions.length,
+                    brokerage: brokerage || 'unknown'
+                };
+            } catch (err) {
+                console.error('OCR error:', err);
+                return { error: `OCR failed: ${err.message}` };
+            }
+        }
+
+        // Parse positions from OCR-extracted text
+        function parseOcrText(text) {
+            const positions = [];
+            const lines = text.split('\n').filter(l => l.trim());
+
+            // Crypto name to symbol mapping
+            const cryptoNames = {
+                'bitcoin': 'BTC', 'ethereum': 'ETH', 'solana': 'SOL', 'dogecoin': 'DOGE',
+                'cardano': 'ADA', 'ripple': 'XRP', 'polkadot': 'DOT', 'avalanche': 'AVAX',
+                'polygon': 'MATIC', 'chainlink': 'LINK', 'litecoin': 'LTC', 'uniswap': 'UNI',
+                'shiba': 'SHIB', 'cosmos': 'ATOM', 'stellar': 'XLM', 'tether': 'USDT',
+                'usd coin': 'USDC', 'binance': 'BNB', 'tron': 'TRX', 'wrapped bitcoin': 'WBTC'
+            };
+
+            // Stock symbol pattern (1-5 uppercase letters)
+            const stockSymbolPattern = /\b([A-Z]{1,5})\b/g;
+
+            // Track found symbols to avoid duplicates
+            const foundSymbols = new Set();
+
+            for (const line of lines) {
+                const lineLower = line.toLowerCase();
+
+                // Check for crypto names
+                for (const [name, symbol] of Object.entries(cryptoNames)) {
+                    if (lineLower.includes(name) && !foundSymbols.has(symbol)) {
+                        // Look for quantity and value
+                        const numbers = line.match(/[\d,]+\.?\d*/g) || [];
+                        const dollarMatch = line.match(/\$[\d,]+\.?\d*/);
+
+                        if (numbers.length > 0) {
+                            const quantity = parseFloat(numbers[0].replace(/,/g, '')) || 0;
+                            let value = null;
+
+                            if (dollarMatch) {
+                                value = parseFloat(dollarMatch[0].replace(/[$,]/g, ''));
+                            } else if (numbers.length >= 2) {
+                                value = parseFloat(numbers[numbers.length - 1].replace(/,/g, ''));
+                            }
+
+                            if (quantity > 0 || value > 0) {
+                                positions.push({
+                                    symbol,
+                                    name: name.charAt(0).toUpperCase() + name.slice(1),
+                                    quantity: quantity || 1,
+                                    price: value && quantity ? value / quantity : null,
+                                    value: value || 0
+                                });
+                                foundSymbols.add(symbol);
+                            }
+                        }
+                    }
+                }
+
+                // Check for stock symbols with values
+                const symbolMatches = line.match(stockSymbolPattern);
+                if (symbolMatches) {
+                    for (const symbol of symbolMatches) {
+                        // Skip common non-stock words
+                        if (['THE', 'AND', 'FOR', 'USD', 'INC', 'LLC', 'ETF', 'FUND', 'CORP'].includes(symbol)) continue;
+                        if (foundSymbols.has(symbol)) continue;
+
+                        // Look for associated numbers
+                        const numbers = line.match(/[\d,]+\.?\d*/g) || [];
+                        const dollarMatch = line.match(/\$[\d,]+\.?\d*/);
+
+                        if (numbers.length >= 2 || dollarMatch) {
+                            let quantity = 0, value = 0, price = 0;
+
+                            if (dollarMatch) {
+                                value = parseFloat(dollarMatch[0].replace(/[$,]/g, ''));
+                            }
+
+                            // Try to extract quantity and price
+                            const cleanNumbers = numbers.map(n => parseFloat(n.replace(/,/g, ''))).filter(n => n > 0);
+                            if (cleanNumbers.length >= 2) {
+                                // Heuristic: smaller number is likely quantity, larger is value
+                                cleanNumbers.sort((a, b) => a - b);
+                                if (cleanNumbers[0] < 10000 && cleanNumbers[cleanNumbers.length - 1] > cleanNumbers[0]) {
+                                    quantity = cleanNumbers[0];
+                                    value = value || cleanNumbers[cleanNumbers.length - 1];
+                                    price = quantity > 0 ? value / quantity : 0;
+                                }
+                            }
+
+                            if (value > 0) {
+                                positions.push({
+                                    symbol,
+                                    name: symbol,
+                                    quantity: quantity || 1,
+                                    price: price || value,
+                                    value
+                                });
+                                foundSymbols.add(symbol);
+                            }
+                        }
+                    }
+                }
+            }
+
+            return positions;
         }
 
         async function downloadRedactedPdf() {
@@ -23360,6 +23522,187 @@
         window.loadSamplePortfolio = loadSamplePortfolio;
 
         // =============================================================================
+        // iOS PWA ICON GENERATOR
+        // =============================================================================
+
+        (function generateiOSIcon() {
+            // Generate PNG icon for iOS (Safari doesn't support SVG icons)
+            const canvas = document.createElement('canvas');
+            canvas.width = 180;
+            canvas.height = 180;
+            const ctx = canvas.getContext('2d');
+
+            // Background
+            ctx.fillStyle = '#635bff';
+            ctx.beginPath();
+            ctx.roundRect(0, 0, 180, 180, 40);
+            ctx.fill();
+
+            // Top-left square
+            ctx.fillStyle = 'white';
+            ctx.beginPath();
+            ctx.roundRect(22, 22, 75, 75, 15);
+            ctx.fill();
+
+            // Bottom-right square
+            ctx.beginPath();
+            ctx.roundRect(83, 83, 75, 75, 15);
+            ctx.fill();
+
+            // Middle stripe
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+            ctx.fillRect(0, 78, 180, 24);
+
+            // Center square
+            ctx.fillStyle = 'white';
+            ctx.beginPath();
+            ctx.roundRect(67, 67, 46, 46, 8);
+            ctx.fill();
+
+            // Set as apple-touch-icon
+            const iconUrl = canvas.toDataURL('image/png');
+            const existingIcon = document.querySelector('link[rel="apple-touch-icon"]');
+            if (existingIcon) {
+                existingIcon.href = iconUrl;
+            }
+
+            // Also create manifest icons dynamically for browsers that cache
+            if ('caches' in window) {
+                // Create 192x192 icon
+                canvas.width = 192;
+                canvas.height = 192;
+                ctx.fillStyle = '#635bff';
+                ctx.beginPath();
+                ctx.roundRect(0, 0, 192, 192, 32);
+                ctx.fill();
+                ctx.fillStyle = 'white';
+                ctx.beginPath();
+                ctx.roundRect(24, 24, 80, 80, 16);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.roundRect(88, 88, 80, 80, 16);
+                ctx.fill();
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+                ctx.fillRect(0, 84, 192, 24);
+                ctx.fillStyle = 'white';
+                ctx.beginPath();
+                ctx.roundRect(72, 72, 48, 48, 8);
+                ctx.fill();
+            }
+        })();
+
+        // =============================================================================
+        // PWA INSTALL PROMPT (All Platforms)
+        // =============================================================================
+
+        let deferredInstallPrompt = null;
+
+        // Capture the install prompt event (Android, Chrome, Edge, etc.)
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredInstallPrompt = e;
+            // Show install prompt after a short delay
+            setTimeout(() => showInstallPrompt(), 3000);
+        });
+
+        function showInstallPrompt() {
+            const isInStandaloneMode = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+            const hasSeenPrompt = localStorage.getItem('pwaInstallPromptSeen');
+
+            if (isInStandaloneMode || hasSeenPrompt) return;
+
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+
+            const prompt = document.createElement('div');
+            prompt.id = 'pwa-install-prompt';
+
+            if (isIOS) {
+                // iOS-specific instructions (no beforeinstallprompt support)
+                prompt.innerHTML = `
+                    <div style="position: fixed; bottom: 20px; left: 20px; right: 20px; background: white; border-radius: 16px; padding: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.15); z-index: 10000; font-family: -apple-system, BlinkMacSystemFont, sans-serif;">
+                        <div style="display: flex; align-items: flex-start; gap: 16px;">
+                            <div style="width: 60px; height: 60px; background: #635bff; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                                    <rect x="3" y="3" width="12" height="12" rx="2" fill="white"/>
+                                    <rect x="17" y="17" width="12" height="12" rx="2" fill="white"/>
+                                    <rect x="12" y="12" width="8" height="8" rx="1" fill="white"/>
+                                </svg>
+                            </div>
+                            <div style="flex: 1;">
+                                <h3 style="margin: 0 0 4px 0; font-size: 17px; font-weight: 600; color: #1a1a2e;">Install Statement Scan</h3>
+                                <p style="margin: 0; font-size: 14px; color: #666; line-height: 1.4;">
+                                    Tap <svg style="vertical-align: middle; margin: 0 2px;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#007AFF" stroke-width="2"><path d="M12 5v14M5 12l7-7 7 7"/><rect x="4" y="19" width="16" height="2" rx="1" fill="#007AFF" stroke="none"/></svg> then <strong>"Add to Home Screen"</strong>
+                                </p>
+                            </div>
+                            <button onclick="dismissInstallPrompt()" style="background: none; border: none; font-size: 24px; color: #999; cursor: pointer; padding: 0; line-height: 1;">&times;</button>
+                        </div>
+                    </div>
+                `;
+            } else if (deferredInstallPrompt) {
+                // Android/Desktop with native install prompt
+                prompt.innerHTML = `
+                    <div style="position: fixed; bottom: 20px; left: 20px; right: 20px; background: white; border-radius: 16px; padding: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.15); z-index: 10000; font-family: -apple-system, BlinkMacSystemFont, sans-serif; max-width: 400px; margin: 0 auto;">
+                        <div style="display: flex; align-items: flex-start; gap: 16px;">
+                            <div style="width: 60px; height: 60px; background: #635bff; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                                    <rect x="3" y="3" width="12" height="12" rx="2" fill="white"/>
+                                    <rect x="17" y="17" width="12" height="12" rx="2" fill="white"/>
+                                    <rect x="12" y="12" width="8" height="8" rx="1" fill="white"/>
+                                </svg>
+                            </div>
+                            <div style="flex: 1;">
+                                <h3 style="margin: 0 0 4px 0; font-size: 17px; font-weight: 600; color: #1a1a2e;">Install Statement Scan</h3>
+                                <p style="margin: 0 0 12px 0; font-size: 14px; color: #666; line-height: 1.4;">
+                                    Install for quick access and offline use
+                                </p>
+                                <div style="display: flex; gap: 8px;">
+                                    <button onclick="triggerInstall()" style="background: #635bff; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer;">Install App</button>
+                                    <button onclick="dismissInstallPrompt()" style="background: #f1f1f1; color: #666; border: none; padding: 10px 16px; border-radius: 8px; font-size: 14px; cursor: pointer;">Not now</button>
+                                </div>
+                            </div>
+                            <button onclick="dismissInstallPrompt()" style="background: none; border: none; font-size: 24px; color: #999; cursor: pointer; padding: 0; line-height: 1; position: absolute; top: 12px; right: 12px;">&times;</button>
+                        </div>
+                    </div>
+                `;
+            } else {
+                return; // No install method available
+            }
+
+            document.body.appendChild(prompt);
+        }
+
+        function dismissInstallPrompt() {
+            const prompt = document.getElementById('pwa-install-prompt');
+            if (prompt) prompt.remove();
+            localStorage.setItem('pwaInstallPromptSeen', 'true');
+        }
+
+        async function triggerInstall() {
+            if (!deferredInstallPrompt) return;
+
+            deferredInstallPrompt.prompt();
+            const { outcome } = await deferredInstallPrompt.userChoice;
+
+            if (outcome === 'accepted') {
+                console.log('PWA installed successfully');
+            }
+
+            deferredInstallPrompt = null;
+            dismissInstallPrompt();
+        }
+
+        // Also show prompt for iOS users who haven't seen it
+        function showIOSInstallPrompt() {
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+            const isInStandaloneMode = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+            const hasSeenPrompt = localStorage.getItem('pwaInstallPromptSeen');
+
+            if (isIOS && !isInStandaloneMode && !hasSeenPrompt) {
+                setTimeout(() => showInstallPrompt(), 3000);
+            }
+        }
+
+        // =============================================================================
         // SERVICE WORKER REGISTRATION
         // =============================================================================
 
@@ -23404,6 +23747,9 @@
 
             // Check for pending uploads from landing page
             await processPendingUploads();
+
+            // Show iOS install prompt for Safari users
+            showIOSInstallPrompt();
         });
 
         // Override switchTab to also update hash on tab changes
