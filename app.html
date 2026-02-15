@@ -13464,34 +13464,46 @@
         }
 
         async function checkPendingUploads() {
+            console.log('[App] checkPendingUploads called');
             try {
                 const db = await openUploadDB();
+                console.log('[App] IndexedDB opened');
                 const tx = db.transaction('files', 'readonly');
                 const store = tx.objectStore('files');
 
                 return new Promise((resolve, reject) => {
                     const request = store.getAll();
-                    request.onsuccess = () => resolve(request.result);
-                    request.onerror = () => reject(request.error);
+                    request.onsuccess = () => {
+                        console.log('[App] Found', request.result.length, 'pending files:', request.result.map(f => f.name));
+                        resolve(request.result);
+                    };
+                    request.onerror = () => {
+                        console.error('[App] Error reading files:', request.error);
+                        reject(request.error);
+                    };
                 });
             } catch (e) {
-                console.error('Error checking pending uploads:', e);
+                console.error('[App] Error checking pending uploads:', e);
                 return [];
             }
         }
 
         async function clearPendingUploads() {
+            console.log('[App] clearPendingUploads called');
             try {
                 const db = await openUploadDB();
                 const tx = db.transaction('files', 'readwrite');
                 tx.objectStore('files').clear();
+                console.log('[App] Cleared pending uploads');
             } catch (e) {
-                console.error('Error clearing pending uploads:', e);
+                console.error('[App] Error clearing pending uploads:', e);
             }
         }
 
         async function processPendingUploads() {
+            console.log('[App] processPendingUploads called');
             const files = await checkPendingUploads();
+            console.log('[App] Retrieved', files.length, 'files from IndexedDB');
             if (files.length > 0) {
                 await clearPendingUploads();
 

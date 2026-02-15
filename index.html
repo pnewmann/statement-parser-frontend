@@ -13943,6 +13943,7 @@
         }
 
         async function handleLandingUpload(files) {
+            console.log('[Landing] handleLandingUpload called with', files.length, 'files');
             try {
                 // Read all file buffers first (before opening transaction)
                 const fileData = await Promise.all(files.map(async (file) => ({
@@ -13951,26 +13952,46 @@
                     type: file.type,
                     timestamp: Date.now()
                 })));
+                console.log('[Landing] File data prepared:', fileData.map(f => ({ name: f.name, size: f.buffer.byteLength })));
 
                 // Now store all files in IndexedDB
                 const db = await openUploadDB();
+                console.log('[Landing] IndexedDB opened');
                 const tx = db.transaction('files', 'readwrite');
                 const store = tx.objectStore('files');
 
                 for (const data of fileData) {
                     store.put(data);
+                    console.log('[Landing] Stored file:', data.name);
                 }
 
                 // Wait for transaction to complete
                 await new Promise((resolve, reject) => {
-                    tx.oncomplete = resolve;
-                    tx.onerror = () => reject(tx.error);
+                    tx.oncomplete = () => {
+                        console.log('[Landing] Transaction complete');
+                        resolve();
+                    };
+                    tx.onerror = () => {
+                        console.error('[Landing] Transaction error:', tx.error);
+                        reject(tx.error);
+                    };
                 });
 
+                // Verify files were stored
+                const verifyTx = db.transaction('files', 'readonly');
+                const verifyReq = verifyTx.objectStore('files').getAll();
+                verifyReq.onsuccess = () => {
+                    console.log('[Landing] Verified stored files:', verifyReq.result.length, verifyReq.result.map(f => f.name));
+                };
+
+                // Small delay to ensure IndexedDB write is flushed
+                await new Promise(r => setTimeout(r, 100));
+
                 // Redirect to app page
+                console.log('[Landing] Redirecting to /app');
                 window.location.href = '/app';
             } catch (e) {
-                console.error('Error storing files for transfer:', e);
+                console.error('[Landing] Error storing files for transfer:', e);
                 // Fall back to redirecting anyway - app will show empty state
                 window.location.href = '/app';
             }
