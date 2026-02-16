@@ -27,6 +27,7 @@
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
     <style>
         :root {
             --primary: #635bff;
@@ -11093,12 +11094,12 @@
                                         </svg>
                                     </div>
                                     <div class="upload-title">Drop your statement here</div>
-                                    <p class="upload-hint">PDF, CSV, OFX, QFX, or image files (PNG, JPG) from any brokerage</p>
+                                    <p class="upload-hint">PDF, CSV, OFX, QFX, or image files (PNG, JPG, HEIC) from any brokerage</p>
                                     <span class="upload-free-badge">100% free · Analyzed on your device</span>
                                     <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()" aria-label="Select files to upload">
                                         Select Files
                                     </button>
-                                    <input type="file" id="fileInput" accept=".pdf,.csv,.ofx,.qfx,.png,.jpg,.jpeg,.webp" multiple aria-label="File input for brokerage statements">
+                                    <input type="file" id="fileInput" accept=".pdf,.csv,.ofx,.qfx,.png,.jpg,.jpeg,.webp,.heic,.heif" multiple aria-label="File input for brokerage statements">
 
                                     <!-- PII Redaction Toggle -->
                                     <div class="redact-pii-option">
@@ -17126,11 +17127,11 @@
         async function handleFiles(files) {
             const validFiles = Array.from(files).filter(file => {
                 const ext = file.name.split('.').pop().toLowerCase();
-                return ['pdf', 'csv', 'ofx', 'qfx', 'png', 'jpg', 'jpeg', 'webp'].includes(ext);
+                return ['pdf', 'csv', 'ofx', 'qfx', 'png', 'jpg', 'jpeg', 'webp', 'heic', 'heif'].includes(ext);
             });
 
             if (validFiles.length === 0) {
-                showError('Please select PDF, CSV, OFX, QFX, or image files (PNG, JPG)');
+                showError('Please select PDF, CSV, OFX, QFX, or image files (PNG, JPG, HEIC)');
                 return;
             }
 
@@ -17899,7 +17900,7 @@
             const redactPii = document.getElementById('redactPiiToggle')?.checked ?? true;
             const ext = file.name.split('.').pop().toLowerCase();
             const isPdf = ext === 'pdf';
-            const isImage = ['png', 'jpg', 'jpeg', 'webp'].includes(ext);
+            const isImage = ['png', 'jpg', 'jpeg', 'webp', 'heic', 'heif'].includes(ext);
 
             // Handle images with client-side OCR (Tesseract.js)
             if (isImage) {
@@ -17937,8 +17938,17 @@
             }
 
             try {
+                // Convert HEIC/HEIF to JPEG for browser compatibility
+                let imageFile = file;
+                const ext = file.name.split('.').pop().toLowerCase();
+                if ((ext === 'heic' || ext === 'heif') && typeof heic2any !== 'undefined') {
+                    progressManager?.setStage('parse', 'Converting HEIC image...');
+                    const blob = await heic2any({ blob: file, toType: 'image/jpeg', quality: 0.9 });
+                    imageFile = new File([blob], file.name.replace(/\.heic$/i, '.jpg').replace(/\.heif$/i, '.jpg'), { type: 'image/jpeg' });
+                }
+
                 // Create image URL from file
-                const imageUrl = URL.createObjectURL(file);
+                const imageUrl = URL.createObjectURL(imageFile);
 
                 // Run OCR with Tesseract.js
                 const { data: { text } } = await Tesseract.recognize(imageUrl, 'eng', {
