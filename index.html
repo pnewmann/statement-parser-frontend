@@ -3499,7 +3499,9 @@
         }
         .preview-grid .preview-card:nth-child(5) {
             border-left: 4px solid #4F46E5; /* Performance Analysis - Indigo */
-            grid-column: 1 / -1; /* span full width */
+        }
+        .preview-grid .preview-card:nth-child(6) {
+            border-left: 4px solid #F97316; /* Scenario Analysis - Orange */
         }
 
         .preview-card-header h3 {
@@ -3535,6 +3537,38 @@
         .preview-grid .preview-card:nth-child(5) .preview-card-header h3::before {
             background: #4F46E5;
         }
+        .preview-grid .preview-card:nth-child(6) .preview-card-header h3::before {
+            background: #F97316;
+        }
+
+        .pv-scenarios {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .pv-scenario-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.04);
+        }
+        .pv-scenario-name {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        .pv-scenario-impact {
+            font-size: 0.9rem;
+            font-weight: 700;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+        }
+        .pv-scenario-impact.negative {
+            color: #FF5F57;
+        }
+        .pv-scenario-impact.positive {
+            color: #00D4AA;
+        }
 
         .preview-card-body {
             min-height: 200px;
@@ -3552,8 +3586,9 @@
             .preview-grid {
                 grid-template-columns: 1fr;
             }
-            .preview-grid .preview-card:nth-child(5) {
-                grid-column: 1; /* no span on mobile single-column grid */
+            .preview-grid .preview-card:nth-child(5),
+            .preview-grid .preview-card:nth-child(6) {
+                grid-column: 1;
             }
             .preview-section .section-heading {
                 font-size: 28px;
@@ -7255,6 +7290,9 @@
         }
         :root[data-theme="dark"] .preview-grid .preview-card:nth-child(5) {
             border-left: 4px solid #4F46E5;
+        }
+        :root[data-theme="dark"] .preview-grid .preview-card:nth-child(6) {
+            border-left: 4px solid #F97316;
         }
         :root[data-theme="dark"] .pv-perf-value {
             color: var(--text-primary);
@@ -11767,6 +11805,31 @@
                                             <div class="pv-perf-bar positive" style="height: 30%;" title="Dec +1.5%"></div>
                                         </div>
                                         <span class="pv-perf-chart-label">Monthly Returns (12 mo.)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="preview-card">
+                            <div class="preview-card-header">
+                                <h3>Scenario Analysis</h3>
+                            </div>
+                            <div class="preview-card-body">
+                                <div class="pv-scenarios">
+                                    <div class="pv-scenario-row">
+                                        <span class="pv-scenario-name">Market Crash (-30%)</span>
+                                        <span class="pv-scenario-impact negative">-$254,100</span>
+                                    </div>
+                                    <div class="pv-scenario-row">
+                                        <span class="pv-scenario-name">Recession</span>
+                                        <span class="pv-scenario-impact negative">-$169,400</span>
+                                    </div>
+                                    <div class="pv-scenario-row">
+                                        <span class="pv-scenario-name">Rising Rates (+2%)</span>
+                                        <span class="pv-scenario-impact negative">-$67,760</span>
+                                    </div>
+                                    <div class="pv-scenario-row">
+                                        <span class="pv-scenario-name">Bull Market (+20%)</span>
+                                        <span class="pv-scenario-impact positive">+$169,400</span>
                                     </div>
                                 </div>
                             </div>
