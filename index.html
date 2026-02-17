@@ -3476,7 +3476,7 @@
         }
         @keyframes pvNeedleSweep {
             from { transform: rotate(-90deg); }
-            to { transform: rotate(-59.4deg); }
+            to { transform: rotate(30.6deg); }
         }
         @keyframes pvRingReveal {
             from { stroke-dashoffset: 440; }
@@ -12321,8 +12321,8 @@
                                             <text class="pv-gauge-tick-label" x="126" y="29" fill="#94A3B8" font-size="7" text-anchor="middle">60</text>
                                             <line class="pv-gauge-tick" x1="134" y1="50" x2="130" y2="56" stroke="#CBD5E1" stroke-width="1.5"/>
                                             <text class="pv-gauge-tick-label" x="140" y="47" fill="#94A3B8" font-size="7" text-anchor="middle">80</text>
-                                            <!-- Needle: 67/100 = ~120.6deg from start (180deg range starting at 180deg) -->
-                                            <g class="pv-gauge-needle-svg" style="transform-origin: 90px 88px; transform: rotate(-59.4deg);">
+                                            <!-- Needle: 67/100 → rotation = (67/100 × 180) − 90 = 30.6deg -->
+                                            <g class="pv-gauge-needle-svg" style="transform-origin: 90px 88px; transform: rotate(30.6deg);">
                                                 <!-- Tapered needle -->
                                                 <polygon class="pv-gauge-needle-body" points="88,88 90,38 92,88"/>
                                                 <!-- Glow dot at tip -->
