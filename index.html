@@ -3544,30 +3544,53 @@
         .pv-scenarios {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
+            width: 100%;
         }
         .pv-scenario-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 8px 12px;
-            border-radius: 8px;
-            background: rgba(255,255,255,0.04);
+            padding: 10px 14px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, rgba(249,250,251,0.8), rgba(243,244,246,0.4));
+            border: 1px solid rgba(0,0,0,0.04);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .pv-scenario-row:hover {
+            transform: translateX(4px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
         }
         .pv-scenario-name {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #475569;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
+        .pv-scenario-name::before {
+            content: '';
+            width: 3px;
+            height: 20px;
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+        .pv-scenario-row:nth-child(1) .pv-scenario-name::before { background: #EF4444; }
+        .pv-scenario-row:nth-child(2) .pv-scenario-name::before { background: #F97316; }
+        .pv-scenario-row:nth-child(3) .pv-scenario-name::before { background: #EAB308; }
+        .pv-scenario-row:nth-child(4) .pv-scenario-name::before { background: #22C55E; }
         .pv-scenario-impact {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             font-weight: 700;
-            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+            letter-spacing: -0.02em;
         }
         .pv-scenario-impact.negative {
-            color: #FF5F57;
+            color: #EF4444;
         }
         .pv-scenario-impact.positive {
-            color: #00D4AA;
+            color: #10B981;
         }
 
         .preview-card-body {
@@ -3601,100 +3624,97 @@
         /* Performance Analysis Card Styles */
         .pv-performance {
             display: flex;
-            align-items: center;
-            gap: 32px;
+            flex-direction: column;
+            gap: 20px;
             width: 100%;
         }
 
         .pv-perf-summary {
             display: flex;
-            gap: 24px;
-            flex-shrink: 0;
+            gap: 12px;
+            width: 100%;
         }
 
         .pv-perf-metric {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .pv-perf-value {
-            font-size: 24px;
-            font-weight: 700;
-            color: #0A2540;
-        }
-
-        .pv-perf-value.positive {
-            color: #00D4AA;
-        }
-
-        .pv-perf-label {
-            font-size: 11px;
-            color: #94A3B8;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            font-weight: 500;
-        }
-
-        .pv-perf-chart {
             flex: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 8px;
+            gap: 4px;
+            padding: 12px 8px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, rgba(249,250,251,0.9), rgba(243,244,246,0.5));
+            border: 1px solid rgba(0,0,0,0.04);
+        }
+
+        .pv-perf-value {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #0F172A;
+            letter-spacing: -0.02em;
+        }
+
+        .pv-perf-value.positive {
+            background: linear-gradient(135deg, #10B981, #059669);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .pv-perf-label {
+            font-size: 0.6rem;
+            color: #94A3B8;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-weight: 600;
+        }
+
+        .pv-perf-chart {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
         }
 
         .pv-perf-bars {
             display: flex;
             align-items: flex-end;
-            gap: 6px;
-            height: 64px;
+            gap: 4px;
+            height: 56px;
             width: 100%;
-            justify-content: center;
+            padding: 0 4px;
         }
 
         .pv-perf-bar {
-            width: 100%;
-            max-width: 28px;
+            flex: 1;
             border-radius: 3px 3px 0 0;
-            transition: opacity 0.2s;
+            transition: opacity 0.2s, transform 0.2s;
+            position: relative;
+        }
+
+        .pv-perf-bar:hover {
+            opacity: 0.85;
+            transform: scaleY(1.05);
+            transform-origin: bottom;
         }
 
         .pv-perf-bar.positive {
-            background: linear-gradient(180deg, #00D4AA, #00B894);
+            background: linear-gradient(180deg, #10B981 0%, #059669 100%);
+            box-shadow: 0 -2px 4px rgba(16, 185, 129, 0.2);
         }
 
         .pv-perf-bar.negative {
-            background: linear-gradient(180deg, #FF6B6B, #EE5A5A);
+            background: linear-gradient(180deg, #F87171 0%, #EF4444 100%);
+            box-shadow: 0 -2px 4px rgba(239, 68, 68, 0.2);
         }
 
         .pv-perf-chart-label {
-            font-size: 10px;
+            font-size: 0.6rem;
             color: #94A3B8;
             text-transform: uppercase;
-            letter-spacing: 0.04em;
-        }
-
-        @media (max-width: 768px) {
-            .pv-performance {
-                flex-direction: column;
-                gap: 20px;
-            }
-
-            .pv-perf-summary {
-                width: 100%;
-                justify-content: space-around;
-            }
-
-            .pv-perf-value {
-                font-size: 20px;
-            }
-        }
-
-        .preview-grid .preview-card:nth-child(5) .preview-card-body {
-            min-height: auto;
-            padding: 8px 0;
+            letter-spacing: 0.06em;
+            font-weight: 500;
         }
 
         /* ========== PREVIEW SECTION CHARTS (unique pv- prefix) ========== */
@@ -3709,8 +3729,8 @@
         }
 
         .pv-donut-ring {
-            width: 130px;
-            height: 130px;
+            width: 140px;
+            height: 140px;
             border-radius: 50%;
             background: conic-gradient(
                 #635BFF 0deg 223deg,
@@ -3722,55 +3742,66 @@
             align-items: center;
             justify-content: center;
             position: relative;
+            box-shadow:
+                0 8px 24px rgba(99, 91, 255, 0.2),
+                0 2px 8px rgba(0, 0, 0, 0.06),
+                inset 0 0 0 2px rgba(255, 255, 255, 0.15);
         }
 
         .pv-donut-ring::before {
             content: '';
             position: absolute;
-            width: 75px;
-            height: 75px;
-            background: var(--bg-primary);
+            width: 82px;
+            height: 82px;
+            background: #FFFFFF;
             border-radius: 50%;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.06);
         }
 
         .pv-donut-value {
             position: relative;
             z-index: 1;
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--text-primary);
+            font-size: 1.375rem;
+            font-weight: 800;
+            color: #0F172A;
             line-height: 1;
+            letter-spacing: -0.02em;
         }
 
         .pv-donut-label {
             position: relative;
             z-index: 1;
-            font-size: 0.625rem;
-            color: var(--text-muted);
+            font-size: 0.6rem;
+            color: #94A3B8;
             margin-top: 2px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            font-weight: 500;
         }
 
         .pv-donut-legend {
             display: flex;
             flex-direction: row;
             justify-content: center;
-            gap: 14px;
+            gap: 16px;
             width: 100%;
         }
 
         .pv-legend-item {
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
             font-size: 0.75rem;
-            color: var(--text-secondary);
+            color: #64748B;
+            font-weight: 500;
         }
 
         .pv-dot {
             width: 8px;
             height: 8px;
-            border-radius: 2px;
+            border-radius: 3px;
             flex-shrink: 0;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
         }
 
         .pv-dot-stocks { background: #635BFF; }
@@ -3786,16 +3817,23 @@
         }
 
         .pv-gauge-arc {
-            width: 130px;
-            height: 65px;
+            width: 150px;
+            height: 75px;
             background: conic-gradient(
                 from 180deg,
-                #00D4AA 0deg 60deg,
-                #F7B955 60deg 120deg,
-                #FF6B6B 120deg 180deg
+                #10B981 0deg,
+                #34D399 30deg,
+                #FCD34D 60deg,
+                #FBBF24 90deg,
+                #F97316 120deg,
+                #EF4444 150deg,
+                #DC2626 180deg
             );
-            border-radius: 130px 130px 0 0;
+            border-radius: 150px 150px 0 0;
             position: relative;
+            box-shadow:
+                0 4px 16px rgba(0, 0, 0, 0.08),
+                inset 0 0 0 2px rgba(255, 255, 255, 0.1);
         }
 
         .pv-gauge-arc::before {
@@ -3804,68 +3842,76 @@
             bottom: 0;
             left: 50%;
             transform: translateX(-50%);
-            width: 80px;
-            height: 40px;
-            background: var(--bg-primary);
-            border-radius: 80px 80px 0 0;
+            width: 94px;
+            height: 47px;
+            background: #FFFFFF;
+            border-radius: 94px 94px 0 0;
+            box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.04);
         }
 
         .pv-gauge-needle {
             width: 3px;
-            height: 32px;
-            background: var(--text-primary);
+            height: 38px;
+            background: linear-gradient(180deg, #1E293B, #475569);
             border-radius: 2px;
             transform: rotate(24deg);
             transform-origin: bottom center;
-            margin-top: -32px;
+            margin-top: -38px;
             margin-bottom: 0;
             position: relative;
             z-index: 2;
+            box-shadow: 0 0 4px rgba(0, 0, 0, 0.15);
         }
 
         .pv-gauge-needle::after {
             content: '';
             position: absolute;
-            bottom: -3px;
+            bottom: -4px;
             left: 50%;
             transform: translateX(-50%);
-            width: 7px;
-            height: 7px;
-            background: var(--text-primary);
+            width: 10px;
+            height: 10px;
+            background: #1E293B;
             border-radius: 50%;
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.9), 0 2px 4px rgba(0, 0, 0, 0.2);
         }
 
         .pv-gauge-info {
             text-align: center;
-            margin-top: 12px;
+            margin-top: 14px;
         }
 
         .pv-gauge-value {
             display: block;
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--text-primary);
+            font-size: 2.25rem;
+            font-weight: 800;
+            color: #0F172A;
             line-height: 1;
+            letter-spacing: -0.03em;
         }
 
         .pv-gauge-label {
             display: inline-block;
-            font-size: 0.625rem;
+            font-size: 0.65rem;
             font-weight: 600;
-            color: #F7B955;
-            background: rgba(247, 185, 85, 0.15);
-            padding: 3px 8px;
-            border-radius: 10px;
-            margin-top: 6px;
+            color: #F59E0B;
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(245, 158, 11, 0.06));
+            padding: 4px 12px;
+            border-radius: 12px;
+            margin-top: 8px;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            border: 1px solid rgba(245, 158, 11, 0.15);
         }
 
         .pv-gauge-scale {
             display: flex;
             justify-content: space-between;
-            width: 130px;
+            width: 150px;
             font-size: 0.5625rem;
-            color: var(--text-muted);
-            margin-top: 8px;
+            color: #94A3B8;
+            margin-top: 10px;
+            font-weight: 500;
         }
 
         /* Preview Bar Chart */
@@ -3883,35 +3929,58 @@
         }
 
         .pv-bar-label {
-            width: 75px;
+            width: 78px;
             font-size: 0.75rem;
-            color: var(--text-secondary);
+            color: #64748B;
             text-align: right;
             flex-shrink: 0;
+            font-weight: 500;
         }
 
         .pv-bar-track {
             flex: 1;
-            height: 8px;
-            background: var(--bg-tertiary);
-            border-radius: 4px;
+            height: 10px;
+            background: linear-gradient(135deg, #F1F5F9, #E2E8F0);
+            border-radius: 5px;
             overflow: hidden;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04);
         }
 
         .pv-bar-fill {
             height: 100%;
-            background: linear-gradient(90deg, #635BFF, #A259FF);
-            border-radius: 4px;
-            transition: width 0.6s ease;
+            border-radius: 5px;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .pv-bar-row:nth-child(1) .pv-bar-fill {
+            background: linear-gradient(90deg, #635BFF, #8B5CF6);
+            box-shadow: 0 1px 4px rgba(99, 91, 255, 0.3);
+        }
+        .pv-bar-row:nth-child(2) .pv-bar-fill {
+            background: linear-gradient(90deg, #10B981, #34D399);
+            box-shadow: 0 1px 4px rgba(16, 185, 129, 0.3);
+        }
+        .pv-bar-row:nth-child(3) .pv-bar-fill {
+            background: linear-gradient(90deg, #3B82F6, #60A5FA);
+            box-shadow: 0 1px 4px rgba(59, 130, 246, 0.3);
+        }
+        .pv-bar-row:nth-child(4) .pv-bar-fill {
+            background: linear-gradient(90deg, #F59E0B, #FBBF24);
+            box-shadow: 0 1px 4px rgba(245, 158, 11, 0.3);
+        }
+        .pv-bar-row:nth-child(5) .pv-bar-fill {
+            background: linear-gradient(90deg, #EC4899, #F472B6);
+            box-shadow: 0 1px 4px rgba(236, 72, 153, 0.3);
         }
 
         .pv-bar-value {
             width: 36px;
             font-size: 0.8125rem;
-            font-weight: 600;
-            color: var(--text-primary);
+            font-weight: 700;
+            color: #0F172A;
             text-align: right;
             flex-shrink: 0;
+            letter-spacing: -0.01em;
         }
 
         /* ========== OLD DONUT (kept for compatibility) ========== */
@@ -4151,82 +4220,90 @@
         .fee-mockup {
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 16px;
             width: 100%;
         }
 
         .fee-stat {
             text-align: center;
-            padding-bottom: 20px;
-            border-bottom: 1px solid var(--border);
+            padding: 4px 0 8px;
         }
 
         .fee-amount {
-            display: block;
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--text-primary);
+            font-size: 2.25rem;
+            font-weight: 800;
+            color: #0F172A;
+            letter-spacing: -0.03em;
             line-height: 1;
         }
 
         .fee-label {
-            display: block;
-            font-size: 0.9375rem;
-            color: var(--text-muted);
-            margin-top: 6px;
+            font-size: 0.65rem;
+            color: #94A3B8;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-weight: 600;
+            margin-top: 4px;
         }
 
         .fee-breakdown {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 8px;
         }
 
         .fee-item {
             display: flex;
             align-items: center;
             gap: 10px;
-            font-size: 0.9375rem;
-            color: var(--text-secondary);
             padding: 10px 14px;
-            background: var(--bg-secondary);
-            border-radius: 8px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            color: #64748B;
+            font-weight: 500;
+            background: linear-gradient(135deg, rgba(249,250,251,0.9), rgba(243,244,246,0.5));
+            border: 1px solid rgba(0,0,0,0.04);
+            transition: transform 0.2s;
+        }
+
+        .fee-item:hover {
+            transform: translateX(4px);
         }
 
         .fee-item svg {
             flex-shrink: 0;
-            width: 18px;
-            height: 18px;
+            opacity: 0.7;
         }
 
         .fee-item.warning {
-            background: rgba(247, 185, 85, 0.1);
-            border: 1px solid rgba(247, 185, 85, 0.2);
+            background: linear-gradient(135deg, rgba(254,243,199,0.4), rgba(254,249,195,0.2));
+            border: 1px solid rgba(245,158,11,0.15);
+            color: #92400E;
         }
 
         .fee-item.warning svg {
-            color: #F7B955;
+            color: #F59E0B;
+            opacity: 1;
         }
 
         .fee-item:not(.warning) svg {
-            color: #00D4AA;
+            color: #10B981;
         }
 
         .fee-savings {
-            background: rgba(0, 212, 170, 0.1);
-            border: 1px solid rgba(0, 212, 170, 0.25);
-            padding: 14px 20px;
-            border-radius: 10px;
             text-align: center;
-            font-size: 1rem;
-            color: #00B894;
-            font-weight: 600;
+            padding: 10px 16px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            color: #065F46;
+            background: linear-gradient(135deg, rgba(209,250,229,0.5), rgba(167,243,208,0.3));
+            border: 1px solid rgba(16,185,129,0.15);
+            font-weight: 500;
         }
 
         .fee-savings strong {
-            color: #00B894;
-            font-size: 20px;
             font-weight: 800;
+            color: #059669;
         }
 
         /* Value Props Section - Dark 2x2 Grid */
