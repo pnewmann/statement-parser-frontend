@@ -23491,16 +23491,11 @@
 </html>
             `;
 
-            // Open report in new window and trigger print
+            // Open report in new window
             const reportWindow = window.open('', '_blank');
             if (reportWindow) {
                 reportWindow.document.write(reportHTML);
                 reportWindow.document.close();
-
-                // Auto-trigger print dialog after a short delay
-                setTimeout(() => {
-                    reportWindow.print();
-                }, 500);
 
                 showToast('Report generated successfully!', 'success');
             } else {
