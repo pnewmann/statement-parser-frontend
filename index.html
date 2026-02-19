@@ -904,7 +904,12 @@
         }
 
         #fileInput {
-            display: none;
+            position: fixed;
+            top: -9999px;
+            left: -9999px;
+            width: 0;
+            height: 0;
+            opacity: 0;
         }
 
         /* PII Redaction Option */
@@ -11521,7 +11526,7 @@
                                     <div class="upload-title">Drop your statement here</div>
                                     <p class="upload-hint">Supports PDF, CSV, OFX, QFX, PNG, JPG, HEIC</p>
                                     <span class="upload-free-badge">100% free · Analyzed on your device</span>
-                                    <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()" aria-label="Select files to upload">
+                                    <button id="selectFilesBtn" class="btn btn-primary" aria-label="Select files to upload">
                                         Select Files
                                     </button>
                                     <input type="file" id="fileInput" accept=".pdf,.csv,.ofx,.qfx,.png,.jpg,.jpeg,.webp,.heic,.heif" multiple aria-label="File input for brokerage statements">
@@ -14035,6 +14040,23 @@
             const dropZone = document.getElementById('dropZone');
             const fileInput = document.getElementById('fileInput');
 
+            // pickerOpen prevents re-entrant calls (Chrome ghost-click after picker closes)
+            // resetPickerFlag delays the reset so the ghost click is still blocked.
+            let pickerOpen = false;
+            let pickerTimeout = null;
+
+            function resetPickerFlag(delay) {
+                clearTimeout(pickerTimeout);
+                pickerTimeout = setTimeout(() => { pickerOpen = false; }, delay);
+            }
+
+            function openFilePicker() {
+                if (pickerOpen) return;
+                pickerOpen = true;
+                resetPickerFlag(2000); // safety valve
+                fileInput.click();
+            }
+
             if (dropZone) {
                 dropZone.addEventListener('dragover', (e) => {
                     e.preventDefault();
@@ -14054,18 +14076,32 @@
                     }
                 });
 
-                dropZone.addEventListener('click', () => {
-                    fileInput?.click();
+                // Only open picker for clicks on the background, not interactive children
+                dropZone.addEventListener('click', (e) => {
+                    if (e.target.closest('button, input, label, a')) return;
+                    openFilePicker();
                 });
             }
+
+            // Dedicated button listener — stopPropagation prevents dropZone also firing
+            document.getElementById('selectFilesBtn')?.addEventListener('click', (e) => {
+                e.stopPropagation();
+                openFilePicker();
+            });
 
             if (fileInput) {
                 fileInput.addEventListener('change', (e) => {
                     const files = Array.from(e.target.files);
+                    fileInput.value = '';
+                    // Delay reset so ghost click (~50ms after picker close) is still blocked
+                    resetPickerFlag(600);
                     if (files.length > 0) {
                         handleLandingUpload(files);
                     }
                 });
+
+                // Chrome 91+: fires when user dismisses without selecting
+                fileInput.addEventListener('cancel', () => { resetPickerFlag(600); });
             }
 
             // Check for reset token in URL
