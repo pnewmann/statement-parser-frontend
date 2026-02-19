@@ -22578,11 +22578,11 @@
             var finalP25 = d25.length > 0 ? d25[d25.length - 1] : 0;
             var finalP50 = d50.length > 0 ? d50[d50.length - 1] : 0;
             var finalP75 = d75.length > 0 ? d75[d75.length - 1] : 0;
-            return '<div><svg width="' + width + '" height="' + height + '" viewBox="0 0 ' + width + ' ' + height + '">' +
+            return '<div style="width:100%;"><svg width="100%" viewBox="0 0 ' + width + ' ' + height + '" preserveAspectRatio="xMidYMid meet">' +
                 gridLines + yearLabels +
                 (areaPath ? '<path d="' + areaPath + '" fill="#e0e7ff" opacity="0.5"/>' : '') +
                 '<path d="' + medianPath + '" fill="none" stroke="#635bff" stroke-width="2.5" stroke-linecap="round"/>' +
-                '</svg><div style="display:flex;justify-content:space-around;margin-top:8px;font-size:10px;">' +
+                '</svg><div style="display:flex;justify-content:space-around;margin-top:8px;font-size:10px;max-width:100%;padding:0 ' + padding.left + 'px;">' +
                 '<span style="color:#dc2626;">25th: ' + reportFmtCurrency(finalP25) + '</span>' +
                 '<span style="color:#635bff;font-weight:600;">Median: ' + reportFmtCurrency(finalP50) + '</span>' +
                 '<span style="color:#16a34a;">75th: ' + reportFmtCurrency(finalP75) + '</span></div></div>';
@@ -22938,7 +22938,7 @@
             var mc = data.projections.monteCarlo;
             if (!mc) return '';
 
-            var chartHtml = reportProjectionChart(mc, data.totalValue, 10, 400, 200);
+            var chartHtml = reportProjectionChart(mc, data.totalValue, 10, 560, 260);
 
             var summaryHtml = '';
             if (mc.summary) {
@@ -23311,7 +23311,7 @@
                 '.disclaimer p { font-size: 9pt; color: #4b5563; line-height: 1.5; margin-bottom: 8px; }' +
                 '.disclaimer p:last-child { margin-bottom: 0; }' +
                 '.chart-container { max-width: 100mm; max-height: 65mm; display: flex; justify-content: center; align-items: center; }' +
-                '.chart-container-lg { max-width: 160mm; max-height: 85mm; }' +
+                '.chart-container-lg { max-width: 175mm; max-height: 95mm; }' +
                 '@media print { body { print-color-adjust: exact; -webkit-print-color-adjust: exact; } .page { margin: 0; box-shadow: none; } thead { display: table-header-group; } tr { page-break-inside: avoid; } }' +
                 '.no-break { page-break-inside: avoid; }';
         }
