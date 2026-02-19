@@ -4788,9 +4788,9 @@
 
         /* --- Row 2: Disclaimer --- */
         .footer-disclaimer {
-            font-size: 10px;
+            font-size: 0.75rem;
             line-height: 1.6;
-            color: #e5e7eb;
+            color: #9ca3af;
             font-weight: 400;
             padding: 24px 0;
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
@@ -22120,6 +22120,7 @@
                 'VFIAX': 'Vanguard 500 Index Fund', 'VTSAX': 'Vanguard Total Stock Market',
                 'VBTLX': 'Vanguard Total Bond Market', 'VTIAX': 'Vanguard Total International',
                 'FXAIX': 'Fidelity 500 Index Fund', 'SWPPX': 'Schwab S&P 500 Index',
+                'SGOV': 'iShares 0-3 Month Treasury Bond ETF',
                 'ARKK': 'ARK Innovation ETF', 'SPY': 'SPDR S&P 500 ETF', 'QQQ': 'Invesco QQQ Trust',
                 'VTI': 'Vanguard Total Stock Market ETF', 'VOO': 'Vanguard S&P 500 ETF',
                 'IVV': 'iShares Core S&P 500 ETF', 'AAPL': 'Apple Inc.', 'MSFT': 'Microsoft Corporation',
@@ -22127,8 +22128,12 @@
                 'META': 'Meta Platforms Inc.', 'NVDA': 'NVIDIA Corporation', 'BRK.B': 'Berkshire Hathaway Inc.'
             };
 
+            const bondSymbolSet = ['AGG','BND','TLT','BNDX','LQD','HYG','TIP','MUB','SGOV','VBTLX','VSIGX','PCBIX','GIBIX','PIMIX','PIGIX','LAPIX'];
+            const cashSymbolSet = ['CASH','SPAXX','VMFXX','SWVXX'];
             const inferFundCategory = function(symbol, name) {
                 const sym = (symbol || '').toUpperCase();
+                if (bondSymbolSet.indexOf(sym) !== -1) return 'Fixed Income';
+                if (cashSymbolSet.indexOf(sym) !== -1) return 'Cash';
                 const nm = (name || symbol || '').toLowerCase();
                 if (nm.includes('bond') || nm.includes('income') || nm.includes('fixed') || nm.includes('treasury') || nm.includes('duration')) return 'Fixed Income';
                 if (nm.includes('growth') || nm.includes('innovation') || nm.includes('technology') || nm.includes('tech')) return 'Growth';
@@ -22144,6 +22149,12 @@
             var enrichedPositions = positions.map(function(p) {
                 var name = p.name || p.description || fundNames[p.symbol] || p.symbol;
                 var category = (p.sector && p.sector !== '-' && p.sector !== 'Unknown') ? p.sector : inferFundCategory(p.symbol, name);
+                // Cross-validate: override Equity to Fixed Income for known bond symbols
+                if (category === 'Equity' || category === 'Mutual Fund') {
+                    var sym = (p.symbol || '').toUpperCase();
+                    if (bondSymbolSet.indexOf(sym) !== -1) category = 'Fixed Income';
+                    else if (cashSymbolSet.indexOf(sym) !== -1) category = 'Cash';
+                }
                 return Object.assign({}, p, { name: name, category: category });
             });
 
@@ -22185,7 +22196,11 @@
             var stocksDollar = rawAllocVals['Stocks'] || rawAllocVals.Stocks || (isDollarAlloc ? stocksRaw : totalValue * allocation.stocks / 100);
             var bondsDollar = rawAllocVals['Bonds'] || rawAllocVals.Bonds || (isDollarAlloc ? bondsRaw : totalValue * allocation.bonds / 100);
             var cashDollar = rawAllocVals['Cash'] || rawAllocVals.Cash || (isDollarAlloc ? cashRaw : totalValue * allocation.cash / 100);
-            var otherDollar = (isDollarAlloc ? (realEstateRaw + cryptoRaw + commoditiesRaw + otherRaw) : totalValue * (allocation.realEstate + allocation.crypto + allocation.commodities + allocation.other) / 100);
+            var realEstateDollar = rawAllocVals['Real Estate'] || rawAllocVals.RealEstate || (isDollarAlloc ? realEstateRaw : totalValue * allocation.realEstate / 100);
+            var cryptoDollar = rawAllocVals['Crypto'] || rawAllocVals.Crypto || (isDollarAlloc ? cryptoRaw : totalValue * allocation.crypto / 100);
+            var commoditiesDollar = rawAllocVals['Commodities'] || rawAllocVals.Commodities || (isDollarAlloc ? commoditiesRaw : totalValue * allocation.commodities / 100);
+            var otherAllocDollar = rawAllocVals['Other'] || rawAllocVals.Other || (isDollarAlloc ? otherRaw : totalValue * allocation.other / 100);
+            var otherDollar = realEstateDollar + cryptoDollar + commoditiesDollar + otherAllocDollar;
 
             // Sub-class allocation
             var subClassAllocation = pd.sub_class_allocation || null;
@@ -22321,7 +22336,7 @@
                 enrichedPositions: enrichedPositions, sortedPositions: sortedPositions,
                 portfolioType: type, fundNames: fundNames,
                 allocation: allocation,
-                allocationValues: { stocks: stocksDollar, bonds: bondsDollar, cash: cashDollar, other: otherDollar },
+                allocationValues: { stocks: stocksDollar, bonds: bondsDollar, cash: cashDollar, other: otherDollar, realEstate: realEstateDollar, crypto: cryptoDollar, commodities: commoditiesDollar, otherAlloc: otherAllocDollar },
                 subClassAllocation: subClassAllocation,
                 sectors: sectors, sectorBenchmark: sectorBenchmark,
                 risk: risk, performance: performance,
@@ -22394,7 +22409,32 @@
             var angle = -90 + (normalized * 180);
             var color = normalized < 0.33 ? '#10b981' : normalized < 0.66 ? '#f59e0b' : '#ef4444';
             var riskLabel = normalized < 0.33 ? 'Low' : normalized < 0.66 ? 'Moderate' : 'High';
-            return '<div style="text-align:center;"><svg width="140" height="80" viewBox="0 0 140 80"><defs><linearGradient id="gaugeGrad' + label.replace(/\s/g,'') + '" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#10b981"/><stop offset="50%" style="stop-color:#f59e0b"/><stop offset="100%" style="stop-color:#ef4444"/></linearGradient></defs><path d="M 15 70 A 55 55 0 0 1 125 70" fill="none" stroke="#e5e7eb" stroke-width="12" stroke-linecap="round"/><path d="M 15 70 A 55 55 0 0 1 125 70" fill="none" stroke="url(#gaugeGrad' + label.replace(/\s/g,'') + ')" stroke-width="12" stroke-linecap="round" stroke-dasharray="' + (normalized * 173) + ' 173"/><circle cx="70" cy="70" r="6" fill="' + color + '"/><line x1="70" y1="70" x2="' + (70 + 40 * Math.cos(angle * Math.PI / 180)) + '" y2="' + (70 + 40 * Math.sin(angle * Math.PI / 180)) + '" stroke="' + color + '" stroke-width="3" stroke-linecap="round"/></svg><div style="margin-top:4px;font-size:18px;font-weight:600;color:' + color + ';">' + value.toFixed(1) + (label.includes('Beta') ? '' : '%') + '</div><div style="font-size:10px;color:#666;">' + riskLabel + ' ' + label + '</div></div>';
+            var gId = label.replace(/\s/g,'');
+            // Wider gauge with zone bands, triangle needle, center cap, min/max labels
+            var cx = 100, cy = 100, r = 75, sw = 16;
+            // Zone arcs (green 0-33%, yellow 33-66%, red 66-100%)
+            var zoneArc = function(startPct, endPct, zColor) {
+                var sA = -Math.PI + startPct * Math.PI, eA = -Math.PI + endPct * Math.PI;
+                var x1 = cx + r * Math.cos(sA), y1 = cy + r * Math.sin(sA);
+                var x2 = cx + r * Math.cos(eA), y2 = cy + r * Math.sin(eA);
+                var large = (endPct - startPct) > 0.5 ? 1 : 0;
+                return '<path d="M ' + x1.toFixed(1) + ' ' + y1.toFixed(1) + ' A ' + r + ' ' + r + ' 0 ' + large + ' 1 ' + x2.toFixed(1) + ' ' + y2.toFixed(1) + '" fill="none" stroke="' + zColor + '" stroke-width="' + sw + '" stroke-opacity="0.2"/>';
+            };
+            // Triangle needle
+            var needleAngle = (-Math.PI + normalized * Math.PI);
+            var tipX = cx + (r - 10) * Math.cos(needleAngle), tipY = cy + (r - 10) * Math.sin(needleAngle);
+            var baseAngle1 = needleAngle + Math.PI / 2, baseAngle2 = needleAngle - Math.PI / 2;
+            var b1x = cx + 6 * Math.cos(baseAngle1), b1y = cy + 6 * Math.sin(baseAngle1);
+            var b2x = cx + 6 * Math.cos(baseAngle2), b2y = cy + 6 * Math.sin(baseAngle2);
+            var needle = '<polygon points="' + tipX.toFixed(1) + ',' + tipY.toFixed(1) + ' ' + b1x.toFixed(1) + ',' + b1y.toFixed(1) + ' ' + b2x.toFixed(1) + ',' + b2y.toFixed(1) + '" fill="' + color + '"/>';
+            var centerCap = '<circle cx="' + cx + '" cy="' + cy + '" r="8" fill="' + color + '"/><circle cx="' + cx + '" cy="' + cy + '" r="4" fill="white"/>';
+            var suffix = label.includes('Beta') ? '' : '%';
+            return '<div style="text-align:center;"><svg width="200" height="120" viewBox="0 0 200 120">' +
+                zoneArc(0, 0.33, '#10b981') + zoneArc(0.33, 0.66, '#f59e0b') + zoneArc(0.66, 1, '#ef4444') +
+                needle + centerCap +
+                '<text x="20" y="112" text-anchor="middle" font-size="9" fill="#6b7280">' + min + '</text>' +
+                '<text x="180" y="112" text-anchor="middle" font-size="9" fill="#6b7280">' + max + '</text>' +
+                '</svg><div style="margin-top:2px;font-size:18px;font-weight:600;color:' + color + ';">' + value.toFixed(1) + suffix + '</div><div style="font-size:10px;color:#666;">' + riskLabel + ' ' + label + '</div></div>';
         }
 
         function reportLineChart(chartData, perfReturns, width, height) {
@@ -22441,12 +22481,20 @@
                 gridLines += '<text x="' + (padding.left - 5) + '" y="' + (gy + 4) + '" text-anchor="end" font-size="9" fill="#6b7280">' + gval.toFixed(0) + '</text>';
             }
             var xLabels = '';
-            var step = Math.max(1, Math.floor(labels.length / 5));
+            var step = Math.max(1, Math.floor(labels.length / 8));
+            var fmtLabel = function(lbl) {
+                if (/^\d{4}-\d{2}/.test(lbl)) {
+                    var parts = lbl.split('-');
+                    var mNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+                    return mNames[parseInt(parts[1], 10) - 1] + ' ' + parts[0].substring(2);
+                }
+                return lbl;
+            };
             for (var xi = 0; xi < labels.length; xi += step) {
-                xLabels += '<text x="' + scaleX(xi) + '" y="' + (height - 8) + '" text-anchor="middle" font-size="9" fill="#6b7280">' + labels[xi] + '</text>';
+                xLabels += '<text x="' + scaleX(xi) + '" y="' + (height - 8) + '" text-anchor="middle" font-size="9" fill="#6b7280">' + fmtLabel(labels[xi]) + '</text>';
             }
             if (labels.length - 1 > 0) {
-                xLabels += '<text x="' + scaleX(labels.length - 1) + '" y="' + (height - 8) + '" text-anchor="middle" font-size="9" fill="#6b7280">' + labels[labels.length - 1] + '</text>';
+                xLabels += '<text x="' + scaleX(labels.length - 1) + '" y="' + (height - 8) + '" text-anchor="middle" font-size="9" fill="#6b7280">' + fmtLabel(labels[labels.length - 1]) + '</text>';
             }
             var svg = '<svg width="' + width + '" height="' + height + '" viewBox="0 0 ' + width + ' ' + height + '">' + gridLines + xLabels;
             if (bPath) svg += '<path d="' + bPath + '" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
@@ -22544,8 +22592,9 @@
             var monthlyBase = annualIncome / 12;
             var html = '<div style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;">';
             months.forEach(function(month, i) {
-                // Use a deterministic distribution (Q1/Q4 slightly higher for typical portfolios)
-                var seasonalFactor = (i < 3 || i >= 9) ? 1.05 : 0.95;
+                // 12 distinct monthly factors (sum = 12.0) for varied calendar values
+                var monthlyFactors = [1.12, 0.88, 1.15, 0.92, 0.85, 1.08, 0.90, 0.95, 1.10, 1.05, 0.88, 1.12];
+                var seasonalFactor = monthlyFactors[i];
                 var amount = monthlyBase * seasonalFactor;
                 var intensity = Math.min(amount / (monthlyBase * 1.2), 1);
                 var bgColor = 'rgba(16, 185, 129, ' + (0.2 + intensity * 0.6) + ')';
@@ -22557,7 +22606,7 @@
 
         function reportDividendProjection(currentIncome, years, growthRate) {
             years = years || 10; growthRate = growthRate || 0.05;
-            var width = 400, height = 160;
+            var width = 500, height = 200;
             var padding = {top: 15, right: 20, bottom: 25, left: 50};
             var chartWidth = width - padding.left - padding.right;
             var chartHeight = height - padding.top - padding.bottom;
@@ -22572,7 +22621,10 @@
                 var barWidth = chartWidth / years * 0.7;
                 var x = scaleX(i) - barWidth / 2;
                 var barHeight = (val / maxVal) * chartHeight;
-                bars += '<rect x="' + x + '" y="' + scaleY(val) + '" width="' + barWidth + '" height="' + barHeight + '" fill="#10b981" rx="2"/>';
+                bars += '<rect x="' + x + '" y="' + scaleY(val) + '" width="' + barWidth + '" height="' + barHeight + '" fill="#10b981" rx="3"/>';
+                if (i % 2 === 0) {
+                    bars += '<text x="' + scaleX(i) + '" y="' + (scaleY(val) - 4) + '" text-anchor="middle" font-size="8" font-weight="500" fill="#166534">$' + (val/1000).toFixed(0) + 'K</text>';
+                }
                 if (i % 2 === 0) bars += '<text x="' + scaleX(i) + '" y="' + (height - 5) + '" text-anchor="middle" font-size="8" fill="#6b7280">Y' + i + '</text>';
             });
             var yLabels = '';
@@ -22591,7 +22643,7 @@
             var html = '';
             Object.keys(labels).forEach(function(key) {
                 var val = factors[key] || 0;
-                html += '<div style="margin-bottom:10px;"><div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="font-size:10px;color:#374151;">' + labels[key] + '</span><span style="font-size:10px;font-weight:600;color:#1a1a2e;">' + val + '%</span></div><div style="height:16px;background:#f3f4f6;border-radius:4px;overflow:hidden;"><div style="height:100%;width:' + val + '%;background:' + colors[key] + ';border-radius:4px;transition:width 0.3s;"></div></div></div>';
+                html += '<div style="margin-bottom:10px;"><div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="font-size:11px;color:#374151;">' + labels[key] + '</span><span style="font-size:11px;font-weight:600;color:#1a1a2e;">' + val + '%</span></div><div style="height:22px;background:#f3f4f6;border-radius:4px;overflow:hidden;"><div style="height:100%;width:' + val + '%;background:' + colors[key] + ';border-radius:4px;transition:width 0.3s;"></div></div></div>';
             });
             return html;
         }
@@ -22627,6 +22679,23 @@
                 '<div class="cover-stat"><div class="cover-stat-value">' + reportFmtPctPlain(data.dividends.portfolioYield) + '</div><div class="cover-stat-label">Dividend Yield</div></div>' +
                 ytdHtml +
                 '</div></div>' +
+                '<div style="margin-top:30px;text-align:left;max-width:280px;margin-left:auto;margin-right:auto;">' +
+                '<div style="font-size:11pt;font-weight:600;opacity:0.9;margin-bottom:12px;text-transform:uppercase;letter-spacing:1px;">Report Contents</div>' +
+                (function() {
+                    var toc = [{ label: 'Executive Summary', always: true }];
+                    toc.push({ label: 'Asset Allocation', always: true });
+                    if (config.showPerformanceChart) toc.push({ label: 'Performance Analysis', always: false });
+                    if (config.showRiskMetrics) toc.push({ label: 'Risk Analysis', always: false });
+                    if (config.showScenarioAnalysis) toc.push({ label: 'Scenario Analysis', always: false });
+                    if (config.showProjections) toc.push({ label: 'Projections', always: false });
+                    toc.push({ label: 'Holdings Detail', always: true });
+                    if (config.showSectorExposure || config.showGeography) toc.push({ label: 'Sector & Geographic Exposure', always: false });
+                    toc.push({ label: 'Dividend & Income Analysis', always: true });
+                    toc.push({ label: 'Disclosures', always: true });
+                    return toc.map(function(item, idx) {
+                        return '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;opacity:0.85;"><span style="width:22px;height:22px;background:rgba(255,255,255,0.15);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:9pt;font-weight:600;">' + (idx + 1) + '</span><span style="font-size:10pt;">' + item.label + '</span></div>';
+                    }).join('');
+                })() + '</div>' +
                 '<div class="cover-footer"><div class="cover-date">' + data.reportDate + '</div><div class="cover-prepared">Prepared by Statement Scan</div></div>' +
                 '</div></div>';
         }
@@ -22638,7 +22707,7 @@
             var topRows = data.topHoldings.slice(0, 5).map(function(pos) {
                 var value = pos.value || (pos.shares * pos.price);
                 var weight = data.totalValue > 0 ? (value / data.totalValue * 100) : 0;
-                return '<tr><td class="symbol">' + pos.symbol + '</td><td class="name-cell">' + (pos.name || pos.symbol).substring(0, 20) + '</td><td class="text-right">' + reportFmtCurrency(value) + '</td><td class="text-right">' + reportFmtPctPlain(weight, 1) + '</td></tr>';
+                return '<tr><td class="symbol">' + pos.symbol + '</td><td class="name-cell">' + (pos.name || pos.symbol).substring(0, 30) + '</td><td class="text-right">' + reportFmtCurrency(value) + '</td><td class="text-right">' + reportFmtPctPlain(weight, 1) + '</td></tr>';
             }).join('');
 
             return '<div class="page">' + reportPageHeader(data.reportDate) +
@@ -22680,9 +22749,9 @@
             if (data.allocation.stocks > 0) allocRows += '<div class="allocation-row"><span>Equities</span><span class="value">' + data.allocation.stocks.toFixed(1) + '% - ' + reportFmtCurrency(data.allocationValues.stocks) + '</span></div>';
             if (data.allocation.bonds > 0) allocRows += '<div class="allocation-row"><span>Fixed Income</span><span class="value">' + data.allocation.bonds.toFixed(1) + '% - ' + reportFmtCurrency(data.allocationValues.bonds) + '</span></div>';
             if (data.allocation.cash > 0) allocRows += '<div class="allocation-row"><span>Cash</span><span class="value">' + data.allocation.cash.toFixed(1) + '% - ' + reportFmtCurrency(data.allocationValues.cash) + '</span></div>';
-            if (data.allocation.realEstate > 0) allocRows += '<div class="allocation-row"><span>Real Estate</span><span class="value">' + data.allocation.realEstate.toFixed(1) + '%</span></div>';
-            if (data.allocation.crypto > 0) allocRows += '<div class="allocation-row"><span>Crypto</span><span class="value">' + data.allocation.crypto.toFixed(1) + '%</span></div>';
-            if (data.allocation.other > 0) allocRows += '<div class="allocation-row"><span>Other</span><span class="value">' + data.allocation.other.toFixed(1) + '%</span></div>';
+            if (data.allocation.realEstate > 0) allocRows += '<div class="allocation-row"><span>Real Estate</span><span class="value">' + data.allocation.realEstate.toFixed(1) + '% - ' + reportFmtCurrency(data.allocationValues.realEstate) + '</span></div>';
+            if (data.allocation.crypto > 0) allocRows += '<div class="allocation-row"><span>Crypto</span><span class="value">' + data.allocation.crypto.toFixed(1) + '% - ' + reportFmtCurrency(data.allocationValues.crypto) + '</span></div>';
+            if (data.allocation.other > 0) allocRows += '<div class="allocation-row"><span>Other</span><span class="value">' + data.allocation.other.toFixed(1) + '% - ' + reportFmtCurrency(data.allocationValues.otherAlloc) + '</span></div>';
             allocRows += '<div class="allocation-row"><span>Total</span><span class="value">' + reportFmtCurrency(data.totalValue) + '</span></div>';
 
             // Sub-class section
@@ -22690,9 +22759,18 @@
             if (data.subClassAllocation && Object.keys(data.subClassAllocation).length > 0) {
                 var scEntries = Object.entries(data.subClassAllocation).sort(function(a, b) { return b[1] - a[1]; }).slice(0, 10);
                 var maxSc = scEntries.length > 0 ? scEntries[0][1] : 1;
+                var subClassColor = function(name) {
+                    var n = name.toLowerCase();
+                    if (n.includes('bond') || n.includes('treasury') || n.includes('aggregate') || n.includes('fixed') || n.includes('tips') || n.includes('credit') || n.includes('municipal') || n.includes('corporate') || n.includes('mortgage')) return '#10b981';
+                    if (n.includes('cash') || n.includes('money market') || n.includes('short-term') || n.includes('savings')) return '#f59e0b';
+                    if (n.includes('crypto') || n.includes('bitcoin') || n.includes('digital')) return '#ef4444';
+                    if (n.includes('real estate') || n.includes('reit')) return '#8b5cf6';
+                    return '#635bff'; // equity default
+                };
                 subClassHtml = '<div class="section"><h2 class="section-title">Sub-Class Breakdown</h2>' +
                     scEntries.map(function(e) {
-                        return '<div style="margin-bottom:8px;"><div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="font-size:10px;color:#374151;">' + e[0] + '</span><span style="font-size:10px;font-weight:600;color:#1a1a2e;">' + e[1].toFixed(1) + '%</span></div><div style="height:14px;background:#f3f4f6;border-radius:3px;overflow:hidden;"><div style="height:100%;width:' + (e[1] / maxSc * 100) + '%;background:#635bff;border-radius:3px;opacity:' + (0.4 + (e[1] / maxSc) * 0.6) + ';"></div></div></div>';
+                        var barColor = subClassColor(e[0]);
+                        return '<div style="margin-bottom:8px;"><div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="font-size:10px;color:#374151;">' + e[0] + '</span><span style="font-size:10px;font-weight:600;color:#1a1a2e;">' + e[1].toFixed(1) + '%</span></div><div style="height:14px;background:#f3f4f6;border-radius:3px;overflow:hidden;"><div style="height:100%;width:' + (e[1] / maxSc * 100) + '%;background:' + barColor + ';border-radius:3px;opacity:' + (0.4 + (e[1] / maxSc) * 0.6) + ';"></div></div></div>';
                     }).join('') + '</div>';
             }
 
@@ -22744,16 +22822,23 @@
             }
 
             // Chart
-            var chartHtml = reportLineChart(data.performance.chartData, data.performance.returns, 400, 150);
+            var chartHtml = reportLineChart(data.performance.chartData, data.performance.returns, 500, 250);
 
             // Key metrics
             var ytdData = returns['YTD'] || returns['ytd'] || {};
             var ytdReturn = ytdData.portfolio ?? null;
-            var metricsGrid = '<div class="summary-grid">' +
-                '<div class="summary-card"><div class="summary-card-value ' + reportPerfClass(ytdReturn) + '">' + (ytdReturn !== null ? ytdReturn.toFixed(2) + '%' : 'N/A') + '</div><div class="summary-card-label">YTD Return</div></div>' +
-                '<div class="summary-card"><div class="summary-card-value ' + reportPerfClass(data.risk.alpha) + '">' + reportFmt(data.risk.alpha, 2, '%') + '</div><div class="summary-card-label">Alpha</div></div>' +
-                '<div class="summary-card"><div class="summary-card-value">' + reportFmt(data.risk.beta) + '</div><div class="summary-card-label">Beta</div></div>' +
-                '<div class="summary-card"><div class="summary-card-value">' + reportFmt(data.risk.tracking_error, 2, '%') + '</div><div class="summary-card-label">Tracking Error</div></div></div>';
+            var perfMetricsList = [];
+            if (ytdReturn !== null) perfMetricsList.push({ value: '<div class="summary-card-value ' + reportPerfClass(ytdReturn) + '">' + ytdReturn.toFixed(2) + '%</div>', label: 'YTD Return' });
+            if (data.risk.alpha !== null && data.risk.alpha !== undefined && !isNaN(data.risk.alpha)) perfMetricsList.push({ value: '<div class="summary-card-value ' + reportPerfClass(data.risk.alpha) + '">' + reportFmt(data.risk.alpha, 2, '%') + '</div>', label: 'Alpha' });
+            if (data.risk.beta !== null && data.risk.beta !== undefined && !isNaN(data.risk.beta)) perfMetricsList.push({ value: '<div class="summary-card-value">' + reportFmt(data.risk.beta) + '</div>', label: 'Beta' });
+            if (data.risk.tracking_error !== null && data.risk.tracking_error !== undefined && !isNaN(data.risk.tracking_error)) perfMetricsList.push({ value: '<div class="summary-card-value">' + reportFmt(data.risk.tracking_error, 2, '%') + '</div>', label: 'Tracking Error' });
+            if (data.risk.sharpe_ratio !== null && data.risk.sharpe_ratio !== undefined && !isNaN(data.risk.sharpe_ratio) && perfMetricsList.length < 4) perfMetricsList.push({ value: '<div class="summary-card-value">' + reportFmt(data.risk.sharpe_ratio) + '</div>', label: 'Sharpe Ratio' });
+            if (data.risk.volatility !== null && data.risk.volatility !== undefined && !isNaN(data.risk.volatility) && perfMetricsList.length < 4) perfMetricsList.push({ value: '<div class="summary-card-value">' + reportFmt(data.risk.volatility, 1, '%') + '</div>', label: 'Volatility' });
+            if (data.risk.max_drawdown !== null && data.risk.max_drawdown !== undefined && !isNaN(data.risk.max_drawdown) && perfMetricsList.length < 4) perfMetricsList.push({ value: '<div class="summary-card-value">' + reportFmt(data.risk.max_drawdown, 1, '%') + '</div>', label: 'Max Drawdown' });
+            // Ensure at least some cards
+            var metricsGridCols = Math.max(perfMetricsList.length, 2);
+            var metricsGrid = '<div class="summary-grid" style="grid-template-columns:repeat(' + Math.min(metricsGridCols, 4) + ', 1fr);">' +
+                perfMetricsList.map(function(m) { return '<div class="summary-card">' + m.value + '<div class="summary-card-label">' + m.label + '</div></div>'; }).join('') + '</div>';
 
             var dataNote = !data.performance.hasData ? '<p style="font-size:9pt;color:#6b7280;margin-top:8px;font-style:italic;">* Performance data not available from statement analysis.</p>' : '';
 
@@ -22788,14 +22873,23 @@
                 '<div class="risk-metric"><div class="risk-metric-value">' + reportFmt(r.beta) + '</div><div class="risk-metric-label">Beta</div><div class="risk-metric-desc">vs S&amp;P 500</div></div>' +
                 '<div class="risk-metric"><div class="risk-metric-value">' + reportFmt(r.sharpe_ratio) + '</div><div class="risk-metric-label">Sharpe Ratio</div><div class="risk-metric-desc">Risk-Adj Return</div></div>' +
                 '<div class="risk-metric"><div class="risk-metric-value">' + reportFmt(r.max_drawdown, 1, '%') + '</div><div class="risk-metric-label">Max Drawdown</div><div class="risk-metric-desc">Peak to Trough</div></div></div></div>' +
-                '<div class="section"><h2 class="section-title">Additional Risk Measures</h2><div class="risk-grid">' +
-                '<div class="risk-metric" style="background:linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);border:none;"><div class="risk-metric-value" style="color:#166534;">' + reportFmt(r.sortino_ratio) + '</div><div class="risk-metric-label" style="color:#15803d;">Sortino Ratio</div></div>' +
-                '<div class="risk-metric" style="background:linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);border:none;"><div class="risk-metric-value" style="color:#92400e;">' + reportFmt(r.var_95, 1, '%') + '</div><div class="risk-metric-label" style="color:#a16207;">VaR (95%)</div></div>' +
-                '<div class="risk-metric" style="background:linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);border:none;"><div class="risk-metric-value" style="color:#5b21b6;">' + reportFmt(r.r_squared) + '</div><div class="risk-metric-label" style="color:#6d28d9;">R-Squared</div></div>' +
-                '<div class="risk-metric" style="background:linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);border:none;"><div class="risk-metric-value" style="color:#0369a1;">' + reportFmt(r.treynor_ratio) + '</div><div class="risk-metric-label" style="color:#0284c7;">Treynor Ratio</div></div>' +
-                '<div class="risk-metric" style="background:linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%);border:none;"><div class="risk-metric-value" style="color:#9d174d;">' + reportFmt(r.information_ratio) + '</div><div class="risk-metric-label" style="color:#be185d;">Information Ratio</div></div>' +
-                '<div class="risk-metric" style="background:linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);border:none;"><div class="risk-metric-value" style="color:#9a3412;">' + reportFmt(r.tracking_error, 1, '%') + '</div><div class="risk-metric-label" style="color:#c2410c;">Tracking Error</div></div>' +
-                '<div class="risk-metric" style="background:linear-gradient(135deg, #f0fdf4 0%, #bbf7d0 100%);border:none;"><div class="risk-metric-value" style="color:#166534;">' + reportFmt(r.alpha, 2, '%') + '</div><div class="risk-metric-label" style="color:#15803d;">Alpha</div></div></div></div>' +
+                (function() {
+                    var addlMetrics = [
+                        { val: r.sortino_ratio, label: 'Sortino Ratio', fmt: reportFmt(r.sortino_ratio), bg: 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)', valColor: '#166534', lblColor: '#15803d' },
+                        { val: r.var_95, label: 'VaR (95%)', fmt: reportFmt(r.var_95, 1, '%'), bg: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)', valColor: '#92400e', lblColor: '#a16207' },
+                        { val: r.r_squared, label: 'R-Squared', fmt: reportFmt(r.r_squared), bg: 'linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%)', valColor: '#5b21b6', lblColor: '#6d28d9' },
+                        { val: r.treynor_ratio, label: 'Treynor Ratio', fmt: reportFmt(r.treynor_ratio), bg: 'linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%)', valColor: '#0369a1', lblColor: '#0284c7' },
+                        { val: r.information_ratio, label: 'Information Ratio', fmt: reportFmt(r.information_ratio), bg: 'linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%)', valColor: '#9d174d', lblColor: '#be185d' },
+                        { val: r.tracking_error, label: 'Tracking Error', fmt: reportFmt(r.tracking_error, 1, '%'), bg: 'linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%)', valColor: '#9a3412', lblColor: '#c2410c' },
+                        { val: r.alpha, label: 'Alpha', fmt: reportFmt(r.alpha, 2, '%'), bg: 'linear-gradient(135deg, #f0fdf4 0%, #bbf7d0 100%)', valColor: '#166534', lblColor: '#15803d' }
+                    ].filter(function(m) { return m.val !== null && m.val !== undefined && !isNaN(m.val); });
+                    if (addlMetrics.length === 0) return '';
+                    var cols = Math.min(addlMetrics.length, 4);
+                    return '<div class="section"><h2 class="section-title">Additional Risk Measures</h2><div class="risk-grid" style="grid-template-columns:repeat(' + cols + ', 1fr);">' +
+                        addlMetrics.map(function(m) {
+                            return '<div class="risk-metric" style="background:' + m.bg + ';border:none;"><div class="risk-metric-value" style="color:' + m.valColor + ';">' + m.fmt + '</div><div class="risk-metric-label" style="color:' + m.lblColor + ';">' + m.label + '</div></div>';
+                        }).join('') + '</div></div>';
+                })() +
                 factorHtml +
                 '<div class="section no-break" style="background:#f8f9fa;padding:12px;border-radius:8px;"><h2 style="font-size:11pt;font-weight:600;color:#1a1a2e;margin-bottom:6px;">Risk Assessment</h2>' +
                 '<p style="font-size:9pt;line-height:1.5;color:#4b5563;margin:0;">' + getRiskCommentary(data.portfolioType, r) + '</p></div>' +
@@ -22906,7 +23000,7 @@
                             gainLossHtml = '<td class="text-right" style="font-size:8pt;color:#9ca3af;">--</td>';
                         }
                     }
-                    return '<tr><td class="text-center">' + globalIdx + '</td><td class="symbol">' + pos.symbol + '</td><td class="name-cell">' + (pos.name || pos.symbol).substring(0, 20) + '</td><td>' + (pos.category || '--') + '</td><td class="text-right">' + (pos.shares ? pos.shares.toLocaleString(undefined, {maximumFractionDigits: 3}) : '--') + '</td><td class="text-right">' + (pos.price ? '$' + pos.price.toFixed(2) : '--') + '</td><td class="text-right">' + reportFmtCurrency(value) + '</td>' + gainLossHtml + '<td class="text-right"><span class="weight-value">' + weight.toFixed(1) + '%</span><div class="weight-bar"><div class="weight-bar-fill" style="width: ' + Math.min(weight * 2, 100) + '%"></div></div></td></tr>';
+                    return '<tr><td class="text-center">' + globalIdx + '</td><td class="symbol">' + pos.symbol + '</td><td class="name-cell">' + (pos.name || pos.symbol).substring(0, 35) + '</td><td>' + (pos.category || '--') + '</td><td class="text-right">' + (pos.shares ? pos.shares.toLocaleString(undefined, {maximumFractionDigits: 3}) : '--') + '</td><td class="text-right">' + (pos.price ? '$' + pos.price.toFixed(2) : '--') + '</td><td class="text-right">' + reportFmtCurrency(value) + '</td>' + gainLossHtml + '<td class="text-right"><span class="weight-value">' + weight.toFixed(1) + '%</span><div class="weight-bar"><div class="weight-bar-fill" style="width: ' + Math.min(weight * 2, 100) + '%"></div></div></td></tr>';
                 }).join('');
 
                 var glHeader = hasCostBasis ? '<th class="text-right">Gain/Loss</th>' : '';
@@ -22942,12 +23036,13 @@
 
             var geoHtml = '';
             if (config.showGeography && data.geography && Object.keys(data.geography).length > 0) {
-                var flags = { 'United States': '\u{1F1FA}\u{1F1F8}', 'US': '\u{1F1FA}\u{1F1F8}', 'Europe': '\u{1F1EA}\u{1F1FA}', 'UK': '\u{1F1EC}\u{1F1E7}', 'Japan': '\u{1F1EF}\u{1F1F5}', 'China': '\u{1F1E8}\u{1F1F3}', 'Emerging Markets': '\u{1F30D}', 'Asia Pacific': '\u{1F30F}', 'International': '\u{1F310}' };
+                var geoColors = { 'United States': '#635bff', 'US': '#635bff', 'Europe': '#10b981', 'UK': '#06b6d4', 'Japan': '#ef4444', 'China': '#f59e0b', 'Emerging Markets': '#8b5cf6', 'Asia Pacific': '#ec4899', 'International': '#14b8a6', 'Canada': '#0ea5e9', 'Latin America': '#d946ef', 'Middle East': '#f97316' };
                 geoHtml = '<div class="section"><h2 class="section-title">Geographic Distribution</h2><div class="chart-container">' +
                     reportPieChart(data.geography, 130, ['#635bff', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'], Object.keys(data.geography).length + (Object.keys(data.geography).length === 1 ? ' Region' : ' Regions')) +
                     '</div><div class="geo-grid" style="margin-top:10px;">' +
                     Object.entries(data.geography).sort(function(a, b) { return b[1] - a[1]; }).slice(0, 6).map(function(e) {
-                        return '<div class="geo-item"><span class="geo-flag">' + (flags[e[0]] || '\u{1F310}') + '</span><span class="geo-name">' + e[0] + '</span><span class="geo-pct">' + e[1].toFixed(1) + '%</span></div>';
+                        var gc = geoColors[e[0]] || '#94a3b8';
+                        return '<div class="geo-item"><span class="geo-flag" style="width:12px;height:12px;border-radius:50%;background:' + gc + ';display:inline-block;flex-shrink:0;"></span><span class="geo-name">' + e[0] + '</span><span class="geo-pct">' + e[1].toFixed(1) + '%</span></div>';
                     }).join('') +
                     '</div></div>';
             } else if (config.showGeography) {
@@ -22987,9 +23082,9 @@
 
         function buildReportDividendPage(data, config) {
             var div = data.dividends;
-            var topDivHoldings = div.holdings.slice(0, 6);
+            var topDivHoldings = div.holdings.slice(0, 8);
             var divTableRows = topDivHoldings.map(function(h) {
-                return '<tr><td class="symbol">' + h.symbol + '</td><td class="name-cell">' + (h.name || h.symbol).substring(0, 22) + '</td><td class="text-right">' + h.yield.toFixed(2) + '%</td><td class="text-right">' + reportFmtCurrency(h.annualIncome) + '</td></tr>';
+                return '<tr><td class="symbol">' + h.symbol + '</td><td class="name-cell">' + (h.name || h.symbol).substring(0, 30) + '</td><td class="text-right">' + h.yield.toFixed(2) + '%</td><td class="text-right">' + reportFmtCurrency(h.annualIncome) + '</td></tr>';
             }).join('');
 
             return '<div class="page">' + reportPageHeader(data.reportDate) +
@@ -23111,7 +23206,7 @@
             return '@page { size: A4; margin: 25mm 25mm 30mm 25mm; }' +
                 '* { box-sizing: border-box; margin: 0; padding: 0; }' +
                 'body { font-family: "Helvetica Neue", Arial, sans-serif; font-size: 10pt; color: #1a1a2e; line-height: 1.4; background: white; }' +
-                '.page { width: 210mm; min-height: 297mm; padding: 25mm 25mm 30mm 25mm; margin: 0 auto; background: white; page-break-after: always; page-break-inside: avoid; position: relative; box-sizing: border-box; }' +
+                '.page { width: 210mm; min-height: 297mm; padding: 25mm 25mm 30mm 25mm; margin: 0 auto; background: white; page-break-after: always; page-break-inside: avoid; position: relative; box-sizing: border-box; display: flex; flex-direction: column; }' +
                 '.page:last-child { page-break-after: auto; }' +
                 '.cover { display: flex; flex-direction: column; justify-content: space-between; min-height: 247mm; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); color: white; padding: 30mm; margin: -25mm -25mm -30mm -25mm; width: calc(100% + 50mm); }' +
                 '.cover-header { text-align: center; margin-top: 40mm; }' +
@@ -23139,19 +23234,19 @@
                 '.summary-card-label { font-size: 8pt; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; }' +
                 '.summary-card-value.positive, .perf-positive { color: #10b981; }' +
                 '.summary-card-value.negative, .perf-negative { color: #ef4444; }' +
-                '.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }' +
+                '.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }' +
                 '.allocation-breakdown { background: #f8f9fa; padding: 15px; border-radius: 10px; border: 1px solid #e5e7eb; }' +
                 '.allocation-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e5e7eb; font-size: 10pt; }' +
                 '.allocation-row:last-child { border-bottom: none; font-weight: 600; }' +
                 '.allocation-row .value { font-weight: 600; color: #635bff; }' +
-                '.holdings-table { width: 100%; border-collapse: collapse; font-size: 9pt; line-height: 1.2; }' +
+                '.holdings-table { width: 100%; border-collapse: collapse; font-size: 8.5pt; line-height: 1.2; }' +
                 '.holdings-table th { background: #f8f9fa; padding: 8px 6px; text-align: left; font-weight: 600; color: #1a1a2e; border-bottom: 2px solid #e5e7eb; text-transform: uppercase; font-size: 8pt; letter-spacing: 0.3px; }' +
                 '.holdings-table td { padding: 6px; border-bottom: 1px solid #f0f0f0; vertical-align: middle; height: 28px; }' +
                 '.holdings-table tr:nth-child(even) { background: #fafafa; }' +
                 '.holdings-table .text-right { text-align: right; }' +
                 '.holdings-table .text-center { text-align: center; }' +
                 '.holdings-table .symbol { font-weight: 600; color: #635bff; }' +
-                '.holdings-table .name-cell { max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }' +
+                '.holdings-table .name-cell { max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }' +
                 '.weight-value { display: inline-block; width: 35px; }' +
                 '.weight-bar { width: 40px; height: 4px; background: #e5e7eb; border-radius: 2px; overflow: hidden; display: inline-block; vertical-align: middle; margin-left: 4px; }' +
                 '.weight-bar-fill { height: 100%; background: #635bff; border-radius: 2px; }' +
@@ -23161,22 +23256,22 @@
                 '.perf-table { width: 100%; border-collapse: collapse; font-size: 10pt; margin-bottom: 15px; }' +
                 '.perf-table th, .perf-table td { padding: 10px 8px; text-align: center; border-bottom: 1px solid #e5e7eb; }' +
                 '.perf-table th { background: #f8f9fa; font-weight: 600; font-size: 9pt; text-transform: uppercase; }' +
-                '.perf-table td { font-size: 11pt; font-weight: 500; }' +
+                '.perf-table td { font-size: 10pt; font-weight: 500; }' +
                 '.perf-table td:first-child { text-align: left; font-weight: 600; }' +
                 '.risk-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }' +
                 '.risk-metric { text-align: center; padding: 14px; background: #f8f9fa; border-radius: 10px; border: 1px solid #e5e7eb; }' +
                 '.risk-metric-value { font-size: 18pt; font-weight: 600; margin-bottom: 4px; }' +
                 '.risk-metric-label { font-size: 8pt; color: #6b7280; text-transform: uppercase; }' +
                 '.risk-metric-desc { font-size: 7pt; color: #9ca3af; margin-top: 3px; }' +
-                '.sector-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }' +
-                '.sector-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; background: #f8f9fa; border-radius: 6px; font-size: 10pt; }' +
+                '.sector-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }' +
+                '.sector-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; background: #f8f9fa; border-radius: 6px; font-size: 10pt; gap: 8px; }' +
                 '.sector-name { font-weight: 500; }' +
                 '.sector-pct { color: #635bff; font-weight: 600; }' +
                 '.sector-bar { width: 50px; height: 5px; background: #e5e7eb; border-radius: 2px; overflow: hidden; margin-left: 8px; }' +
                 '.sector-bar-fill { height: 100%; background: #635bff; border-radius: 2px; }' +
                 '.geo-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }' +
                 '.geo-item { display: flex; align-items: center; padding: 8px 10px; background: #f8f9fa; border-radius: 6px; font-size: 10pt; }' +
-                '.geo-flag { font-size: 14pt; margin-right: 8px; }' +
+                '.geo-flag { width: 12px; height: 12px; margin-right: 8px; }' +
                 '.geo-name { font-weight: 500; flex: 1; }' +
                 '.geo-pct { color: #635bff; font-weight: 600; }' +
                 '.dividend-highlight { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 18px; border-radius: 10px; text-align: center; }' +
@@ -23184,7 +23279,7 @@
                 '.dividend-highlight-label { font-size: 9pt; opacity: 0.9; margin-top: 5px; }' +
                 '.dividend-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }' +
                 '.dividend-stat { background: #f0fdf4; padding: 12px; border-radius: 8px; text-align: center; border: 1px solid #bbf7d0; }' +
-                '.dividend-stat-value { font-size: 16pt; font-weight: 600; color: #166534; }' +
+                '.dividend-stat-value { font-size: 18pt; font-weight: 600; color: #166534; }' +
                 '.dividend-stat-label { font-size: 8pt; color: #15803d; margin-top: 3px; }' +
                 '.top-holdings { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }' +
                 '.insights-list { display: flex; flex-direction: column; gap: 8px; }' +
@@ -23201,7 +23296,7 @@
                 '.disclaimer p { font-size: 9pt; color: #4b5563; line-height: 1.5; margin-bottom: 8px; }' +
                 '.disclaimer p:last-child { margin-bottom: 0; }' +
                 '.chart-container { max-width: 100mm; max-height: 65mm; display: flex; justify-content: center; align-items: center; }' +
-                '.chart-container-lg { max-width: 150mm; max-height: 65mm; }' +
+                '.chart-container-lg { max-width: 160mm; max-height: 85mm; }' +
                 '@media print { body { print-color-adjust: exact; -webkit-print-color-adjust: exact; } .page { margin: 0; box-shadow: none; } thead { display: table-header-group; } tr { page-break-inside: avoid; } }' +
                 '.no-break { page-break-inside: avoid; }';
         }
