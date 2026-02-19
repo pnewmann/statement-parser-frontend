@@ -11103,7 +11103,7 @@
                                     <div class="upload-title">Drop your statement here</div>
                                     <p class="upload-hint">Supports PDF, CSV, OFX, QFX, PNG, JPG, HEIC</p>
                                     <span class="upload-free-badge">100% free · Analyzed on your device</span>
-                                    <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()" aria-label="Select files to upload">
+                                    <button id="selectFilesBtn" class="btn btn-primary" aria-label="Select files to upload">
                                         Select Files
                                     </button>
                                     <input type="file" id="fileInput" accept=".pdf,.csv,.ofx,.qfx,.png,.jpg,.jpeg,.webp,.heic,.heif" multiple aria-label="File input for brokerage statements">
@@ -17071,11 +17071,29 @@
         const uploadSection = document.getElementById('uploadSection');
 
         // Event Listeners
+        // Guard flag: prevents the picker from being opened twice (e.g. Chrome fires
+        // a ghost click on the triggering element after a native file dialog closes).
+        let pickerOpen = false;
+
+        function openFilePicker() {
+            if (pickerOpen) return;
+            pickerOpen = true;
+            fileInput.click();
+            // Fallback reset in case change/cancel events don't fire (e.g. older browsers)
+            setTimeout(() => { pickerOpen = false; }, 1000);
+        }
+
+        // Dedicated button listener — stopPropagation prevents dropZone also firing
+        document.getElementById('selectFilesBtn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            openFilePicker();
+        });
+
         dropZone.addEventListener('click', (e) => {
             if (e.target.closest('button, input, label, a')) return;
-            fileInput.click();
+            openFilePicker();
         });
-        addMoreBtn.addEventListener('click', () => fileInput.click());
+        addMoreBtn.addEventListener('click', () => openFilePicker());
 
         dropZone.addEventListener('dragover', (e) => {
             e.preventDefault();
@@ -17089,9 +17107,13 @@
         });
 
         fileInput.addEventListener('change', (e) => {
+            pickerOpen = false;
             handleFiles(e.target.files);
             fileInput.value = '';
         });
+
+        // Chrome 91+: fires when user dismisses picker without selecting
+        fileInput.addEventListener('cancel', () => { pickerOpen = false; });
 
         analyzeBtn.addEventListener('click', analyzePortfolio);
         clearAllBtn.addEventListener('click', () => {
