@@ -15219,23 +15219,52 @@
                 return;
             }
 
-            // Create Excel-compatible XML
-            let xml = '<?xml version="1.0"?><?mso-application progid="Excel.Sheet"?>';
-            xml += '<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">';
+            const total = portfolioData.total_value || 0;
+            const esc = (s) => String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+            // Create Excel-compatible XML Spreadsheet
+            let xml = '<?xml version="1.0" encoding="UTF-8"?>\n<?mso-application progid="Excel.Sheet"?>\n';
+            xml += '<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"\n xmlns:o="urn:schemas-microsoft-com:office:office"\n xmlns:x="urn:schemas-microsoft-com:office:excel"\n xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">\n';
+
+            // Styles for header row
+            xml += '<Styles><Style ss:ID="header"><Font ss:Bold="1"/><Interior ss:Color="#E8E8E8" ss:Pattern="Solid"/></Style>';
+            xml += '<Style ss:ID="currency"><NumberFormat ss:Format="$#,##0.00"/></Style>';
+            xml += '<Style ss:ID="pct"><NumberFormat ss:Format="0.00%"/></Style></Styles>\n';
 
             // Holdings sheet
-            xml += '<Worksheet ss:Name="Holdings"><Table>';
-            xml += '<Row><Cell><Data ss:Type="String">Symbol</Data></Cell><Cell><Data ss:Type="String">Description</Data></Cell><Cell><Data ss:Type="String">Shares</Data></Cell><Cell><Data ss:Type="String">Price</Data></Cell><Cell><Data ss:Type="String">Value</Data></Cell><Cell><Data ss:Type="String">Weight</Data></Cell></Row>';
+            xml += '<Worksheet ss:Name="Holdings"><Table>\n';
+            xml += '<Column ss:Width="60"/><Column ss:Width="200"/><Column ss:Width="80"/><Column ss:Width="70"/><Column ss:Width="80"/><Column ss:Width="90"/><Column ss:Width="90"/><Column ss:Width="70"/>\n';
+            xml += '<Row ss:StyleID="header"><Cell><Data ss:Type="String">Symbol</Data></Cell><Cell><Data ss:Type="String">Name</Data></Cell><Cell><Data ss:Type="String">Sector</Data></Cell><Cell><Data ss:Type="Number">Shares</Data></Cell><Cell ss:StyleID="currency"><Data ss:Type="String">Price</Data></Cell><Cell ss:StyleID="currency"><Data ss:Type="String">Value</Data></Cell><Cell ss:StyleID="currency"><Data ss:Type="String">Cost Basis</Data></Cell><Cell ss:StyleID="pct"><Data ss:Type="String">Weight</Data></Cell></Row>\n';
             portfolioData.positions.forEach(p => {
-                xml += `<Row><Cell><Data ss:Type="String">${p.symbol}</Data></Cell><Cell><Data ss:Type="String">${p.description || ''}</Data></Cell><Cell><Data ss:Type="Number">${p.shares}</Data></Cell><Cell><Data ss:Type="Number">${p.price}</Data></Cell><Cell><Data ss:Type="Number">${p.value}</Data></Cell><Cell><Data ss:Type="Number">${p.weight}</Data></Cell></Row>`;
+                const name = esc(p.name || p.description || '');
+                const sector = esc(p.sector || (p.classification || {}).sector || '');
+                const val = p.value || (p.shares * p.price) || 0;
+                const cost = p.costBasis || p.cost_basis || 0;
+                const w = total > 0 ? val / total : 0;
+                xml += `<Row><Cell><Data ss:Type="String">${esc(p.symbol)}</Data></Cell><Cell><Data ss:Type="String">${name}</Data></Cell><Cell><Data ss:Type="String">${sector}</Data></Cell><Cell><Data ss:Type="Number">${p.shares || 0}</Data></Cell><Cell ss:StyleID="currency"><Data ss:Type="Number">${p.price || 0}</Data></Cell><Cell ss:StyleID="currency"><Data ss:Type="Number">${val}</Data></Cell><Cell ss:StyleID="currency"><Data ss:Type="Number">${cost}</Data></Cell><Cell ss:StyleID="pct"><Data ss:Type="Number">${w}</Data></Cell></Row>\n`;
             });
-            xml += '</Table></Worksheet>';
+            // Total row
+            xml += `<Row><Cell/><Cell/><Cell/><Cell/><Cell/><Cell ss:StyleID="currency"><Data ss:Type="Number">${total}</Data></Cell><Cell/><Cell/></Row>\n`;
+            xml += '</Table></Worksheet>\n';
 
             // Summary sheet
-            xml += '<Worksheet ss:Name="Summary"><Table>';
-            xml += `<Row><Cell><Data ss:Type="String">Total Value</Data></Cell><Cell><Data ss:Type="Number">${portfolioData.total_value}</Data></Cell></Row>`;
-            xml += `<Row><Cell><Data ss:Type="String">Positions</Data></Cell><Cell><Data ss:Type="Number">${portfolioData.positions.length}</Data></Cell></Row>`;
-            xml += '</Table></Worksheet>';
+            xml += '<Worksheet ss:Name="Summary"><Table>\n';
+            xml += '<Column ss:Width="150"/><Column ss:Width="120"/>\n';
+            xml += '<Row ss:StyleID="header"><Cell><Data ss:Type="String">Metric</Data></Cell><Cell><Data ss:Type="String">Value</Data></Cell></Row>\n';
+            xml += `<Row><Cell><Data ss:Type="String">Total Value</Data></Cell><Cell ss:StyleID="currency"><Data ss:Type="Number">${total}</Data></Cell></Row>\n`;
+            xml += `<Row><Cell><Data ss:Type="String">Positions</Data></Cell><Cell><Data ss:Type="Number">${portfolioData.positions.length}</Data></Cell></Row>\n`;
+            if (portfolioData.performance) {
+                const perf = portfolioData.performance;
+                if (perf.ytd_return != null) xml += `<Row><Cell><Data ss:Type="String">YTD Return</Data></Cell><Cell ss:StyleID="pct"><Data ss:Type="Number">${perf.ytd_return / 100}</Data></Cell></Row>\n`;
+                if (perf.one_year != null) xml += `<Row><Cell><Data ss:Type="String">1-Year Return</Data></Cell><Cell ss:StyleID="pct"><Data ss:Type="Number">${perf.one_year / 100}</Data></Cell></Row>\n`;
+            }
+            if (portfolioData.risk_metrics) {
+                const r = portfolioData.risk_metrics;
+                if (r.sharpe_ratio != null) xml += `<Row><Cell><Data ss:Type="String">Sharpe Ratio</Data></Cell><Cell><Data ss:Type="Number">${r.sharpe_ratio}</Data></Cell></Row>\n`;
+                if (r.volatility != null) xml += `<Row><Cell><Data ss:Type="String">Volatility</Data></Cell><Cell ss:StyleID="pct"><Data ss:Type="Number">${r.volatility / 100}</Data></Cell></Row>\n`;
+                if (r.beta != null) xml += `<Row><Cell><Data ss:Type="String">Beta</Data></Cell><Cell><Data ss:Type="Number">${r.beta}</Data></Cell></Row>\n`;
+            }
+            xml += '</Table></Worksheet>\n';
 
             xml += '</Workbook>';
 
@@ -15244,8 +15273,9 @@
             const a = document.createElement('a');
             a.href = url;
             a.download = 'portfolio_export.xls';
+            document.body.appendChild(a);
             a.click();
-            URL.revokeObjectURL(url);
+            setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 1000);
 
             hideExportModal();
             showToast('Excel file downloaded', 'success');
@@ -19559,18 +19589,27 @@
 
         function downloadCSV() {
             if (!portfolioData?.positions) return;
-            let csv = 'Symbol,Description,Asset Class,Sub Class,Sector,Geography,Shares,Price,Value,Weight\n';
+            const BOM = '\uFEFF';
+            let csv = 'Symbol,Name,Sector,Shares,Price,Value,Cost Basis,Weight\n';
             const total = portfolioData.total_value || 0;
             portfolioData.positions.forEach(p => {
-                const c = p.classification || {};
-                const w = total > 0 ? (p.value || 0) / total * 100 : 0;
-                csv += [p.symbol, `"${(p.description || '').replace(/"/g, '""')}"`, c.asset_class || '', c.sub_class || '', c.sector || '', c.geography || '', p.shares || '', p.price || '', p.value || '', w.toFixed(2) + '%'].join(',') + '\n';
+                const name = (p.name || p.description || '').replace(/"/g, '""');
+                const sector = p.sector || (p.classification || {}).sector || '';
+                const val = p.value || (p.shares * p.price) || 0;
+                const cost = p.costBasis || p.cost_basis || '';
+                const w = total > 0 ? (val / total * 100).toFixed(2) + '%' : '0.00%';
+                csv += [p.symbol, '"' + name + '"', '"' + sector + '"', p.shares || '', p.price || '', val, cost, w].join(',') + '\n';
             });
-            const blob = new Blob([csv], { type: 'text/csv' });
+            // Add summary row
+            csv += '\n';
+            csv += ',,,,,Total:,' + (portfolioData.total_value || '') + '\n';
+            const blob = new Blob([BOM + csv], { type: 'text/csv;charset=utf-8' });
             const a = document.createElement('a');
             a.href = URL.createObjectURL(blob);
             a.download = 'portfolio_analysis.csv';
+            document.body.appendChild(a);
             a.click();
+            document.body.removeChild(a);
         }
 
         function resetUI() {
