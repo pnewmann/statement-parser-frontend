@@ -22308,9 +22308,44 @@
                 holdings: dividendHoldings.sort(function(a, b) { return b.annualIncome - a.annualIncome; })
             };
 
-            // Projections — read real monte carlo data
+            // Projections — read real monte carlo data or generate synthetic
             var proj = pd.projections || {};
             var monteCarlo = proj.monte_carlo || null;
+            if (!monteCarlo && totalValue > 0) {
+                // Generate synthetic Monte Carlo projection from portfolio stats
+                var annualReturn = (perf.ytd_return || perf.one_year || 8) / 100;
+                var annualVol = (risk.volatility || 15) / 100;
+                var mcYears = 10;
+                var syntheticPercentiles = { p5: [], p25: [], p50: [], p75: [], p95: [] };
+                var zScores = { p5: -1.645, p25: -0.674, p50: 0, p75: 0.674, p95: 1.645 };
+                for (var yi = 0; yi <= mcYears; yi++) {
+                    var drift = (annualReturn - 0.5 * annualVol * annualVol) * yi;
+                    var diffusion = annualVol * Math.sqrt(yi);
+                    Object.keys(zScores).forEach(function(pKey) {
+                        var logReturn = drift + zScores[pKey] * diffusion;
+                        syntheticPercentiles[pKey].push(Math.round(totalValue * Math.exp(logReturn)));
+                    });
+                }
+                var medianEnd = syntheticPercentiles.p50[mcYears];
+                monteCarlo = {
+                    projection_data: { percentiles: syntheticPercentiles },
+                    summary: {
+                        median: medianEnd,
+                        p5: syntheticPercentiles.p5[mcYears],
+                        p25: syntheticPercentiles.p25[mcYears],
+                        p75: syntheticPercentiles.p75[mcYears],
+                        p95: syntheticPercentiles.p95[mcYears],
+                        prob_gain: Math.round((1 - normalCDF(-annualReturn * mcYears / (annualVol * Math.sqrt(mcYears)))) * 100),
+                        prob_double: Math.round((1 - normalCDF((Math.log(2) - drift) / diffusion)) * 100)
+                    }
+                };
+                function normalCDF(x) {
+                    var t = 1 / (1 + 0.2316419 * Math.abs(x));
+                    var d = 0.3989422804014327;
+                    var p = d * Math.exp(-x * x / 2) * t * (0.3193815 + t * (-0.3565638 + t * (1.781478 + t * (-1.8212560 + t * 1.3302744))));
+                    return x > 0 ? 1 - p : p;
+                }
+            }
             var projections = { monteCarlo: monteCarlo };
 
             // Scenarios — read directly
