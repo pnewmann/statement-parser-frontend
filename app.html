@@ -17071,16 +17071,24 @@
         const uploadSection = document.getElementById('uploadSection');
 
         // Event Listeners
-        // Guard flag: prevents the picker from being opened twice (e.g. Chrome fires
-        // a ghost click on the triggering element after a native file dialog closes).
+        // pickerOpen blocks re-entrant calls to openFilePicker().
+        // Chrome fires a ghost click on the triggering element ~50ms after a native
+        // file dialog closes, which would re-open the picker. We reset the flag via a
+        // clearable timeout so the ghost click window (≈100ms) is always covered.
         let pickerOpen = false;
+        let pickerTimeout = null;
+
+        function resetPickerFlag(delay) {
+            clearTimeout(pickerTimeout);
+            pickerTimeout = setTimeout(() => { pickerOpen = false; }, delay);
+        }
 
         function openFilePicker() {
             if (pickerOpen) return;
             pickerOpen = true;
+            // Safety valve: reset if neither change nor cancel ever fires
+            resetPickerFlag(2000);
             fileInput.click();
-            // Fallback reset in case change/cancel events don't fire (e.g. older browsers)
-            setTimeout(() => { pickerOpen = false; }, 1000);
         }
 
         // Dedicated button listener — stopPropagation prevents dropZone also firing
@@ -17107,13 +17115,14 @@
         });
 
         fileInput.addEventListener('change', (e) => {
-            pickerOpen = false;
+            // Delay reset so the ghost click (~50ms after picker close) is still blocked
+            resetPickerFlag(600);
             handleFiles(e.target.files);
             fileInput.value = '';
         });
 
         // Chrome 91+: fires when user dismisses picker without selecting
-        fileInput.addEventListener('cancel', () => { pickerOpen = false; });
+        fileInput.addEventListener('cancel', () => { resetPickerFlag(600); });
 
         analyzeBtn.addEventListener('click', analyzePortfolio);
         clearAllBtn.addEventListener('click', () => {
