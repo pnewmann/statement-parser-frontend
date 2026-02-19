@@ -15213,6 +15213,53 @@
             document.getElementById('downloadCsvBtn').click();
         }
 
+        // Minimal ZIP builder for XLSX generation (STORE method, no compression)
+        function _xlsxZip(files) {
+            var enc = new TextEncoder();
+            var entries = Object.keys(files).map(function(name) {
+                return { name: enc.encode(name), data: enc.encode(files[name]) };
+            });
+            // CRC32 table
+            var crcTable = new Uint32Array(256);
+            for (var n = 0; n < 256; n++) {
+                var c = n;
+                for (var k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1;
+                crcTable[n] = c;
+            }
+            function crc32(buf) {
+                var crc = 0xFFFFFFFF;
+                for (var i = 0; i < buf.length; i++) crc = crcTable[(crc ^ buf[i]) & 0xFF] ^ (crc >>> 8);
+                return (crc ^ 0xFFFFFFFF) >>> 0;
+            }
+            function u16(v) { return [v & 0xFF, (v >> 8) & 0xFF]; }
+            function u32(v) { return [v & 0xFF, (v >> 8) & 0xFF, (v >> 16) & 0xFF, (v >> 24) & 0xFF]; }
+            var localParts = [], centralParts = [], offset = 0;
+            entries.forEach(function(e) {
+                var crc = crc32(e.data);
+                var local = new Uint8Array([].concat(
+                    [0x50,0x4B,0x03,0x04, 0x14,0x00, 0x00,0x00, 0x00,0x00, 0x00,0x00,0x00,0x00],
+                    u32(crc), u32(e.data.length), u32(e.data.length),
+                    u16(e.name.length), u16(0)
+                ));
+                localParts.push(local, e.name, e.data);
+                var central = new Uint8Array([].concat(
+                    [0x50,0x4B,0x01,0x02, 0x14,0x00, 0x14,0x00, 0x00,0x00, 0x00,0x00, 0x00,0x00,0x00,0x00],
+                    u32(crc), u32(e.data.length), u32(e.data.length),
+                    u16(e.name.length), u16(0), u16(0), u16(0), u16(0), u32(0), u32(offset)
+                ));
+                centralParts.push(central, e.name);
+                offset += local.length + e.name.length + e.data.length;
+            });
+            var centralOffset = offset;
+            var centralSize = centralParts.reduce(function(s, p) { return s + p.length; }, 0);
+            var eocd = new Uint8Array([].concat(
+                [0x50,0x4B,0x05,0x06, 0x00,0x00, 0x00,0x00],
+                u16(entries.length), u16(entries.length),
+                u32(centralSize), u32(centralOffset), u16(0)
+            ));
+            return new Blob([].concat(localParts, centralParts, [eocd]), { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        }
+
         function exportToExcel() {
             if (!portfolioData || !portfolioData.positions) {
                 showToast('No portfolio data to export', 'error');
@@ -15220,59 +15267,147 @@
             }
 
             const total = portfolioData.total_value || 0;
-            const esc = (s) => String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            const esc = (s) => String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
-            // Create Excel-compatible XML Spreadsheet
-            let xml = '<?xml version="1.0" encoding="UTF-8"?>\n<?mso-application progid="Excel.Sheet"?>\n';
-            xml += '<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"\n xmlns:o="urn:schemas-microsoft-com:office:office"\n xmlns:x="urn:schemas-microsoft-com:office:excel"\n xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">\n';
+            // Collect shared strings
+            var strings = [], stringIdx = {};
+            function ss(s) {
+                s = String(s || '');
+                if (!(s in stringIdx)) { stringIdx[s] = strings.length; strings.push(s); }
+                return stringIdx[s];
+            }
 
-            // Styles for header row
-            xml += '<Styles><Style ss:ID="header"><Font ss:Bold="1"/><Interior ss:Color="#E8E8E8" ss:Pattern="Solid"/></Style>';
-            xml += '<Style ss:ID="currency"><NumberFormat ss:Format="$#,##0.00"/></Style>';
-            xml += '<Style ss:ID="pct"><NumberFormat ss:Format="0.00%"/></Style></Styles>\n';
+            // Column letter helper
+            function colLetter(i) { return String.fromCharCode(65 + i); }
 
-            // Holdings sheet
-            xml += '<Worksheet ss:Name="Holdings"><Table>\n';
-            xml += '<Column ss:Width="60"/><Column ss:Width="200"/><Column ss:Width="80"/><Column ss:Width="70"/><Column ss:Width="80"/><Column ss:Width="90"/><Column ss:Width="90"/><Column ss:Width="70"/>\n';
-            xml += '<Row ss:StyleID="header"><Cell><Data ss:Type="String">Symbol</Data></Cell><Cell><Data ss:Type="String">Name</Data></Cell><Cell><Data ss:Type="String">Sector</Data></Cell><Cell><Data ss:Type="Number">Shares</Data></Cell><Cell ss:StyleID="currency"><Data ss:Type="String">Price</Data></Cell><Cell ss:StyleID="currency"><Data ss:Type="String">Value</Data></Cell><Cell ss:StyleID="currency"><Data ss:Type="String">Cost Basis</Data></Cell><Cell ss:StyleID="pct"><Data ss:Type="String">Weight</Data></Cell></Row>\n';
-            portfolioData.positions.forEach(p => {
-                const name = esc(p.name || p.description || '');
-                const sector = esc(p.sector || (p.classification || {}).sector || '');
-                const val = p.value || (p.shares * p.price) || 0;
-                const cost = p.costBasis || p.cost_basis || 0;
-                const w = total > 0 ? val / total : 0;
-                xml += `<Row><Cell><Data ss:Type="String">${esc(p.symbol)}</Data></Cell><Cell><Data ss:Type="String">${name}</Data></Cell><Cell><Data ss:Type="String">${sector}</Data></Cell><Cell><Data ss:Type="Number">${p.shares || 0}</Data></Cell><Cell ss:StyleID="currency"><Data ss:Type="Number">${p.price || 0}</Data></Cell><Cell ss:StyleID="currency"><Data ss:Type="Number">${val}</Data></Cell><Cell ss:StyleID="currency"><Data ss:Type="Number">${cost}</Data></Cell><Cell ss:StyleID="pct"><Data ss:Type="Number">${w}</Data></Cell></Row>\n`;
+            // Build Holdings sheet rows
+            var headers = ['Symbol','Name','Sector','Shares','Price','Value','Cost Basis','Weight'];
+            headers.forEach(ss);
+            var sheet1 = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n' +
+                '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><cols>' +
+                '<col min="1" max="1" width="12"/><col min="2" max="2" width="35"/><col min="3" max="3" width="18"/>' +
+                '<col min="4" max="4" width="10"/><col min="5" max="6" width="14"/><col min="7" max="7" width="14"/><col min="8" max="8" width="10"/></cols><sheetData>';
+            // Header row
+            sheet1 += '<row r="1">';
+            headers.forEach(function(h, i) { sheet1 += '<c r="' + colLetter(i) + '1" t="s" s="1"><v>' + ss(h) + '</v></c>'; });
+            sheet1 += '</row>';
+            // Data rows
+            portfolioData.positions.forEach(function(p, ri) {
+                var r = ri + 2;
+                var name = p.name || p.description || '';
+                var sector = p.sector || (p.classification || {}).sector || '';
+                var val = p.value || (p.shares * p.price) || 0;
+                var cost = p.costBasis || p.cost_basis || 0;
+                var w = total > 0 ? val / total : 0;
+                sheet1 += '<row r="' + r + '">' +
+                    '<c r="A' + r + '" t="s"><v>' + ss(p.symbol) + '</v></c>' +
+                    '<c r="B' + r + '" t="s"><v>' + ss(name) + '</v></c>' +
+                    '<c r="C' + r + '" t="s"><v>' + ss(sector) + '</v></c>' +
+                    '<c r="D' + r + '"><v>' + (p.shares || 0) + '</v></c>' +
+                    '<c r="E' + r + '" s="2"><v>' + (p.price || 0) + '</v></c>' +
+                    '<c r="F' + r + '" s="2"><v>' + val + '</v></c>' +
+                    '<c r="G' + r + '" s="2"><v>' + cost + '</v></c>' +
+                    '<c r="H' + r + '" s="3"><v>' + w.toFixed(6) + '</v></c>' +
+                    '</row>';
             });
             // Total row
-            xml += `<Row><Cell/><Cell/><Cell/><Cell/><Cell/><Cell ss:StyleID="currency"><Data ss:Type="Number">${total}</Data></Cell><Cell/><Cell/></Row>\n`;
-            xml += '</Table></Worksheet>\n';
+            var tr = portfolioData.positions.length + 2;
+            sheet1 += '<row r="' + tr + '"><c r="E' + tr + '" t="s" s="1"><v>' + ss('Total') + '</v></c><c r="F' + tr + '" s="2"><v>' + total + '</v></c></row>';
+            sheet1 += '</sheetData></worksheet>';
 
-            // Summary sheet
-            xml += '<Worksheet ss:Name="Summary"><Table>\n';
-            xml += '<Column ss:Width="150"/><Column ss:Width="120"/>\n';
-            xml += '<Row ss:StyleID="header"><Cell><Data ss:Type="String">Metric</Data></Cell><Cell><Data ss:Type="String">Value</Data></Cell></Row>\n';
-            xml += `<Row><Cell><Data ss:Type="String">Total Value</Data></Cell><Cell ss:StyleID="currency"><Data ss:Type="Number">${total}</Data></Cell></Row>\n`;
-            xml += `<Row><Cell><Data ss:Type="String">Positions</Data></Cell><Cell><Data ss:Type="Number">${portfolioData.positions.length}</Data></Cell></Row>\n`;
+            // Build Summary sheet
+            var summaryRows = [
+                ['Total Value', total, 'currency'],
+                ['Positions', portfolioData.positions.length, 'number']
+            ];
             if (portfolioData.performance) {
-                const perf = portfolioData.performance;
-                if (perf.ytd_return != null) xml += `<Row><Cell><Data ss:Type="String">YTD Return</Data></Cell><Cell ss:StyleID="pct"><Data ss:Type="Number">${perf.ytd_return / 100}</Data></Cell></Row>\n`;
-                if (perf.one_year != null) xml += `<Row><Cell><Data ss:Type="String">1-Year Return</Data></Cell><Cell ss:StyleID="pct"><Data ss:Type="Number">${perf.one_year / 100}</Data></Cell></Row>\n`;
+                var perf = portfolioData.performance;
+                if (perf.ytd_return != null) summaryRows.push(['YTD Return', perf.ytd_return / 100, 'pct']);
+                if (perf.one_year != null) summaryRows.push(['1-Year Return', perf.one_year / 100, 'pct']);
+                if (perf.three_year != null) summaryRows.push(['3-Year Return', perf.three_year / 100, 'pct']);
             }
             if (portfolioData.risk_metrics) {
-                const r = portfolioData.risk_metrics;
-                if (r.sharpe_ratio != null) xml += `<Row><Cell><Data ss:Type="String">Sharpe Ratio</Data></Cell><Cell><Data ss:Type="Number">${r.sharpe_ratio}</Data></Cell></Row>\n`;
-                if (r.volatility != null) xml += `<Row><Cell><Data ss:Type="String">Volatility</Data></Cell><Cell ss:StyleID="pct"><Data ss:Type="Number">${r.volatility / 100}</Data></Cell></Row>\n`;
-                if (r.beta != null) xml += `<Row><Cell><Data ss:Type="String">Beta</Data></Cell><Cell><Data ss:Type="Number">${r.beta}</Data></Cell></Row>\n`;
+                var rm = portfolioData.risk_metrics;
+                if (rm.sharpe_ratio != null) summaryRows.push(['Sharpe Ratio', rm.sharpe_ratio, 'number']);
+                if (rm.volatility != null) summaryRows.push(['Volatility', rm.volatility / 100, 'pct']);
+                if (rm.beta != null) summaryRows.push(['Beta', rm.beta, 'number']);
+                if (rm.max_drawdown != null) summaryRows.push(['Max Drawdown', rm.max_drawdown / 100, 'pct']);
             }
-            xml += '</Table></Worksheet>\n';
+            ss('Metric'); ss('Value');
+            var sheet2 = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n' +
+                '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><cols>' +
+                '<col min="1" max="1" width="20"/><col min="2" max="2" width="18"/></cols><sheetData>';
+            sheet2 += '<row r="1"><c r="A1" t="s" s="1"><v>' + ss('Metric') + '</v></c><c r="B1" t="s" s="1"><v>' + ss('Value') + '</v></c></row>';
+            summaryRows.forEach(function(row, ri) {
+                var r = ri + 2;
+                var style = row[2] === 'currency' ? ' s="2"' : row[2] === 'pct' ? ' s="3"' : '';
+                sheet2 += '<row r="' + r + '"><c r="A' + r + '" t="s"><v>' + ss(row[0]) + '</v></c><c r="B' + r + '"' + style + '><v>' + row[1] + '</v></c></row>';
+            });
+            sheet2 += '</sheetData></worksheet>';
 
-            xml += '</Workbook>';
+            // Build shared strings XML
+            var ssXml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n' +
+                '<sst xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" count="' + strings.length + '" uniqueCount="' + strings.length + '">';
+            strings.forEach(function(s) { ssXml += '<si><t>' + esc(s) + '</t></si>'; });
+            ssXml += '</sst>';
 
-            const blob = new Blob([xml], { type: 'application/vnd.ms-excel' });
+            // Styles XML (s="1" bold header, s="2" currency, s="3" percent)
+            var stylesXml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n' +
+                '<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">' +
+                '<numFmts count="2"><numFmt numFmtId="164" formatCode="$#,##0.00"/><numFmt numFmtId="165" formatCode="0.00%"/></numFmts>' +
+                '<fonts count="2"><font><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="11"/><name val="Calibri"/></font></fonts>' +
+                '<fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FFE8E8E8"/></patternFill></fill></fills>' +
+                '<borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders>' +
+                '<cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>' +
+                '<cellXfs count="4">' +
+                '<xf numFmtId="0" fontId="0" fillId="0" borderId="0"/>' +
+                '<xf numFmtId="0" fontId="1" fillId="2" borderId="0" applyFont="1" applyFill="1"/>' +
+                '<xf numFmtId="164" fontId="0" fillId="0" borderId="0" applyNumberFormat="1"/>' +
+                '<xf numFmtId="165" fontId="0" fillId="0" borderId="0" applyNumberFormat="1"/>' +
+                '</cellXfs></styleSheet>';
+
+            // Workbook XML
+            var wbXml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n' +
+                '<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">' +
+                '<sheets><sheet name="Holdings" sheetId="1" r:id="rId1"/><sheet name="Summary" sheetId="2" r:id="rId2"/></sheets></workbook>';
+
+            // Rels
+            var rootRels = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n' +
+                '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
+                '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>';
+            var wbRels = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n' +
+                '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
+                '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/>' +
+                '<Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet2.xml"/>' +
+                '<Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings" Target="sharedStrings.xml"/>' +
+                '<Relationship Id="rId4" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>';
+
+            // Content Types
+            var ctXml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n' +
+                '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">' +
+                '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>' +
+                '<Default Extension="xml" ContentType="application/xml"/>' +
+                '<Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>' +
+                '<Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>' +
+                '<Override PartName="/xl/worksheets/sheet2.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>' +
+                '<Override PartName="/xl/sharedStrings.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sharedStrings+xml"/>' +
+                '<Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>';
+
+            var blob = _xlsxZip({
+                '[Content_Types].xml': ctXml,
+                '_rels/.rels': rootRels,
+                'xl/workbook.xml': wbXml,
+                'xl/_rels/workbook.xml.rels': wbRels,
+                'xl/sharedStrings.xml': ssXml,
+                'xl/styles.xml': stylesXml,
+                'xl/worksheets/sheet1.xml': sheet1,
+                'xl/worksheets/sheet2.xml': sheet2
+            });
+
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'portfolio_export.xls';
+            a.download = 'portfolio_export.xlsx';
             document.body.appendChild(a);
             a.click();
             setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 1000);
