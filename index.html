@@ -12757,8 +12757,13 @@
                     console.log('[Landing] Verified stored files:', verifyReq.result.length, verifyReq.result.map(f => f.name));
                 };
 
-                // Small delay to ensure IndexedDB write is flushed
-                await new Promise(r => setTimeout(r, 100));
+                // Close the connection explicitly so the app page sees the committed
+                // data immediately when it opens its own connection.
+                db.close();
+
+                // Brief pause to ensure the browser flushes the closed connection
+                // before the new page's IndexedDB open request fires.
+                await new Promise(r => setTimeout(r, 150));
 
                 // Redirect to app page
                 console.log('[Landing] Redirecting to /app');

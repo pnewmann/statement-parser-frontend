@@ -13510,7 +13510,18 @@
 
         async function processPendingUploads() {
             console.log('[App] processPendingUploads called');
-            const files = await checkPendingUploads();
+            // The landing page closes its DB connection and waits before redirecting,
+            // but browsers can still deliver us here before the data is visible.
+            // Retry up to 5 times (100 ms apart) to cover the propagation window.
+            let files = [];
+            for (let attempt = 0; attempt < 5; attempt++) {
+                files = await checkPendingUploads();
+                if (files.length > 0) break;
+                if (attempt < 4) {
+                    console.log(`[App] No files on attempt ${attempt + 1}, retrying…`);
+                    await new Promise(r => setTimeout(r, 100));
+                }
+            }
             console.log('[App] Retrieved', files.length, 'files from IndexedDB');
             if (files.length > 0) {
                 // Hide empty state, show progress
