@@ -22244,6 +22244,16 @@
             // Performance — read from real data, NO fabrication
             var perf = pd.historical_performance || pd.performance || {};
             var perfReturns = perf.returns || {};
+            // Bridge flat performance format (ytd_return, one_year, etc.) into returns structure
+            if (Object.keys(perfReturns).length === 0) {
+                var flatMap = { 'ytd_return': 'YTD', 'one_month': '1M', 'three_month': '3M', 'six_month': '6M', 'one_year': '1Y', 'three_year': '3Y', 'five_year': '5Y' };
+                Object.keys(flatMap).forEach(function(flatKey) {
+                    var val = perf[flatKey] ?? pd[flatKey] ?? null;
+                    if (val !== null && val !== undefined) {
+                        perfReturns[flatMap[flatKey]] = { portfolio: val };
+                    }
+                });
+            }
             var chartData = perf.chart_data || null;
             var performance = {
                 returns: perfReturns,
@@ -22378,9 +22388,14 @@
                 } else {
                     paths += '<circle cx="' + center + '" cy="' + center + '" r="' + radius + '" fill="' + color + '"/>';
                 }
-                legendHtml += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><div style="width:12px;height:12px;border-radius:3px;background:' + color + ';flex-shrink:0;"></div><span style="font-size:11px;color:#374151;flex:1;">' + label + '</span><span style="font-size:11px;font-weight:600;color:#1a1a2e;">' + (percent * 100).toFixed(1) + '%</span></div>';
+                if (i < 8) {
+                    legendHtml += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;"><div style="width:10px;height:10px;border-radius:3px;background:' + color + ';flex-shrink:0;"></div><span style="font-size:10px;color:#374151;flex:1;">' + label + '</span><span style="font-size:10px;font-weight:600;color:#1a1a2e;">' + (percent * 100).toFixed(1) + '%</span></div>';
+                }
                 cumulativePercent += percent;
             });
+            if (entries.length > 8) {
+                legendHtml += '<div style="font-size:9px;color:#6b7280;margin-top:2px;">+' + (entries.length - 8) + ' more</div>';
+            }
             paths += '<circle cx="' + center + '" cy="' + center + '" r="' + (radius * 0.55) + '" fill="white"/>';
             var ct = centerText !== undefined ? centerText : reportFmtCurrency(total);
             if (ct !== null && ct !== '') {
@@ -22882,7 +22897,7 @@
                         { val: r.information_ratio, label: 'Information Ratio', fmt: reportFmt(r.information_ratio), bg: 'linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%)', valColor: '#9d174d', lblColor: '#be185d' },
                         { val: r.tracking_error, label: 'Tracking Error', fmt: reportFmt(r.tracking_error, 1, '%'), bg: 'linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%)', valColor: '#9a3412', lblColor: '#c2410c' },
                         { val: r.alpha, label: 'Alpha', fmt: reportFmt(r.alpha, 2, '%'), bg: 'linear-gradient(135deg, #f0fdf4 0%, #bbf7d0 100%)', valColor: '#166534', lblColor: '#15803d' }
-                    ].filter(function(m) { return m.val !== null && m.val !== undefined && !isNaN(m.val); });
+                    ].filter(function(m) { return m.val !== null && m.val !== undefined && !isNaN(m.val) && m.fmt !== 'N/A'; });
                     if (addlMetrics.length === 0) return '';
                     var cols = Math.min(addlMetrics.length, 4);
                     return '<div class="section"><h2 class="section-title">Additional Risk Measures</h2><div class="risk-grid" style="grid-template-columns:repeat(' + cols + ', 1fr);">' +
@@ -23029,7 +23044,7 @@
                     reportPieChart(data.sectors, 130, null, Object.keys(data.sectors).length + (Object.keys(data.sectors).length === 1 ? ' Sector' : ' Sectors')) +
                     '</div><div class="sector-grid" style="margin-top:10px;">' +
                     Object.entries(data.sectors).sort(function(a, b) { return b[1] - a[1]; }).slice(0, 6).map(function(e) {
-                        return '<div class="sector-item"><span class="sector-name">' + e[0].substring(0, 15) + '</span><span class="sector-pct">' + e[1].toFixed(1) + '%</span></div>';
+                        return '<div class="sector-item"><span class="sector-name">' + e[0].substring(0, 20) + '</span><span class="sector-pct">' + e[1].toFixed(1) + '%</span></div>';
                     }).join('') +
                     '</div></div>';
             }
