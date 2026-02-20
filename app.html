@@ -15160,9 +15160,9 @@
                 totalValue: portfolioData.total_value,
                 positions: portfolioData.positions.length,
                 allocation: {
-                    stocks: portfolioData.allocation?.stocks || 0,
-                    bonds: portfolioData.allocation?.bonds || 0,
-                    cash: portfolioData.allocation?.cash || 0
+                    stocks: portfolioData.asset_allocation?.Stocks || portfolioData.allocation?.stocks || 0,
+                    bonds: portfolioData.asset_allocation?.Bonds || portfolioData.allocation?.bonds || 0,
+                    cash: portfolioData.asset_allocation?.Cash || portfolioData.allocation?.cash || 0
                 }
             };
 
@@ -18895,17 +18895,28 @@
         }
 
         function renderPerformance() {
-            const perf = portfolioData.historical_performance || {};
+            const perf = portfolioData.historical_performance || portfolioData.performance || {};
             let returns = perf.returns || {};
             const periods = ['1M', '3M', '6M', 'YTD', '1Y', '3Y', '5Y'];
+
+            // Bridge flat performance format (ytd_return, one_year, etc.) into nested returns structure
+            if (Object.keys(returns).length === 0) {
+                const flatMap = { 'ytd_return': 'YTD', 'one_month': '1M', 'three_month': '3M', 'six_month': '6M', 'one_year': '1Y', 'three_year': '3Y', 'five_year': '5Y' };
+                Object.keys(flatMap).forEach(flatKey => {
+                    const val = perf[flatKey] ?? portfolioData[flatKey] ?? null;
+                    if (val !== null && val !== undefined) {
+                        returns[flatMap[flatKey]] = { portfolio: val };
+                    }
+                });
+            }
 
             // Generate simulated historical returns if not provided by backend
             // This creates realistic estimates based on portfolio composition
             function generateSimulatedReturns() {
-                const allocation = portfolioData.allocation || {};
-                const stockPct = (allocation.stocks || allocation.Stocks || 0) / 100;
-                const bondPct = (allocation.bonds || allocation.Bonds || allocation['Fixed Income'] || 0) / 100;
-                const cashPct = (allocation.cash || allocation.Cash || 0) / 100;
+                const allocation = portfolioData.asset_allocation || portfolioData.allocation || {};
+                const stockPct = (allocation.Stocks || allocation.stocks || 0) / 100;
+                const bondPct = (allocation.Bonds || allocation.bonds || allocation['Fixed Income'] || 0) / 100;
+                const cashPct = (allocation.Cash || allocation.cash || 0) / 100;
                 const otherPct = 1 - stockPct - bondPct - cashPct;
 
                 // Historical average annual returns (approximate)
@@ -19025,10 +19036,10 @@
 
             // Generate simulated chart data if not provided by backend
             function generateSimulatedChartData() {
-                const allocation = portfolioData.allocation || {};
-                const stockPct = (allocation.stocks || allocation.Stocks || 0) / 100;
-                const bondPct = (allocation.bonds || allocation.Bonds || allocation['Fixed Income'] || 0) / 100;
-                const cashPct = (allocation.cash || allocation.Cash || 0) / 100;
+                const allocation = portfolioData.asset_allocation || portfolioData.allocation || {};
+                const stockPct = (allocation.Stocks || allocation.stocks || 0) / 100;
+                const bondPct = (allocation.Bonds || allocation.bonds || allocation['Fixed Income'] || 0) / 100;
+                const cashPct = (allocation.Cash || allocation.cash || 0) / 100;
                 const otherPct = Math.max(0, 1 - stockPct - bondPct - cashPct);
 
                 // Annual return estimates
@@ -19511,9 +19522,14 @@
             const benchmark = portfolioData.sector_benchmark || {};
             const all = [...new Set([...Object.keys(sectors), ...Object.keys(benchmark)])].sort((a, b) => (sectors[b] || 0) - (sectors[a] || 0));
 
+            // Detect if benchmark values are already percentages (sum > 10) or decimals (need * 100)
+            const benchValues = Object.values(benchmark).filter(v => typeof v === 'number');
+            const benchSum = benchValues.reduce((a, b) => a + b, 0);
+            const benchMultiplier = benchSum > 10 ? 1 : 100;
+
             document.getElementById('sectorList').innerHTML = all.map(s => {
                 const p = sectors[s] || 0;
-                const b = (benchmark[s] || 0) * 100;
+                const b = (benchmark[s] || 0) * benchMultiplier;
                 const max = Math.max(p, b, 30);
                 return `
                     <div class="sector-item">
@@ -19611,10 +19627,10 @@
             const conc = portfolioData.concentration || {};
             const scenarios = portfolioData.scenario_analysis?.scenarios || [];
 
-            document.getElementById('volatilityVal').textContent = risk.volatility !== null ? risk.volatility.toFixed(1) + '%' : '--';
-            document.getElementById('betaVal').textContent = risk.beta !== null ? risk.beta.toFixed(2) : '--';
-            document.getElementById('sharpeVal').textContent = risk.sharpe_ratio !== null ? risk.sharpe_ratio.toFixed(2) : '--';
-            document.getElementById('maxDdVal').textContent = risk.max_drawdown !== null ? risk.max_drawdown.toFixed(1) + '%' : '--';
+            document.getElementById('volatilityVal').textContent = risk.volatility != null ? risk.volatility.toFixed(1) + '%' : '--';
+            document.getElementById('betaVal').textContent = risk.beta != null ? risk.beta.toFixed(2) : '--';
+            document.getElementById('sharpeVal').textContent = risk.sharpe_ratio != null ? risk.sharpe_ratio.toFixed(2) : '--';
+            document.getElementById('maxDdVal').textContent = risk.max_drawdown != null ? risk.max_drawdown.toFixed(1) + '%' : '--';
 
             document.getElementById('top10Pct').textContent = (conc.top_10_pct || 0).toFixed(1) + '%';
             document.getElementById('topHoldingsList').innerHTML = (conc.top_10_holdings || []).map((h, i) => `
@@ -21437,10 +21453,13 @@
             const allocation = portfolioData?.asset_allocation || {};
             const totalValue = portfolioData?.total_value || 0;
 
-            // Calculate allocation percentages
-            const cashPct = ((allocation['Cash'] || 0) / totalValue) * 100 || 0;
-            const bondPct = ((allocation['Bonds'] || 0) / totalValue) * 100 || 0;
-            const stockPct = ((allocation['Stocks'] || 0) / totalValue) * 100 || 0;
+            // Calculate allocation percentages - detect if values are already percentages or dollars
+            const allocValues = Object.values(allocation).filter(v => typeof v === 'number');
+            const allocSum = allocValues.reduce((a, b) => a + b, 0);
+            const isDollar = allocSum > 200;
+            const cashPct = isDollar ? ((allocation['Cash'] || 0) / totalValue) * 100 : (allocation['Cash'] || 0);
+            const bondPct = isDollar ? ((allocation['Bonds'] || 0) / totalValue) * 100 : (allocation['Bonds'] || 0);
+            const stockPct = isDollar ? ((allocation['Stocks'] || 0) / totalValue) * 100 : (allocation['Stocks'] || 0);
 
             // Risk multiplier based on asset allocation (cash/bonds reduce risk)
             // 100% cash = 0.05 multiplier, 100% stocks = 1.0 multiplier
@@ -21502,14 +21521,17 @@
 
         function updateFactorExposure() {
             // Calculate factor exposure based on actual portfolio holdings
-            const holdings = portfolioData?.holdings || [];
+            const holdings = portfolioData?.positions || portfolioData?.holdings || [];
             const totalValue = portfolioData?.total_value || 0;
             const allocation = portfolioData?.asset_allocation || {};
 
-            // Calculate allocation percentages
-            const cashPct = totalValue > 0 ? ((allocation['Cash'] || 0) / totalValue) * 100 : 0;
-            const bondPct = totalValue > 0 ? ((allocation['Bonds'] || 0) / totalValue) * 100 : 0;
-            const stockPct = totalValue > 0 ? ((allocation['Stocks'] || 0) / totalValue) * 100 : 0;
+            // Calculate allocation percentages - detect if values are already percentages or dollars
+            const feAllocValues = Object.values(allocation).filter(v => typeof v === 'number');
+            const feAllocSum = feAllocValues.reduce((a, b) => a + b, 0);
+            const feIsDollar = feAllocSum > 200;
+            const cashPct = feIsDollar ? (totalValue > 0 ? ((allocation['Cash'] || 0) / totalValue) * 100 : 0) : (allocation['Cash'] || 0);
+            const bondPct = feIsDollar ? (totalValue > 0 ? ((allocation['Bonds'] || 0) / totalValue) * 100 : 0) : (allocation['Bonds'] || 0);
+            const stockPct = feIsDollar ? (totalValue > 0 ? ((allocation['Stocks'] || 0) / totalValue) * 100 : 0) : (allocation['Stocks'] || 0);
 
             // Factor profiles by asset class
             // Cash/Money Market: minimal exposure to all factors
@@ -21544,10 +21566,11 @@
                 let equityValue = 0;
 
                 holdings.forEach(h => {
-                    if (h.asset_class === 'Stocks' || h.asset_class === 'Equity') {
-                        const sector = h.sector || 'Unknown';
-                        sectorWeights[sector] = (sectorWeights[sector] || 0) + (h.current_value || 0);
-                        equityValue += (h.current_value || 0);
+                    const assetClass = h.classification?.asset_class || h.asset_class || '';
+                    if (assetClass === 'Stocks' || assetClass === 'Equity' || (!['Bonds', 'Fixed Income', 'Cash', 'TIPS'].includes(h.sector) && !['Bonds', 'Cash'].includes(assetClass))) {
+                        const sector = h.classification?.sector || h.sector || 'Unknown';
+                        sectorWeights[sector] = (sectorWeights[sector] || 0) + (h.value || h.current_value || 0);
+                        equityValue += (h.value || h.current_value || 0);
                     }
                 });
 
@@ -21691,6 +21714,23 @@
             return null;
         }
 
+        function heatMapFallbackQuote(pos) {
+            // Generate a reasonable estimate from cost basis gain/loss when API is unavailable
+            let estChange = pos.change_percent || 0;
+            if (!estChange && pos.costBasis && pos.value && pos.costBasis > 0) {
+                // Annualized gain scaled to a daily estimate
+                const totalGainPct = ((pos.value - pos.costBasis) / pos.costBasis) * 100;
+                estChange = totalGainPct / 252; // rough daily from total gain
+            }
+            return {
+                price: pos.price,
+                change: 0,
+                changePercent: estChange,
+                estimated: true,
+                fetchedAt: Date.now()
+            };
+        }
+
         async function fetchHeatMapQuotes() {
             const positions = portfolioData?.positions || [];
             const promises = positions.map(async (pos) => {
@@ -21698,7 +21738,10 @@
                     return; // Use cached data if less than 1 minute old
                 }
                 try {
-                    const response = await fetch(`${API_URL}/quote/${pos.symbol}`);
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 5000);
+                    const response = await fetch(`${API_URL}/quote/${pos.symbol}`, { signal: controller.signal });
+                    clearTimeout(timeoutId);
                     if (response.ok) {
                         const data = await response.json();
                         heatMapQuoteCache[pos.symbol] = {
@@ -21707,16 +21750,13 @@
                             changePercent: data.changePercent || 0,
                             fetchedAt: Date.now()
                         };
+                    } else if (!heatMapQuoteCache[pos.symbol]) {
+                        heatMapQuoteCache[pos.symbol] = heatMapFallbackQuote(pos);
                     }
                 } catch (e) {
                     // Keep any existing cached data or use position data
                     if (!heatMapQuoteCache[pos.symbol]) {
-                        heatMapQuoteCache[pos.symbol] = {
-                            price: pos.price,
-                            change: 0,
-                            changePercent: pos.change_percent || 0,
-                            fetchedAt: Date.now()
-                        };
+                        heatMapQuoteCache[pos.symbol] = heatMapFallbackQuote(pos);
                     }
                 }
             });
@@ -22331,6 +22371,7 @@
                 const sym = (symbol || '').toUpperCase();
                 if (bondSymbolSet.indexOf(sym) !== -1) return 'Fixed Income';
                 if (cashSymbolSet.indexOf(sym) !== -1) return 'Cash';
+                if (['IBIT', 'BITO', 'GBTC', 'ETHA', 'FBTC'].indexOf(sym) !== -1) return 'Crypto';
                 const nm = (name || symbol || '').toLowerCase();
                 if (nm.includes('bond') || nm.includes('income') || nm.includes('fixed') || nm.includes('treasury') || nm.includes('duration')) return 'Fixed Income';
                 if (nm.includes('growth') || nm.includes('innovation') || nm.includes('technology') || nm.includes('tech')) return 'Growth';
@@ -23762,6 +23803,24 @@
                 { symbol: 'VMFXX', name: 'Vanguard Federal Money Market Fund', shares: 5000, value: 5000, costBasis: 5000, sector: 'Cash', price: 1, expense_ratio: 0.11, dividend_yield: 5.2 }
             ];
 
+            // Enrich positions with classification and description
+            const sectorToAssetClass = {
+                'Broad Market': 'Stocks', 'Large Cap': 'Stocks', 'Technology': 'Stocks',
+                'Growth': 'Stocks', 'International': 'Stocks', 'International Developed': 'Stocks',
+                'Large Cap Growth': 'Stocks', 'Healthcare': 'Stocks', 'Consumer Defensive': 'Stocks',
+                'Small Cap': 'Stocks', 'Mid Cap': 'Stocks', 'Energy': 'Stocks',
+                'Bonds': 'Bonds', 'TIPS': 'Bonds',
+                'Real Estate': 'Real Estate',
+                'Cash': 'Cash'
+            };
+            samplePositions.forEach(p => {
+                p.description = p.name;
+                p.classification = {
+                    asset_class: sectorToAssetClass[p.sector] || 'Stocks',
+                    sector: p.sector
+                };
+            });
+
             const totalValue = samplePositions.reduce((sum, p) => sum + p.value, 0);
             const totalCost = samplePositions.reduce((sum, p) => sum + p.costBasis, 0);
 
@@ -23808,11 +23867,31 @@
                     'Real Estate': realEstateValue
                 },
                 sector_allocation: sectorAllocation,
+                sector_exposure: sectorAllocation,
+                geography: (function() {
+                    const usSymbols = ['VTI', 'VOO', 'AAPL', 'MSFT', 'GOOGL', 'ARKK', 'QQQ', 'GFFFX', 'VNQ', 'JNJ', 'PG', 'KO', 'VB', 'VO', 'XOM', 'VMFXX', 'BND', 'VTIP'];
+                    const intlSymbols = ['VXUS', 'EFA'];
+                    let usPct = 0, intlPct = 0;
+                    samplePositions.forEach(p => {
+                        const w = (p.value / totalValue) * 100;
+                        if (intlSymbols.includes(p.symbol)) intlPct += w;
+                        else if (usSymbols.includes(p.symbol)) usPct += w;
+                    });
+                    return { 'US': Math.round(usPct * 10) / 10, 'Developed Markets': Math.round(intlPct * 10) / 10 };
+                })(),
                 performance: {
                     ytd_return: 8.7,
                     one_year: 15.2,
                     three_year: 28.4,
                     five_year: 52.1
+                },
+                historical_performance: {
+                    returns: {
+                        'YTD': { portfolio: 8.7 },
+                        '1Y': { portfolio: 15.2 },
+                        '3Y': { portfolio: 28.4 },
+                        '5Y': { portfolio: 52.1 }
+                    }
                 },
                 risk_metrics: {
                     volatility: 14.8,
@@ -23849,6 +23928,9 @@
                 renderGeography();
                 renderRisk();
                 renderHoldings();
+
+                // Initialize heat map and other allocation tab features
+                updateHeatMap(heatMapPeriod);
 
                 showToast('Sample portfolio loaded! Explore the dashboard to see all features.', 'success', { duration: 4000 });
             } catch (err) {
