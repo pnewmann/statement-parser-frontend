@@ -908,12 +908,15 @@
         }
 
         #fileInput {
-            position: fixed;
-            top: -9999px;
-            left: -9999px;
-            width: 0;
-            height: 0;
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
             opacity: 0;
+            cursor: pointer;
+            font-size: 0;
+            z-index: -1;
         }
 
         /* PII Redaction Option */
@@ -17270,6 +17273,7 @@
         // clearable timeout so the ghost click window (≈100ms) is always covered.
         let pickerOpen = false;
         let pickerTimeout = null;
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
         function resetPickerFlag(delay) {
             clearTimeout(pickerTimeout);
@@ -17279,9 +17283,14 @@
         function openFilePicker() {
             if (pickerOpen) return;
             pickerOpen = true;
-            // Safety valve: reset if neither change nor cancel ever fires
-            resetPickerFlag(2000);
+            // iOS Safari doesn't fire 'cancel' — use shorter safety valve
+            resetPickerFlag(isIOS ? 800 : 2000);
             fileInput.click();
+        }
+
+        // On iOS, also reset on window focus (user returns from picker)
+        if (isIOS) {
+            window.addEventListener('focus', () => { resetPickerFlag(300); });
         }
 
         // Dedicated button listener — stopPropagation prevents dropZone also firing
