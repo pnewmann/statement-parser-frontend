@@ -2529,6 +2529,10 @@
             box-shadow: 0 0 0 3px rgba(99, 91, 255, 0.1);
         }
 
+        .return-card.unavailable {
+            opacity: 0.45;
+        }
+
         .return-card .stat-value {
             font-size: 1.5rem;
         }
@@ -11702,9 +11706,9 @@
                             <button class="period-btn" data-period="3M">3M</button>
                             <button class="period-btn" data-period="6M">6M</button>
                             <button class="period-btn" data-period="YTD">YTD</button>
-                            <button class="period-btn" data-period="1Y">1Y</button>
+                            <button class="period-btn active" data-period="1Y">1Y</button>
                             <button class="period-btn" data-period="3Y">3Y</button>
-                            <button class="period-btn active" data-period="5Y">5Y</button>
+                            <button class="period-btn" data-period="5Y">5Y</button>
                         </div>
                     </div>
                     <div style="display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap;">
@@ -13447,7 +13451,7 @@
         let currentUser = null;
         let authToken = localStorage.getItem('authToken');
         let fullChartData = null;
-        let currentPeriod = '5Y';
+        let currentPeriod = '1Y';
         let visibleBenchmarks = { sp500: true, bonds: false, world: false, sixty_forty: false };
 
         // =============================================================================
@@ -19030,12 +19034,14 @@
                 const data = returns[p] || {};
                 const val = data.portfolio;
                 const bench = data.benchmark;
-                const cls = val > 0 ? 'positive' : val < 0 ? 'negative' : '';
+                const hasVal = val !== null && val !== undefined;
+                const cls = hasVal ? (val > 0 ? 'positive' : val < 0 ? 'negative' : '') : '';
+                const unavailable = !hasVal;
                 return `
-                    <div class="stat-card return-card" data-period="${p}">
+                    <div class="stat-card return-card${unavailable ? ' unavailable' : ''}" data-period="${p}">
                         <div class="stat-label">${p}</div>
-                        <div class="stat-value ${cls}">${val !== null && val !== undefined ? (val > 0 ? '+' : '') + val.toFixed(2) + '%' : '--'}</div>
-                        <div class="benchmark-label">S&P: ${bench !== null && bench !== undefined ? (bench > 0 ? '+' : '') + bench.toFixed(2) + '%' : '--'}</div>
+                        <div class="stat-value ${cls}">${hasVal ? (val > 0 ? '+' : '') + val.toFixed(2) + '%' : '--'}</div>
+                        <div class="benchmark-label">${hasVal ? 'S&P: ' + (bench !== null && bench !== undefined ? (bench > 0 ? '+' : '') + bench.toFixed(2) + '%' : '--') : '<span title="Not available from statement" style="cursor:help;">Not in statement</span>'}</div>
                     </div>
                 `;
             }).join('');
@@ -19102,8 +19108,8 @@
             // Store full chart data for filtering
             if (perf.chart_data) {
                 fullChartData = perf.chart_data;
-            } else if (!hasValidReturns) {
-                // Generate simulated chart data when no backend data
+            } else {
+                // Generate simulated chart data when no backend chart data
                 fullChartData = generateSimulatedChartData();
             }
 
@@ -23893,11 +23899,46 @@
                 },
                 historical_performance: {
                     returns: {
-                        'YTD': { portfolio: 8.7 },
-                        '1Y': { portfolio: 15.2 },
-                        '3Y': { portfolio: 28.4 },
-                        '5Y': { portfolio: 52.1 }
-                    }
+                        'YTD': { portfolio: 8.7, benchmark: 3.2 },
+                        '1Y': { portfolio: 15.2, benchmark: 23.31 },
+                        '3Y': { portfolio: 28.4, benchmark: 31.15 },
+                        '5Y': { portfolio: 52.1, benchmark: 89.43 }
+                    },
+                    chart_data: (function() {
+                        // Generate 36 monthly data points (3Y) with seeded pseudo-random walk
+                        const labels = [], portfolio = [], sp500 = [], bonds = [], world = [], sixty_forty = [];
+                        const endDate = new Date(2026, 0, 31); // Jan 31, 2026
+                        let pv = 100, sv = 100, bv = 100, wv = 100, sfv = 100;
+                        // Seeded PRNG for deterministic chart
+                        let seed = 42;
+                        function rand() { seed = (seed * 16807 + 0) % 2147483647; return (seed - 1) / 2147483646; }
+                        for (let i = 0; i <= 60; i++) {
+                            const d = new Date(2021, 0, 31);
+                            d.setMonth(d.getMonth() + i);
+                            labels.push(d.toISOString().split('T')[0]);
+                            portfolio.push(Math.round(pv * 100) / 100);
+                            sp500.push(Math.round(sv * 100) / 100);
+                            bonds.push(Math.round(bv * 100) / 100);
+                            world.push(Math.round(wv * 100) / 100);
+                            sixty_forty.push(Math.round(sfv * 100) / 100);
+                            pv *= 1 + (8.8 / 12 / 100) + (rand() - 0.5) * 0.04;
+                            sv *= 1 + (13.5 / 12 / 100) + (rand() - 0.5) * 0.045;
+                            bv *= 1 + (1.2 / 12 / 100) + (rand() - 0.5) * 0.012;
+                            wv *= 1 + (9.0 / 12 / 100) + (rand() - 0.5) * 0.042;
+                            sfv *= 1 + (8.0 / 12 / 100) + (rand() - 0.5) * 0.03;
+                        }
+                        return { labels, portfolio, sp500, bonds, world, sixty_forty };
+                    })()
+                },
+                sub_class_allocation: {
+                    'US Large Cap': 48.2,
+                    'US Small Cap': 4.2,
+                    'US Mid Cap': 3.9,
+                    'International Developed': 7.8,
+                    'Government Bonds': 4.2,
+                    'Inflation-Protected': 1.8,
+                    'Real Estate': 2.7,
+                    'Cash & Equivalents': 1.9
                 },
                 risk_metrics: {
                     volatility: 14.8,
@@ -23918,17 +23959,21 @@
                 const appEmptyState = document.getElementById('appEmptyState');
                 if (appEmptyState) appEmptyState.style.display = 'none';
 
+                // Hide market ticker bar for cleaner demo experience
+                const marketBar = document.getElementById('marketIndicators');
+                if (marketBar) marketBar.style.display = 'none';
+
                 // Show the dashboard
                 const dashboardEl = document.getElementById('dashboard');
                 if (dashboardEl) dashboardEl.style.display = 'block';
 
-                // Show sample data banner
+                // Show lightweight sample data banner
                 let banner = document.getElementById('sampleBanner');
                 if (!banner) {
                     banner = document.createElement('div');
                     banner.id = 'sampleBanner';
-                    banner.style.cssText = 'background:linear-gradient(90deg,#635BFF,#A259FF);color:white;text-align:center;padding:10px 16px;font-size:13px;font-weight:600;letter-spacing:0.3px;';
-                    banner.innerHTML = 'You\u2019re viewing a sample portfolio \u00B7 <a href="/app" style="color:white;text-decoration:underline;margin-left:4px;">Upload your own statement</a>';
+                    banner.style.cssText = 'background:#fff;border-left:4px solid var(--primary,#635BFF);padding:10px 16px;font-size:13px;color:#425466;display:flex;align-items:center;justify-content:space-between;gap:12px;box-shadow:0 1px 3px rgba(0,0,0,0.06);';
+                    banner.innerHTML = '<span>You\u2019re viewing a sample portfolio</span><span style="display:flex;align-items:center;gap:10px;"><a href="/app" style="background:var(--primary,#635BFF);color:white;font-size:12px;font-weight:600;padding:5px 14px;border-radius:100px;text-decoration:none;">Upload your own \u2192</a><button onclick="this.closest(\'#sampleBanner\').remove()" style="background:none;border:none;cursor:pointer;color:#8898aa;font-size:18px;line-height:1;padding:0 2px;" aria-label="Dismiss">\u00D7</button></span>';
                     dashboardEl.prepend(banner);
                 }
 
