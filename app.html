@@ -17252,12 +17252,10 @@
             showResetPasswordModal(resetTokenFromUrl);
         }
 
-        // Auto-load sample portfolio if ?sample=1
-        if (urlParams.get('sample') === '1') {
-            // Clean the URL so refresh doesn't re-trigger
+        // Auto-load sample portfolio if ?sample=1 (handled in DOMContentLoaded to avoid race with processPendingUploads)
+        const _autoLoadSample = urlParams.get('sample') === '1';
+        if (_autoLoadSample) {
             history.replaceState(null, '', window.location.pathname);
-            // Small delay to let DOM finish initializing
-            setTimeout(() => { loadSamplePortfolio(); }, 200);
         }
 
         // DOM Elements
@@ -24184,8 +24182,13 @@
             // Initialize hash-based routing
             initRouter();
 
-            // Check for pending uploads from landing page
-            await processPendingUploads();
+            // If ?sample=1 was set, skip pending upload check and load sample directly
+            if (_autoLoadSample) {
+                await loadSamplePortfolio();
+            } else {
+                // Check for pending uploads from landing page
+                await processPendingUploads();
+            }
 
             // Show iOS install prompt for Safari users
             showIOSInstallPrompt();
