@@ -845,6 +845,22 @@
             text-align: center;
         }
 
+        .try-sample-link {
+            display: inline-block;
+            margin-top: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--primary);
+            text-decoration: none;
+            opacity: 0.85;
+            transition: opacity 0.2s;
+        }
+
+        .try-sample-link:hover {
+            opacity: 1;
+            text-decoration: underline;
+        }
+
         /* Coming Soon Card Styles */
         .coming-soon-card {
             position: relative;
@@ -11545,6 +11561,9 @@
                                             <span class="redact-pii-hint">Mask account numbers, SSN</span>
                                         </div>
                                     </div>
+
+                                    <!-- Try Sample -->
+                                    <a href="/app?sample=1" class="try-sample-link">Try a Sample Portfolio →</a>
 
                                     <!-- Upload Queue (shown during batch upload) -->
                                     <div class="upload-queue" id="uploadQueue" style="display: none;">

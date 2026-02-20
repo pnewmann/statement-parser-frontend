@@ -17252,6 +17252,14 @@
             showResetPasswordModal(resetTokenFromUrl);
         }
 
+        // Auto-load sample portfolio if ?sample=1
+        if (urlParams.get('sample') === '1') {
+            // Clean the URL so refresh doesn't re-trigger
+            history.replaceState(null, '', window.location.pathname);
+            // Small delay to let DOM finish initializing
+            setTimeout(() => { loadSamplePortfolio(); }, 200);
+        }
+
         // DOM Elements
         const dropZone = document.getElementById('dropZone');
         const fileInput = document.getElementById('fileInput');
@@ -23915,6 +23923,16 @@
                 // Show the dashboard
                 const dashboardEl = document.getElementById('dashboard');
                 if (dashboardEl) dashboardEl.style.display = 'block';
+
+                // Show sample data banner
+                let banner = document.getElementById('sampleBanner');
+                if (!banner) {
+                    banner = document.createElement('div');
+                    banner.id = 'sampleBanner';
+                    banner.style.cssText = 'background:linear-gradient(90deg,#635BFF,#A259FF);color:white;text-align:center;padding:10px 16px;font-size:13px;font-weight:600;letter-spacing:0.3px;';
+                    banner.innerHTML = 'You\u2019re viewing a sample portfolio \u00B7 <a href="/app" style="color:white;text-decoration:underline;margin-left:4px;">Upload your own statement</a>';
+                    dashboardEl.prepend(banner);
+                }
 
                 // Update total value badge
                 const totalBadge = document.getElementById('totalBadge');
