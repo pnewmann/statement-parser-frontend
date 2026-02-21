@@ -2740,6 +2740,113 @@
             transform: translateX(4px);
         }
 
+        .sample-banner {
+            background: #FFF8E7;
+            border-bottom: 1px solid #F3E8C8;
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            overflow: hidden;
+            max-height: 60px;
+            transition: max-height 150ms ease-out, padding 150ms ease-out, border 150ms ease-out, opacity 150ms ease-out;
+        }
+
+        .sample-banner.dismissed {
+            max-height: 0;
+            padding: 0 24px;
+            border-bottom-color: transparent;
+            opacity: 0;
+        }
+
+        .sample-banner-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .sample-banner-text {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .sample-banner-icon {
+            flex-shrink: 0;
+            color: #F59E0B;
+        }
+
+        .sample-banner-cta {
+            background: var(--primary, #635BFF);
+            color: white;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            padding: 6px 16px;
+            border-radius: 100px;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            white-space: nowrap;
+            transition: background 0.15s ease, transform 0.15s ease;
+        }
+
+        .sample-banner-cta:hover {
+            background: var(--primary-dark, #524AE0);
+            transform: translateY(-1px);
+        }
+
+        .sample-banner-dismiss {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #9CA3AF;
+            padding: 4px;
+            line-height: 1;
+            border-radius: 4px;
+            transition: color 0.15s ease, background 0.15s ease;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .sample-banner-dismiss:hover {
+            color: #374151;
+            background: rgba(0, 0, 0, 0.06);
+        }
+
+        @media (max-width: 640px) {
+            .sample-banner {
+                max-height: 100px;
+                padding: 12px 16px;
+                position: relative;
+            }
+            .sample-banner-content {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .sample-banner-text {
+                width: 100%;
+                justify-content: center;
+            }
+            .sample-banner-cta {
+                width: 100%;
+                text-align: center;
+                padding: 10px 16px;
+            }
+            .sample-banner-dismiss {
+                position: absolute;
+                top: 8px;
+                right: 8px;
+            }
+        }
+
         /* Dashboard (Portfolio Analysis) */
         .dashboard {
             display: block;
@@ -25133,10 +25240,29 @@
                 if (!banner) {
                     banner = document.createElement('div');
                     banner.id = 'sampleBanner';
-                    banner.style.cssText = 'background:#fff;border-left:4px solid var(--primary,#635BFF);padding:10px 16px;font-size:13px;color:#425466;display:flex;align-items:center;justify-content:space-between;gap:12px;box-shadow:0 1px 3px rgba(0,0,0,0.06);';
-                    banner.innerHTML = '<span>You\u2019re viewing a sample portfolio</span><span style="display:flex;align-items:center;gap:10px;"><a href="/app" style="background:var(--primary,#635BFF);color:white;font-size:12px;font-weight:600;padding:5px 14px;border-radius:100px;text-decoration:none;">Upload your own \u2192</a><button onclick="this.closest(\'#sampleBanner\').remove()" style="background:none;border:none;cursor:pointer;color:#8898aa;font-size:18px;line-height:1;padding:0 2px;" aria-label="Dismiss">\u00D7</button></span>';
+                    banner.className = 'sample-banner';
+                    banner.innerHTML = `
+                        <div class="sample-banner-content">
+                            <div class="sample-banner-text">
+                                <svg class="sample-banner-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                                <span>You\u2019re viewing a sample portfolio</span>
+                            </div>
+                            <a href="/app" class="sample-banner-cta">Upload Your Statement</a>
+                            <button class="sample-banner-dismiss" onclick="dismissSampleBanner()" aria-label="Dismiss">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                            </button>
+                        </div>`;
                     dashboardEl.prepend(banner);
                 }
+
+                function dismissSampleBanner() {
+                    const b = document.getElementById('sampleBanner');
+                    if (b) {
+                        b.classList.add('dismissed');
+                        setTimeout(() => b.remove(), 160);
+                    }
+                }
+                window.dismissSampleBanner = dismissSampleBanner;
 
                 // Update total value badge
                 const totalBadge = document.getElementById('totalBadge');
