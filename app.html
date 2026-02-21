@@ -1874,6 +1874,639 @@
             color: var(--primary);
         }
 
+        /* ============================================================
+           VIEW TRANSITION SYSTEM
+           ============================================================ */
+        .view-hidden {
+            opacity: 0;
+            transform: translateY(12px);
+            pointer-events: none;
+            transition: opacity 400ms ease, transform 400ms ease;
+        }
+
+        .view-visible {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+            transition: opacity 400ms ease, transform 400ms ease;
+        }
+
+        /* ============================================================
+           PROCESSING LOG (Terminal-Style)
+           ============================================================ */
+        .processing-log {
+            background: #0A2540;
+            border-radius: var(--radius-md);
+            padding: 16px;
+            margin-top: 16px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+            font-size: 12px;
+            line-height: 1.6;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255,255,255,0.15) transparent;
+        }
+
+        .processing-log::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .processing-log::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .processing-log::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.15);
+            border-radius: 3px;
+        }
+
+        .log-entry {
+            color: #94A3B8;
+            padding: 2px 0;
+            animation: logFadeIn 0.3s ease-out;
+        }
+
+        .log-entry .log-time {
+            color: #556B7E;
+            margin-right: 8px;
+        }
+
+        .log-entry.success { color: #30d158; }
+        .log-entry.info { color: #64D2FF; }
+        .log-entry.warn { color: #ffd60a; }
+        .log-entry.error { color: #ff453a; }
+
+        @keyframes logFadeIn {
+            from { opacity: 0; transform: translateX(-8px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* ============================================================
+           PROCESSING SUMMARY CARD
+           ============================================================ */
+        .processing-summary {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            margin-top: 24px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border);
+            animation: summaryFadeUp 0.5s ease-out;
+            text-align: center;
+            display: none;
+        }
+
+        .processing-summary.visible {
+            display: block;
+        }
+
+        @keyframes summaryFadeUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .processing-summary h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .processing-summary .summary-subtitle {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            margin-bottom: 24px;
+        }
+
+        .summary-stats {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            margin-bottom: 24px;
+        }
+
+        .summary-stat {
+            text-align: center;
+        }
+
+        .summary-stat-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1.2;
+        }
+
+        .summary-stat-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 4px;
+        }
+
+        .processing-summary .btn-view-dashboard {
+            margin-top: 8px;
+        }
+
+        .processing-summary .auto-redirect-text {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 12px;
+        }
+
+        /* ============================================================
+           QUICK ACTION CARDS (Signed-in empty state)
+           ============================================================ */
+        .quick-action-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .quick-action-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 24px 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .quick-action-card:hover {
+            border-color: var(--primary);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .quick-action-card .qa-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px;
+            background: rgba(99, 91, 255, 0.08);
+            color: var(--primary);
+        }
+
+        .quick-action-card .qa-icon svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .quick-action-card .qa-title {
+            font-weight: 600;
+            font-size: 0.9375rem;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .quick-action-card .qa-desc {
+            font-size: 0.8125rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        /* ============================================================
+           CONTINUE WHERE YOU LEFT OFF CARD
+           ============================================================ */
+        .continue-card {
+            background: linear-gradient(135deg, rgba(99, 91, 255, 0.06) 0%, rgba(162, 89, 255, 0.06) 100%);
+            border: 1px solid rgba(99, 91, 255, 0.15);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            margin-bottom: 24px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .continue-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(99, 91, 255, 0.12);
+        }
+
+        .continue-card .continue-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .continue-card .continue-icon svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .continue-card .continue-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .continue-card .continue-label {
+            font-size: 0.75rem;
+            color: var(--primary);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 2px;
+        }
+
+        .continue-card .continue-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .continue-card .continue-meta {
+            font-size: 0.8125rem;
+            color: var(--text-muted);
+        }
+
+        /* ============================================================
+           RECENT ACTIVITY TIMELINE
+           ============================================================ */
+        .recent-activity {
+            margin-top: 24px;
+            text-align: left;
+        }
+
+        .recent-activity h4 {
+            font-size: 0.8125rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 0;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .activity-item .activity-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--border);
+            flex-shrink: 0;
+        }
+
+        .activity-item .activity-time {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            flex-shrink: 0;
+            min-width: 50px;
+            text-align: right;
+        }
+
+        /* ============================================================
+           HEALTH BADGE
+           ============================================================ */
+        .health-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            margin-left: 12px;
+        }
+
+        .health-badge .health-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .health-badge.health-green {
+            background: rgba(48, 209, 88, 0.1);
+            color: #28a745;
+        }
+        .health-badge.health-green .health-dot {
+            background: #30d158;
+        }
+
+        .health-badge.health-yellow {
+            background: rgba(255, 214, 10, 0.1);
+            color: #c49000;
+        }
+        .health-badge.health-yellow .health-dot {
+            background: #ffd60a;
+        }
+
+        .health-badge.health-red {
+            background: rgba(255, 69, 58, 0.1);
+            color: #dc3545;
+        }
+        .health-badge.health-red .health-dot {
+            background: #ff453a;
+        }
+
+        /* ============================================================
+           DASHBOARD QUICK STATS ROW
+           ============================================================ */
+        .dashboard-quick-stats {
+            display: flex;
+            gap: 24px;
+            padding: 12px 0;
+            margin-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .dashboard-quick-stat {
+            font-size: 0.8125rem;
+            color: var(--text-muted);
+        }
+
+        .dashboard-quick-stat strong {
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        /* ============================================================
+           BUTTON GROUP
+           ============================================================ */
+        .btn-group {
+            display: inline-flex;
+        }
+
+        .btn-group .btn {
+            border-radius: 0;
+            border-right: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .btn-group .btn:first-child {
+            border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+        }
+
+        .btn-group .btn:last-child {
+            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+            border-right: none;
+        }
+
+        /* ============================================================
+           PORTFOLIO SWITCHER
+           ============================================================ */
+        .portfolio-switcher {
+            position: relative;
+        }
+
+        .portfolio-switcher-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: none;
+            border: none;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: var(--radius-sm);
+            transition: background 0.2s;
+        }
+
+        .portfolio-switcher-btn:hover {
+            background: var(--bg-secondary);
+        }
+
+        .portfolio-switcher-btn .chevron {
+            width: 16px;
+            height: 16px;
+            transition: transform 0.2s;
+        }
+
+        .portfolio-switcher.open .portfolio-switcher-btn .chevron {
+            transform: rotate(180deg);
+        }
+
+        .portfolio-switcher-dropdown {
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 0;
+            min-width: 280px;
+            background: white;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border);
+            z-index: 100;
+            display: none;
+            animation: dropdownAppear 0.2s ease-out;
+        }
+
+        .portfolio-switcher.open .portfolio-switcher-dropdown {
+            display: block;
+        }
+
+        @keyframes dropdownAppear {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .switcher-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            cursor: pointer;
+            transition: background 0.15s;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            font-family: inherit;
+        }
+
+        .switcher-item:hover {
+            background: var(--bg-secondary);
+        }
+
+        .switcher-item.active {
+            border-left: 3px solid var(--primary);
+            background: rgba(99, 91, 255, 0.04);
+        }
+
+        .switcher-item .switcher-name {
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--text-primary);
+        }
+
+        .switcher-item .switcher-meta {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .switcher-divider {
+            height: 1px;
+            background: var(--border);
+            margin: 4px 0;
+        }
+
+        .switcher-action {
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        /* ============================================================
+           CAMERA CAPTURE BUTTON (Mobile Only)
+           ============================================================ */
+        .camera-capture-btn {
+            display: none;
+        }
+
+        /* ============================================================
+           SIGN-IN CTA
+           ============================================================ */
+        .sign-in-cta {
+            margin-top: 24px;
+            padding: 16px;
+            background: rgba(99, 91, 255, 0.04);
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        .sign-in-cta a {
+            color: var(--primary);
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .sign-in-cta a:hover {
+            text-decoration: underline;
+        }
+
+        /* ============================================================
+           MOBILE OVERRIDES FOR NEW COMPONENTS
+           ============================================================ */
+        @media (max-width: 768px) {
+            .quick-action-cards {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .quick-action-card {
+                min-height: 48px;
+                padding: 16px;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                text-align: left;
+            }
+
+            .quick-action-card .qa-icon {
+                margin: 0;
+                width: 40px;
+                height: 40px;
+            }
+
+            .summary-stats {
+                gap: 16px;
+            }
+
+            .summary-stat-value {
+                font-size: 1.25rem;
+            }
+
+            .processing-log {
+                max-height: 150px;
+                font-size: 11px;
+                padding: 12px;
+            }
+
+            .progress-stage-label {
+                font-size: 11px;
+            }
+
+            .processing-summary {
+                padding: 24px 16px;
+            }
+
+            .dashboard-quick-stats {
+                flex-wrap: wrap;
+                gap: 12px;
+            }
+
+            .portfolio-switcher-dropdown {
+                min-width: 240px;
+            }
+
+            .btn-group {
+                flex-wrap: wrap;
+            }
+
+            .camera-capture-btn {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                width: 100%;
+                min-height: 48px;
+                margin-top: 12px;
+                padding: 12px 16px;
+                background: var(--bg-secondary);
+                border: 1px solid var(--border);
+                border-radius: var(--radius-md);
+                cursor: pointer;
+                font-size: 0.9375rem;
+                font-weight: 500;
+                color: var(--text-secondary);
+                transition: all 0.2s;
+            }
+
+            .camera-capture-btn:hover {
+                border-color: var(--primary);
+                color: var(--primary);
+            }
+
+            .camera-capture-btn svg {
+                width: 20px;
+                height: 20px;
+            }
+
+            .upload-drop-area .btn {
+                min-height: 48px;
+                width: 100%;
+                font-size: 1rem;
+            }
+
+            .entry-method-btn {
+                min-height: 48px;
+            }
+
+            .progress-section {
+                padding: 24px 16px;
+            }
+
+            .header-actions {
+                gap: 6px;
+            }
+        }
+
         /* Error */
         .error-message {
             background: rgba(255, 69, 58, 0.08);
@@ -11069,7 +11702,7 @@
         </div>
 
         <!-- App Empty State (shown when no portfolio is loaded) -->
-        <div id="appEmptyState" class="app-empty-state">
+        <div id="appEmptyState" class="app-empty-state" data-display-type="flex">
             <div class="empty-state-content">
                 <div class="empty-state-icon-large">
                     <svg viewBox="0 0 24 24" width="64" height="64" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -11131,6 +11764,14 @@
                                         Select Files
                                     </button>
                                     <input type="file" id="fileInput" accept=".pdf,.csv,.ofx,.qfx,.png,.jpg,.jpeg,.webp,.heic,.heif" multiple aria-label="File input for brokerage statements">
+                                    <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display:none;" aria-label="Camera capture for statements">
+                                    <button class="camera-capture-btn" onclick="document.getElementById('cameraInput').click()">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                                            <circle cx="12" cy="13" r="4"/>
+                                        </svg>
+                                        Take Photo of Statement
+                                    </button>
 
                                     <!-- PII Redaction Toggle -->
                                     <div class="redact-pii-option">
@@ -11461,6 +12102,31 @@
                 <div class="progress-tip" id="progressTip">
                     <strong>Tip:</strong> Larger files with more positions take longer to process. Complex statements may require additional parsing time.
                 </div>
+
+                <!-- Processing Log (Terminal-style) -->
+                <div class="processing-log" id="processingLog" style="display: none;"></div>
+
+                <!-- Processing Complete Summary -->
+                <div class="processing-summary" id="processingSummary">
+                    <h3>Analysis Complete</h3>
+                    <p class="summary-subtitle">Your portfolio has been processed successfully</p>
+                    <div class="summary-stats">
+                        <div class="summary-stat">
+                            <div class="summary-stat-value" id="summaryAccounts">0</div>
+                            <div class="summary-stat-label">Accounts</div>
+                        </div>
+                        <div class="summary-stat">
+                            <div class="summary-stat-value" id="summaryHoldings">0</div>
+                            <div class="summary-stat-label">Holdings</div>
+                        </div>
+                        <div class="summary-stat">
+                            <div class="summary-stat-value" id="summaryTotal">$0</div>
+                            <div class="summary-stat-label">Total Value</div>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary btn-view-dashboard" id="viewDashboardBtn" onclick="onViewDashboardClick()">View Dashboard</button>
+                    <div class="auto-redirect-text" id="autoRedirectText">Redirecting in 3s...</div>
+                </div>
             </div>
         </div>
 
@@ -11515,31 +12181,37 @@
                             <rect x="16" y="16" width="12" height="12" rx="2" fill="white"/>
                         </svg>
                     </div>
-                    <h2>Portfolio Analysis</h2>
+                    <div class="portfolio-switcher" id="portfolioSwitcher">
+                        <button class="portfolio-switcher-btn" onclick="togglePortfolioSwitcher()">
+                            <span id="portfolioSwitcherName">Portfolio Analysis</span>
+                            <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"/>
+                            </svg>
+                        </button>
+                        <div class="portfolio-switcher-dropdown" id="portfolioSwitcherDropdown">
+                            <div id="portfolioSwitcherList"></div>
+                            <div class="switcher-divider"></div>
+                            <button class="switcher-item switcher-action" onclick="resetUI(); togglePortfolioSwitcher();">
+                                + New Analysis
+                            </button>
+                        </div>
+                    </div>
                     <span class="total-badge" id="totalBadge">$0</span>
+                    <span class="health-badge" id="healthBadge" style="display:none;">
+                        <span class="health-dot"></span>
+                        <span id="healthLabel"></span>
+                    </span>
                 </div>
                 <div class="header-actions">
                     <button class="btn btn-secondary" id="newAnalysisBtn" aria-label="Start new analysis" title="New Analysis (Ctrl+N)">
                         New Analysis
                         <span class="kbd" style="margin-left: 8px;">Ctrl+N</span>
                     </button>
-                    <button class="btn btn-success" id="savePortfolioBtn" style="display: none;" aria-label="Save portfolio">Save Portfolio</button>
-                    <button class="btn btn-secondary" id="sharePortfolioBtn" onclick="showShareModal()">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
-                            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
-                            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
-                        </svg>
-                        Share
-                    </button>
-                    <button class="btn btn-secondary" id="exportMenuBtn" onclick="showExportModal()">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                            <polyline points="7 10 12 15 17 10"/>
-                            <line x1="12" y1="15" x2="12" y2="3"/>
-                        </svg>
-                        Export
-                    </button>
+                    <div class="btn-group">
+                        <button class="btn btn-success" id="savePortfolioBtn" style="display: none;" aria-label="Save portfolio">Save Portfolio</button>
+                        <button class="btn btn-secondary" id="sharePortfolioBtn" onclick="showShareModal()">Share</button>
+                        <button class="btn btn-secondary" id="exportMenuBtn" onclick="showExportModal()">Export</button>
+                    </div>
                     <button class="btn btn-primary" id="generateReportBtn" onclick="generateProfessionalReport()">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
@@ -11551,6 +12223,11 @@
                         Generate Report
                     </button>
                 </div>
+            </div>
+            <div class="dashboard-quick-stats" id="dashboardQuickStats">
+                <span class="dashboard-quick-stat"><strong id="qsAccounts">0</strong> accounts</span>
+                <span class="dashboard-quick-stat"><strong id="qsPositions">0</strong> positions</span>
+                <span class="dashboard-quick-stat" id="qsUpdated">Updated just now</span>
             </div>
 
             <div class="tabs">
@@ -13576,6 +14253,375 @@
         }
 
         // =============================================================================
+        // VIEW TRANSITION SYSTEM
+        // =============================================================================
+
+        let _transitioning = false;
+
+        function transitionView(hideEl, showEl) {
+            return new Promise(resolve => {
+                if (_transitioning) { resolve(); return; }
+                _transitioning = true;
+
+                if (hideEl) {
+                    hideEl.classList.remove('view-visible');
+                    hideEl.classList.add('view-hidden');
+                }
+
+                setTimeout(() => {
+                    if (hideEl) hideEl.style.display = 'none';
+                    if (showEl) {
+                        showEl.style.display = showEl.dataset.displayType || 'block';
+                        // Force reflow
+                        showEl.offsetHeight;
+                        showEl.classList.remove('view-hidden');
+                        showEl.classList.add('view-visible');
+                    }
+                    setTimeout(() => {
+                        _transitioning = false;
+                        resolve();
+                    }, 420);
+                }, hideEl ? 400 : 0);
+            });
+        }
+
+        // =============================================================================
+        // PROCESSING LOG HELPERS
+        // =============================================================================
+
+        function logMessage(text, type = 'info') {
+            const log = document.getElementById('processingLog');
+            if (!log) return;
+            log.style.display = 'block';
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            const now = new Date();
+            const ts = now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            entry.innerHTML = `<span class="log-time">${ts}</span>${text}`;
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+        }
+
+        function clearProcessingLog() {
+            const log = document.getElementById('processingLog');
+            if (log) { log.innerHTML = ''; log.style.display = 'none'; }
+        }
+
+        // =============================================================================
+        // GREETING & ACTIVITY UTILITIES
+        // =============================================================================
+
+        function getGreeting() {
+            const h = new Date().getHours();
+            if (h < 12) return 'Good morning';
+            if (h < 17) return 'Good afternoon';
+            return 'Good evening';
+        }
+
+        function getGreetingText() {
+            if (currentUser) {
+                const name = (currentUser.name || currentUser.email || '').split(/[\s@]/)[0];
+                return name ? `${getGreeting()}, ${name}` : 'Your Portfolio';
+            }
+            return 'Your Portfolio';
+        }
+
+        function formatRelativeTime(timestamp) {
+            const diff = Date.now() - new Date(timestamp).getTime();
+            const s = Math.floor(diff / 1000);
+            if (s < 60) return 'Just now';
+            const m = Math.floor(s / 60);
+            if (m < 60) return `${m}m ago`;
+            const h = Math.floor(m / 60);
+            if (h < 24) return `${h}h ago`;
+            const d = Math.floor(h / 24);
+            return `${d}d ago`;
+        }
+
+        function trackActivity(text) {
+            try {
+                const activity = JSON.parse(localStorage.getItem('recentActivity') || '[]');
+                activity.unshift({ text, timestamp: new Date().toISOString() });
+                localStorage.setItem('recentActivity', JSON.stringify(activity.slice(0, 10)));
+            } catch (e) { /* ignore */ }
+        }
+
+        // =============================================================================
+        // HEALTH BADGE
+        // =============================================================================
+
+        function updateHealthBadge() {
+            const badge = document.getElementById('healthBadge');
+            const label = document.getElementById('healthLabel');
+            if (!badge || !label || !portfolioData) return;
+
+            const positions = portfolioData.positions || [];
+            const totalValue = portfolioData.total_value || 0;
+            let score = 0;
+
+            // Holding count (0/1/2)
+            if (positions.length >= 20) score += 2;
+            else if (positions.length >= 5) score += 1;
+
+            // Asset class diversity (0/1/2)
+            const classes = new Set();
+            positions.forEach(p => {
+                const s = (p.sector || p.asset_class || '').toLowerCase();
+                if (s) classes.add(s);
+            });
+            if (classes.size >= 5) score += 2;
+            else if (classes.size >= 3) score += 1;
+
+            // Concentration (0/1/2)
+            if (positions.length > 0 && totalValue > 0) {
+                const sorted = [...positions].sort((a, b) => (b.value || 0) - (a.value || 0));
+                const topPct = (sorted[0]?.value || 0) / totalValue;
+                if (topPct < 0.15) score += 2;
+                else if (topPct < 0.30) score += 1;
+            }
+
+            badge.style.display = 'inline-flex';
+            badge.className = 'health-badge';
+            if (score >= 5) {
+                badge.classList.add('health-green');
+                label.textContent = 'Well Diversified';
+            } else if (score >= 3) {
+                badge.classList.add('health-yellow');
+                label.textContent = 'Moderate';
+            } else {
+                badge.classList.add('health-red');
+                label.textContent = 'Concentrated';
+            }
+        }
+
+        // =============================================================================
+        // PORTFOLIO SWITCHER
+        // =============================================================================
+
+        function togglePortfolioSwitcher() {
+            const switcher = document.getElementById('portfolioSwitcher');
+            if (!switcher) return;
+            const isOpen = switcher.classList.toggle('open');
+            if (isOpen) {
+                populatePortfolioSwitcher();
+                const close = (e) => {
+                    if (!switcher.contains(e.target)) {
+                        switcher.classList.remove('open');
+                        document.removeEventListener('click', close);
+                    }
+                };
+                setTimeout(() => document.addEventListener('click', close), 0);
+            }
+        }
+
+        function populatePortfolioSwitcher() {
+            const list = document.getElementById('portfolioSwitcherList');
+            if (!list) return;
+
+            const saved = JSON.parse(localStorage.getItem('savedPortfolios') || '[]');
+            if (saved.length === 0) {
+                list.innerHTML = '<div style="padding: 12px 16px; color: var(--text-muted); font-size: 0.8125rem;">No saved portfolios</div>';
+                return;
+            }
+
+            list.innerHTML = saved.slice(0, 8).map(p => `
+                <button class="switcher-item" onclick="loadSavedPortfolioById('${p.id}'); togglePortfolioSwitcher();">
+                    <div>
+                        <div class="switcher-name">${p.name || 'Unnamed'}</div>
+                        <div class="switcher-meta">${p.holdings?.length || 0} positions &middot; ${formatCurrency(p.totalValue || 0)}</div>
+                    </div>
+                </button>
+            `).join('');
+        }
+
+        function loadSavedPortfolioById(id) {
+            const saved = JSON.parse(localStorage.getItem('savedPortfolios') || '[]');
+            const p = saved.find(s => s.id === id);
+            if (!p) return;
+
+            accounts = [{
+                id: p.id,
+                name: p.name || 'Portfolio',
+                positions: p.holdings || p.positions || [],
+                totalValue: p.totalValue || 0
+            }];
+            analyzePortfolio();
+            trackActivity(`Loaded "${p.name || 'Portfolio'}"`);
+        }
+
+        // =============================================================================
+        // PROCESSING SUMMARY CARD LOGIC
+        // =============================================================================
+
+        let _viewDashboardClicked = false;
+
+        function showProcessingSummary() {
+            const summary = document.getElementById('processingSummary');
+            if (!summary) return;
+
+            // Populate stats
+            const totalPositions = accounts.reduce((s, a) => s + (a.positions?.length || 0), 0);
+            const totalValue = accounts.reduce((s, a) => s + (a.totalValue || 0), 0);
+            document.getElementById('summaryAccounts').textContent = accounts.length;
+            document.getElementById('summaryHoldings').textContent = totalPositions;
+            document.getElementById('summaryTotal').textContent = formatCurrency(totalValue);
+
+            summary.classList.add('visible');
+
+            // Auto-redirect countdown
+            _viewDashboardClicked = false;
+            let countdown = 3;
+            const redirectText = document.getElementById('autoRedirectText');
+            const timer = setInterval(() => {
+                if (_viewDashboardClicked) { clearInterval(timer); return; }
+                countdown--;
+                if (redirectText) redirectText.textContent = `Redirecting in ${countdown}s...`;
+                if (countdown <= 0) {
+                    clearInterval(timer);
+                    onViewDashboardClick();
+                }
+            }, 1000);
+        }
+
+        async function onViewDashboardClick() {
+            _viewDashboardClicked = true;
+            const summary = document.getElementById('processingSummary');
+            if (summary) summary.classList.remove('visible');
+
+            const progressSection = document.getElementById('progressSection');
+            const dashboard = document.getElementById('dashboard');
+
+            await transitionView(progressSection, dashboard);
+            progressManager.reset();
+            clearProcessingLog();
+        }
+
+        // =============================================================================
+        // SIGNED-IN / SIGNED-OUT EMPTY STATES
+        // =============================================================================
+
+        function renderSignedInEmptyState(container) {
+            const content = container.querySelector('.empty-state-content');
+            if (!content) return;
+
+            const saved = JSON.parse(localStorage.getItem('savedPortfolios') || '[]');
+            const activity = JSON.parse(localStorage.getItem('recentActivity') || '[]');
+
+            // Update title/subtitle
+            const title = content.querySelector('.empty-state-title');
+            const desc = content.querySelector('.empty-state-description');
+            if (title) title.textContent = getGreetingText();
+            if (desc) desc.textContent = 'What would you like to do?';
+
+            // Hide entry methods, show quick-action cards
+            const entryMethods = content.querySelector('.entry-methods');
+            if (entryMethods) entryMethods.style.display = 'none';
+
+            // Remove any existing dynamic content
+            content.querySelectorAll('.quick-action-cards, .continue-card, .recent-activity, .sign-in-cta').forEach(el => el.remove());
+
+            // Insert quick-action cards before the upload card
+            const uploadCard = content.querySelector('.app-upload-card');
+
+            const qaDiv = document.createElement('div');
+            qaDiv.className = 'quick-action-cards';
+            qaDiv.innerHTML = `
+                <div class="quick-action-card" onclick="switchEntryMethod('upload')">
+                    <div class="qa-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="17 8 12 3 7 8"/>
+                            <line x1="12" y1="3" x2="12" y2="15"/>
+                        </svg>
+                    </div>
+                    <div class="qa-title">Upload Statement</div>
+                    <div class="qa-desc">PDF, CSV, OFX, or image</div>
+                </div>
+                <div class="quick-action-card" onclick="switchEntryMethod('manual')">
+                    <div class="qa-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                        </svg>
+                    </div>
+                    <div class="qa-title">Manual Entry</div>
+                    <div class="qa-desc">Type in your holdings</div>
+                </div>
+                <div class="quick-action-card" onclick="switchEntryMethod('connect')">
+                    <div class="qa-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="4" width="20" height="16" rx="2"/>
+                            <path d="M7 15h0M2 9h20"/>
+                        </svg>
+                    </div>
+                    <div class="qa-title">Connect Brokerage</div>
+                    <div class="qa-desc">Link your account directly</div>
+                </div>
+            `;
+            if (uploadCard) content.insertBefore(qaDiv, uploadCard);
+
+            // Continue where you left off card
+            if (saved.length > 0) {
+                const last = saved[0];
+                const continueDiv = document.createElement('div');
+                continueDiv.className = 'continue-card';
+                continueDiv.onclick = () => loadSavedPortfolioById(last.id);
+                continueDiv.innerHTML = `
+                    <div class="continue-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="5 3 19 12 5 21 5 3"/>
+                        </svg>
+                    </div>
+                    <div class="continue-info">
+                        <div class="continue-label">Continue where you left off</div>
+                        <div class="continue-name">${last.name || 'Portfolio'}</div>
+                        <div class="continue-meta">${last.holdings?.length || 0} holdings &middot; ${formatCurrency(last.totalValue || 0)}</div>
+                    </div>
+                `;
+                if (uploadCard) content.insertBefore(continueDiv, uploadCard);
+            }
+
+            // Recent activity
+            if (activity.length > 0) {
+                const actDiv = document.createElement('div');
+                actDiv.className = 'recent-activity';
+                actDiv.innerHTML = `<h4>Recent Activity</h4>` +
+                    activity.slice(0, 3).map(a => `
+                        <div class="activity-item">
+                            <span class="activity-dot"></span>
+                            <span>${a.text}</span>
+                            <span class="activity-time">${formatRelativeTime(a.timestamp)}</span>
+                        </div>
+                    `).join('');
+                content.appendChild(actDiv);
+            }
+        }
+
+        function renderSignedOutEmptyState(container) {
+            const content = container.querySelector('.empty-state-content');
+            if (!content) return;
+
+            // Update title/subtitle
+            const title = content.querySelector('.empty-state-title');
+            const desc = content.querySelector('.empty-state-description');
+            if (title) title.textContent = 'Analyze Your Portfolio';
+            if (desc) desc.textContent = 'Upload a brokerage statement to see what you own, how diversified you are, and where to improve.';
+
+            // Show entry methods
+            const entryMethods = content.querySelector('.entry-methods');
+            if (entryMethods) entryMethods.style.display = '';
+
+            // Remove dynamic content
+            content.querySelectorAll('.quick-action-cards, .continue-card, .recent-activity, .sign-in-cta').forEach(el => el.remove());
+
+            // Add sign-in CTA
+            const cta = document.createElement('div');
+            cta.className = 'sign-in-cta';
+            cta.innerHTML = '<a onclick="showAuthModal()">Sign in</a> to save and track your portfolios over time';
+            content.appendChild(cta);
+        }
+
+        // =============================================================================
         // APP HELPER FUNCTIONS
         // =============================================================================
 
@@ -13585,6 +14631,13 @@
 
             if (emptyState) emptyState.style.display = 'flex';
             if (dashboard) dashboard.style.display = 'none';
+
+            // Branch on auth state
+            if (currentUser) {
+                renderSignedInEmptyState(emptyState);
+            } else {
+                renderSignedOutEmptyState(emptyState);
+            }
 
             // Load saved portfolios into the preview grid
             loadSavedPortfoliosPreview();
@@ -15983,6 +17036,12 @@
                 // Hide dashboard and show landing
                 hideUserDashboard();
             }
+
+            // Re-render empty state if it's currently visible
+            const emptyState = document.getElementById('appEmptyState');
+            if (emptyState && emptyState.style.display !== 'none') {
+                showAppEmptyState();
+            }
         }
 
         // Dashboard Functions
@@ -16199,6 +17258,7 @@
 
                 hideSaveModal();
                 showToast('Portfolio saved successfully!');
+                trackActivity('Saved portfolio');
                 loadSavedPortfolios();
             } catch (err) {
                 errorEl.textContent = 'Connection error. Please try again.';
@@ -17336,6 +18396,14 @@
         // Chrome 91+: fires when user dismisses picker without selecting
         fileInput.addEventListener('cancel', () => { resetPickerFlag(600); });
 
+        // Camera input handler
+        const cameraInput = document.getElementById('cameraInput');
+        if (cameraInput) {
+            cameraInput.addEventListener('change', (e) => {
+                if (e.target.files.length) handleFiles(e.target.files);
+            });
+        }
+
         analyzeBtn.addEventListener('click', analyzePortfolio);
         clearAllBtn.addEventListener('click', () => {
             accounts = [];
@@ -17395,6 +18463,7 @@
 
             // Show enhanced progress with stages
             showProgress('Preparing files...', { start: true, totalFiles: validFiles.length, stage: 'upload' });
+            logMessage(`${validFiles.length} file${validFiles.length > 1 ? 's' : ''} selected (${formatSize(totalSize)})`, 'info');
 
             // Update file info display
             const fileInfoEl = document.getElementById('progressFileName');
@@ -17441,6 +18510,7 @@
             const processFile = async (file, index) => {
                 const iconEl = document.getElementById(`queueIcon${index}`);
                 const statusEl = document.getElementById(`queueStatus${index}`);
+                logMessage(`Parsing ${file.name}...`, 'info');
 
                 if (validFiles.length > 1) {
                     iconEl?.classList.add('processing');
@@ -17480,6 +18550,7 @@
                     const result = await parseFile(file);
 
                     if (result.error && !result.positions?.length) {
+                        logMessage(`${file.name}: ${result.error}`, 'warn');
                         if (validFiles.length > 1) {
                             iconEl?.classList.remove('processing');
                             iconEl?.classList.add('error');
@@ -17522,8 +18593,10 @@
                         }
                     }
 
+                    logMessage(`${file.name}: ${result.positions.length} positions found`, 'success');
                     return { success: true };
                 } catch (err) {
+                    logMessage(`${file.name}: ${err.message}`, 'error');
                     if (validFiles.length > 1) {
                         iconEl?.classList.remove('processing');
                         iconEl?.classList.add('error');
@@ -17569,6 +18642,8 @@
             }
 
             // Finish up
+            const failed = validFiles.length - successful;
+
             if (validFiles.length > 1) {
                 queueTitle.textContent = 'Upload complete';
 
@@ -17580,11 +18655,34 @@
                 }
             }
 
+            // Partial success handling
+            if (failed > 0 && successful > 0) {
+                showToast(`${successful} of ${validFiles.length} files processed successfully`, 'warning', {
+                    duration: 8000,
+                    action: {
+                        label: 'Retry Failed',
+                        callback: () => {
+                            const failedFiles = validFiles.filter((_, i) => !results[i]?.success);
+                            if (failedFiles.length) handleFiles(failedFiles);
+                        }
+                    }
+                });
+            } else if (failed === validFiles.length) {
+                showToast('All files failed to process', 'error', {
+                    duration: 8000,
+                    action: {
+                        label: 'Manual Entry',
+                        callback: () => switchEntryMethod('manual')
+                    }
+                });
+            }
+
             // Hide progress after parsing is complete
             hideProgress();
 
             hideError();
             renderAccounts();
+            trackActivity(`Uploaded ${successful} file${successful !== 1 ? 's' : ''}`);
         }
 
         // Brokerage domain mapping for favicon API
@@ -18588,6 +19686,8 @@
                 progressManager.setStage('analyze', 'Analyzing portfolio...');
             }
 
+            logMessage('Classifying assets and sectors...', 'info');
+
             try {
                 const res = await fetch(`${API_URL}/analyze`, {
                     method: 'POST',
@@ -18597,23 +19697,29 @@
                 if (!res.ok) throw new Error('Analysis failed');
                 portfolioData = await res.json();
 
+                logMessage('Building risk metrics...', 'info');
+
                 // Transition to render stage
                 progressManager.setStage('render', 'Building dashboard...');
 
                 hideError();
                 await showDashboard();
 
+                logMessage('Dashboard ready', 'success');
+
                 // Track last analysis date
                 localStorage.setItem('lastAnalysisDate', new Date().toISOString());
+                trackActivity('Analyzed portfolio');
 
                 // Complete progress
                 progressManager.complete();
 
-                // Brief delay to show 100% before hiding
+                // Show processing summary card instead of immediate transition
                 await new Promise(r => setTimeout(r, 400));
-                hideProgress();
+                showProcessingSummary();
 
             } catch (err) {
+                logMessage('Analysis failed: ' + err.message, 'error');
                 hideProgress();
                 showError('Analysis failed: ' + err.message);
             }
@@ -18622,11 +19728,38 @@
         async function showDashboard() {
             uploadSection.style.display = 'none';
             dashboard.style.display = 'block';
-            hideLandingSections(); // Hide landing page when showing results
+            hideLandingSections();
+            hideAppEmptyState();
             // Also hide user dashboard if visible
             const userDashboard = document.getElementById('userDashboard');
             if (userDashboard) userDashboard.style.display = 'none';
             document.getElementById('totalBadge').textContent = formatCurrency(portfolioData.total_value);
+
+            // Update dashboard header with greeting and portfolio name
+            const psName = document.getElementById('portfolioSwitcherName');
+            if (psName) {
+                if (currentUser) {
+                    psName.textContent = getGreetingText();
+                } else if (accounts.length === 1 && accounts[0].name) {
+                    psName.textContent = accounts[0].name;
+                } else if (accounts.length > 1) {
+                    psName.textContent = `${accounts.length} Accounts`;
+                } else {
+                    psName.textContent = 'Portfolio Analysis';
+                }
+            }
+
+            // Populate quick stats
+            const totalPositions = (portfolioData.positions || []).length;
+            const qsAcc = document.getElementById('qsAccounts');
+            const qsPos = document.getElementById('qsPositions');
+            const qsUpd = document.getElementById('qsUpdated');
+            if (qsAcc) qsAcc.textContent = accounts.length;
+            if (qsPos) qsPos.textContent = totalPositions;
+            if (qsUpd) qsUpd.textContent = 'Updated just now';
+
+            // Update health badge
+            updateHealthBadge();
 
             // Chunked rendering for better perceived performance
             // Each render is wrapped in requestAnimationFrame for smoother UI
@@ -18641,6 +19774,7 @@
             ];
 
             for (const task of renderTasks) {
+                logMessage(`Rendering ${task.name}...`, 'info');
                 await new Promise(resolve => {
                     requestAnimationFrame(() => {
                         task.fn();
@@ -19800,21 +20934,33 @@
 
         function resetUI() {
             dashboard.style.display = 'none';
+            dashboard.classList.remove('view-visible');
             uploadSection.style.display = 'block';
-            showLandingSections(); // Show landing page again
+            showLandingSections();
+            showAppEmptyState();
             portfolioData = null;
             Object.values(charts).forEach(c => c.destroy());
             charts = {};
+            // Reset health badge and portfolio switcher
+            const hb = document.getElementById('healthBadge');
+            if (hb) hb.style.display = 'none';
+            const psName = document.getElementById('portfolioSwitcherName');
+            if (psName) psName.textContent = 'Portfolio Analysis';
         }
 
         function showProgress(text, options = {}) {
             progressSection.style.display = 'block';
+            progressSection.classList.add('view-visible');
+            progressSection.classList.remove('view-hidden');
             progressText.textContent = text;
             uploadSection.style.display = 'none';
+            hideLandingSections();
+            hideAppEmptyState();
 
             // Initialize progress manager if starting fresh
             if (options.start) {
                 progressManager.start(options.totalFiles || 1);
+                clearProcessingLog();
             }
 
             // Set stage if specified
@@ -19825,13 +20971,28 @@
 
         function hideProgress() {
             progressSection.style.display = 'none';
+            progressSection.classList.remove('view-visible');
             uploadSection.style.display = 'block';
             progressManager.reset();
+            clearProcessingLog();
+            // Hide summary card
+            const summary = document.getElementById('processingSummary');
+            if (summary) summary.classList.remove('visible');
         }
 
         function showError(msg) {
-            // Show error via toast notification system
-            showToast(msg, 'error', { duration: 6000 });
+            // Detect upload/parse errors and offer recovery
+            const isUploadError = /parse|upload|format|file|pdf|csv|read/i.test(msg);
+            const opts = { duration: 6000 };
+
+            if (isUploadError) {
+                opts.action = {
+                    label: 'Try Manual Entry',
+                    callback: () => switchEntryMethod('manual')
+                };
+            }
+
+            showToast(msg, 'error', opts);
             // Also keep static message for accessibility
             errorMessage.textContent = msg;
             errorMessage.style.display = 'block';
@@ -23993,6 +25154,17 @@
                 // Initialize heat map and other allocation tab features
                 updateHeatMap(heatMapPeriod);
 
+                // Update header elements for sample portfolio
+                updateHealthBadge();
+                const psName = document.getElementById('portfolioSwitcherName');
+                if (psName) psName.textContent = 'Sample Portfolio';
+                const qsAcc = document.getElementById('qsAccounts');
+                const qsPos = document.getElementById('qsPositions');
+                const qsUpd = document.getElementById('qsUpdated');
+                if (qsAcc) qsAcc.textContent = accounts.length;
+                if (qsPos) qsPos.textContent = (portfolioData.positions || []).length;
+                if (qsUpd) qsUpd.textContent = 'Updated just now';
+
                 showToast('Sample portfolio loaded! Explore the dashboard to see all features.', 'success', { duration: 4000 });
             } catch (err) {
                 console.error('Error showing dashboard:', err);
@@ -24002,6 +25174,9 @@
 
         // Expose globally
         window.loadSamplePortfolio = loadSamplePortfolio;
+        window.onViewDashboardClick = onViewDashboardClick;
+        window.loadSavedPortfolioById = loadSavedPortfolioById;
+        window.togglePortfolioSwitcher = togglePortfolioSwitcher;
 
         // =============================================================================
         // iOS PWA ICON GENERATOR
