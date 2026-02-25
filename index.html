@@ -4657,107 +4657,63 @@
         }
 
         /* Trust Section - Marquee */
-        /* Compact Brokerage Strip (inside hero section) */
-        .brokerage-strip {
-            background: transparent;
-            padding: 16px 24px 0;
-            margin-top: 32px;
-            text-align: center;
+        /* Text-based Brokerage Ticker */
+        .brokerages-section {
+            padding: 48px 0 40px;
+            overflow: hidden;
+            border-top: 1px solid rgba(0,0,0,0.06);
+            border-bottom: 1px solid rgba(0,0,0,0.06);
         }
-
-        .brokerage-strip-label {
+        .brokerages-label {
+            text-align: center;
             font-size: 11px;
             font-weight: 600;
+            letter-spacing: 0.12em;
             text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: #8899AA;
-            margin: 0 0 12px 0;
+            color: #9ca3af;
+            margin-bottom: 20px;
         }
-
-        .brokerage-strip-logos {
+        .brokerages-ticker-wrapper {
+            width: 100%;
             overflow: hidden;
-            position: relative;
-            max-width: 1000px;
-            margin: 0 auto;
-            -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
-            mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+            -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+            mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
         }
-
-        .brokerage-strip-track {
-            display: flex;
-            align-items: center;
-            gap: 40px;
-            animation: scrollLogosStrip 30s linear infinite;
-            width: max-content;
+        .brokerages-ticker {
+            display: inline-flex;
+            gap: 0;
+            white-space: nowrap;
+            animation: ticker-scroll 30s linear infinite;
         }
-
-        .brokerage-strip-track:hover {
-            animation-play-state: paused;
+        .brokerages-ticker span {
+            font-size: 15px;
+            font-weight: 500;
+            color: #374151;
+            padding: 0 6px;
+            letter-spacing: 0.01em;
         }
-
-        @keyframes scrollLogosStrip {
+        .brokerages-ticker .dot {
+            color: #d1d5db;
+            font-weight: 300;
+            padding: 0 2px;
+        }
+        @keyframes ticker-scroll {
             0% { transform: translateX(0); }
             100% { transform: translateX(-50%); }
         }
-
-        .brokerage-strip-track .brokerage-logo {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-shrink: 0;
-            opacity: 0.5;
-            transition: opacity 0.2s;
-        }
-
-        .brokerage-strip-track .brokerage-logo:hover {
-            opacity: 0.8;
-        }
-
-        .brokerage-strip-track .brokerage-logo-img {
-            width: 20px;
-            height: 20px;
-            object-fit: contain;
-        }
-
-        .brokerage-strip-track .brokerage-name {
-            font-size: 13px;
-            font-weight: 500;
-            color: #425466;
-            white-space: nowrap;
-        }
-
-        .brokerage-strip-more {
-            font-size: 12px;
-            color: #8899AA;
-            margin: 10px 0 0 0;
+        .brokerages-ticker:hover {
+            animation-play-state: paused;
         }
 
         @media (max-width: 768px) {
-            .brokerage-strip {
-                padding: 12px 16px 16px;
+            .brokerages-section {
+                padding: 32px 0 28px;
             }
-
-            .brokerage-strip-label {
+            .brokerages-label {
                 font-size: 10px;
-                margin-bottom: 10px;
             }
-
-            .brokerage-strip-track {
-                gap: 28px;
-            }
-
-            .brokerage-strip-track .brokerage-logo-img {
-                width: 18px;
-                height: 18px;
-            }
-
-            .brokerage-strip-track .brokerage-name {
-                font-size: 12px;
-            }
-
-            .brokerage-strip-more {
-                font-size: 11px;
-                margin-top: 8px;
+            .brokerages-ticker span {
+                font-size: 13px;
             }
 
             .section-divider.hero-to-dark {
@@ -4799,94 +4755,7 @@
             font-weight: 500;
         }
 
-        .marquee-container {
-            position: relative;
-            width: 100%;
-            overflow: hidden;
-        }
-
-        .marquee-container::before,
-        .marquee-container::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            width: 100px;
-            z-index: 2;
-            pointer-events: none;
-        }
-
-        .marquee-container::before {
-            left: 0;
-            background: linear-gradient(to right, var(--bg-primary), transparent);
-        }
-
-        .marquee-container::after {
-            right: 0;
-            background: linear-gradient(to left, var(--bg-primary), transparent);
-        }
-
-        .marquee-track {
-            display: flex;
-            animation: marquee 45s linear infinite;
-            width: max-content;
-        }
-
-        .marquee-track:hover {
-            animation-play-state: paused;
-        }
-
-        @keyframes marquee {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
-
-        .brokerage-logos {
-            display: flex;
-            align-items: center;
-            gap: 0;
-            padding: 0;
-        }
-
-        .brokerage-logo {
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin: 0 48px;
-            transition: opacity 0.3s ease;
-        }
-
-        .brokerage-logo:hover {
-            opacity: 1;
-        }
-
-        .brokerage-logo-img {
-            height: 28px;
-            width: auto;
-            filter: grayscale(100%) opacity(0.7);
-            transition: filter 0.3s ease;
-        }
-
-        .brokerage-logo:hover .brokerage-logo-img {
-            filter: grayscale(0%) opacity(1);
-        }
-
-        .brokerage-name {
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--text-muted);
-            white-space: nowrap;
-            transition: color 0.3s ease;
-        }
-
-        .brokerage-logo:hover .brokerage-name {
-            color: var(--text-primary);
-        }
-
-        .brokerage-name.fallback-only {
-            display: none;
-        }
+        /* (old marquee/brokerage-logo styles removed — replaced by .brokerages-ticker) */
 
         .trust-note {
             font-size: 0.875rem;
@@ -7601,19 +7470,19 @@
             background: var(--bg-primary);
         }
 
-        /* Brokerage strip in dark mode */
-        :root[data-theme="dark"] .brokerage-strip-label,
-        :root[data-theme="dark"] .brokerage-strip-more {
+        /* Brokerage ticker in dark mode */
+        :root[data-theme="dark"] .brokerages-section {
+            border-top-color: rgba(255,255,255,0.08);
+            border-bottom-color: rgba(255,255,255,0.08);
+        }
+        :root[data-theme="dark"] .brokerages-label {
             color: #8899AA;
         }
-
-        :root[data-theme="dark"] .brokerage-strip-track .brokerage-name {
+        :root[data-theme="dark"] .brokerages-ticker span {
             color: var(--text-secondary);
         }
-
-        :root[data-theme="dark"] .brokerage-strip-logos {
-            -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
-            mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+        :root[data-theme="dark"] .brokerages-ticker .dot {
+            color: rgba(255,255,255,0.2);
         }
 
         :root[data-theme="dark"] .browser-frame {
@@ -7670,22 +7539,7 @@
             background: rgba(99, 91, 255, 0.15);
         }
 
-        /* Marquee gradients for dark mode */
-        :root[data-theme="dark"] .marquee-container::before {
-            background: linear-gradient(to right, var(--bg-primary), transparent);
-        }
-
-        :root[data-theme="dark"] .marquee-container::after {
-            background: linear-gradient(to left, var(--bg-primary), transparent);
-        }
-
-        :root[data-theme="dark"] .brokerage-logo-img {
-            filter: grayscale(100%) brightness(0) invert(1) opacity(0.5);
-        }
-
-        :root[data-theme="dark"] .brokerage-logo:hover .brokerage-logo-img {
-            filter: grayscale(0%) brightness(1) invert(0) opacity(1);
-        }
+        /* (old marquee/brokerage dark mode styles removed) */
 
         /* Hero upload card in dark mode */
         :root[data-theme="dark"] .hero-upload-card {
@@ -11772,41 +11626,62 @@
                 </div><!-- End hero-upload-wrapper -->
             </div><!-- End hero-grid -->
 
-            <!-- Brokerage Logo Strip (Social Proof) - Inside Hero -->
-            <div class="brokerage-strip">
-                <p class="brokerage-strip-label">Works with statements from</p>
-                <div class="brokerage-strip-logos">
-                    <div class="brokerage-strip-track">
-                        <!-- First set -->
-                        <div class="brokerage-logo"><img src="https://logo.clearbit.com/schwab.com" alt="Schwab" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=schwab.com&sz=128';"><span class="brokerage-name">Schwab</span></div>
-                        <div class="brokerage-logo"><img src="https://logo.clearbit.com/fidelity.com" alt="Fidelity" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=fidelity.com&sz=128';"><span class="brokerage-name">Fidelity</span></div>
-                        <div class="brokerage-logo"><img src="https://logo.clearbit.com/vanguard.com" alt="Vanguard" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=vanguard.com&sz=128';"><span class="brokerage-name">Vanguard</span></div>
-                        <div class="brokerage-logo"><img src="https://logo.clearbit.com/etrade.com" alt="E*TRADE" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=etrade.com&sz=128';"><span class="brokerage-name">E*TRADE</span></div>
-                        <div class="brokerage-logo"><img src="https://logo.clearbit.com/tdameritrade.com" alt="TD Ameritrade" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=tdameritrade.com&sz=128';"><span class="brokerage-name">TD Ameritrade</span></div>
-                        <div class="brokerage-logo"><img src="https://logo.clearbit.com/robinhood.com" alt="Robinhood" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=robinhood.com&sz=128';"><span class="brokerage-name">Robinhood</span></div>
-                        <div class="brokerage-logo"><img src="https://logo.clearbit.com/ml.com" alt="Merrill" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=ml.com&sz=128';"><span class="brokerage-name">Merrill</span></div>
-                        <div class="brokerage-logo"><img src="https://logo.clearbit.com/interactivebrokers.com" alt="Interactive Brokers" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=interactivebrokers.com&sz=128';"><span class="brokerage-name">Interactive Brokers</span></div>
-                        <div class="brokerage-logo"><img src="https://logo.clearbit.com/ally.com" alt="Ally Invest" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=ally.com&sz=128';"><span class="brokerage-name">Ally Invest</span></div>
-                        <div class="brokerage-logo"><img src="https://logo.clearbit.com/webull.com" alt="Webull" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=webull.com&sz=128';"><span class="brokerage-name">Webull</span></div>
-                        <div class="brokerage-logo"><img src="https://logo.clearbit.com/sofi.com" alt="SoFi" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=sofi.com&sz=128';"><span class="brokerage-name">SoFi</span></div>
-                        <div class="brokerage-logo"><img src="https://logo.clearbit.com/betterment.com" alt="Betterment" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=betterment.com&sz=128';"><span class="brokerage-name">Betterment</span></div>
-                        <!-- Duplicate for seamless loop -->
-                        <div class="brokerage-logo"><img src="https://logo.clearbit.com/schwab.com" alt="Schwab" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=schwab.com&sz=128';"><span class="brokerage-name">Schwab</span></div>
-                        <div class="brokerage-logo"><img src="https://logo.clearbit.com/fidelity.com" alt="Fidelity" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=fidelity.com&sz=128';"><span class="brokerage-name">Fidelity</span></div>
-                        <div class="brokerage-logo"><img src="https://logo.clearbit.com/vanguard.com" alt="Vanguard" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=vanguard.com&sz=128';"><span class="brokerage-name">Vanguard</span></div>
-                        <div class="brokerage-logo"><img src="https://logo.clearbit.com/etrade.com" alt="E*TRADE" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=etrade.com&sz=128';"><span class="brokerage-name">E*TRADE</span></div>
-                        <div class="brokerage-logo"><img src="https://logo.clearbit.com/tdameritrade.com" alt="TD Ameritrade" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=tdameritrade.com&sz=128';"><span class="brokerage-name">TD Ameritrade</span></div>
-                        <div class="brokerage-logo"><img src="https://logo.clearbit.com/robinhood.com" alt="Robinhood" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=robinhood.com&sz=128';"><span class="brokerage-name">Robinhood</span></div>
-                        <div class="brokerage-logo"><img src="https://logo.clearbit.com/ml.com" alt="Merrill" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=ml.com&sz=128';"><span class="brokerage-name">Merrill</span></div>
-                        <div class="brokerage-logo"><img src="https://logo.clearbit.com/interactivebrokers.com" alt="Interactive Brokers" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=interactivebrokers.com&sz=128';"><span class="brokerage-name">Interactive Brokers</span></div>
-                        <div class="brokerage-logo"><img src="https://logo.clearbit.com/ally.com" alt="Ally Invest" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=ally.com&sz=128';"><span class="brokerage-name">Ally Invest</span></div>
-                        <div class="brokerage-logo"><img src="https://logo.clearbit.com/webull.com" alt="Webull" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=webull.com&sz=128';"><span class="brokerage-name">Webull</span></div>
-                        <div class="brokerage-logo"><img src="https://logo.clearbit.com/sofi.com" alt="SoFi" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=sofi.com&sz=128';"><span class="brokerage-name">SoFi</span></div>
-                        <div class="brokerage-logo"><img src="https://logo.clearbit.com/betterment.com" alt="Betterment" class="brokerage-logo-img" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?domain=betterment.com&sz=128';"><span class="brokerage-name">Betterment</span></div>
-                    </div>
+            <!-- Brokerage Text Ticker (Social Proof) -->
+            <section class="brokerages-section">
+              <p class="brokerages-label">Works with statements from</p>
+              <div class="brokerages-ticker-wrapper">
+                <div class="brokerages-ticker">
+                  <span>Fidelity</span>
+                  <span class="dot">&middot;</span>
+                  <span>Charles Schwab</span>
+                  <span class="dot">&middot;</span>
+                  <span>Merrill Lynch</span>
+                  <span class="dot">&middot;</span>
+                  <span>TD Ameritrade</span>
+                  <span class="dot">&middot;</span>
+                  <span>E*TRADE</span>
+                  <span class="dot">&middot;</span>
+                  <span>Morgan Stanley</span>
+                  <span class="dot">&middot;</span>
+                  <span>Robinhood</span>
+                  <span class="dot">&middot;</span>
+                  <span>Wealthfront</span>
+                  <span class="dot">&middot;</span>
+                  <span>Betterment</span>
+                  <span class="dot">&middot;</span>
+                  <span>Interactive Brokers</span>
+                  <span class="dot">&middot;</span>
+                  <span>Ally Invest</span>
+                  <span class="dot">&middot;</span>
+                  <span>Webull</span>
+                  <span class="dot">&middot;</span>
+                  <!-- duplicate for seamless loop -->
+                  <span>Fidelity</span>
+                  <span class="dot">&middot;</span>
+                  <span>Charles Schwab</span>
+                  <span class="dot">&middot;</span>
+                  <span>Merrill Lynch</span>
+                  <span class="dot">&middot;</span>
+                  <span>TD Ameritrade</span>
+                  <span class="dot">&middot;</span>
+                  <span>E*TRADE</span>
+                  <span class="dot">&middot;</span>
+                  <span>Morgan Stanley</span>
+                  <span class="dot">&middot;</span>
+                  <span>Robinhood</span>
+                  <span class="dot">&middot;</span>
+                  <span>Wealthfront</span>
+                  <span class="dot">&middot;</span>
+                  <span>Betterment</span>
+                  <span class="dot">&middot;</span>
+                  <span>Interactive Brokers</span>
+                  <span class="dot">&middot;</span>
+                  <span>Ally Invest</span>
+                  <span class="dot">&middot;</span>
+                  <span>Webull</span>
                 </div>
-                <p class="brokerage-strip-more">+ 50 more brokerages supported</p>
-            </div>
+              </div>
+            </section>
 
             </div><!-- End hero-inner -->
         </section><!-- End hero-section -->
