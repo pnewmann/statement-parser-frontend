@@ -12663,9 +12663,29 @@
                 // data immediately when it opens its own connection.
                 db.close();
 
-                // Brief pause to ensure the browser flushes the closed connection
-                // before the new page's IndexedDB open request fires.
-                await new Promise(r => setTimeout(r, 150));
+                // Wait for the closed connection to fully flush before navigating.
+                // iOS Safari's IndexedDB is slow — 150ms is not enough on older
+                // devices or under memory pressure.  Re-read to confirm the data
+                // is actually visible before redirecting.
+                const maxWait = 2000;  // hard cap
+                const start = Date.now();
+                while (Date.now() - start < maxWait) {
+                    await new Promise(r => setTimeout(r, 100));
+                    try {
+                        const checkDb = await openUploadDB();
+                        const checkTx = checkDb.transaction('files', 'readonly');
+                        const checkReq = checkTx.objectStore('files').getAll();
+                        const confirmed = await new Promise((res, rej) => {
+                            checkReq.onsuccess = () => res(checkReq.result.length);
+                            checkReq.onerror = () => rej(checkReq.error);
+                        });
+                        checkDb.close();
+                        if (confirmed >= fileData.length) {
+                            console.log('[Landing] Verified', confirmed, 'files committed');
+                            break;
+                        }
+                    } catch (_) { /* retry */ }
+                }
 
                 // Redirect to app page
                 console.log('[Landing] Redirecting to /app');
